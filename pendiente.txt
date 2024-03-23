@@ -1,0 +1,18 @@
+Agregar carcateristica descuento en entidad producto.... true or false, set Discount
+autorización de descuento basado en autorización de usuario Administrador.
+
+
+
+Sistema de reparto:
+
+gastos operativos:
+
+Venta cuando  haga
+
+
+
+
+
+Sistema de stock con Nota de venta: 
+en la practica la nota de venta es un aresrrva de stock. 
+
