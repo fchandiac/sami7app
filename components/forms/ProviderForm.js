@@ -140,7 +140,7 @@ export default function ProviderForm(props) {
             </Grid>
             <Grid item>
               <TextField
-                label="Correo"
+                label="Mail"
                 name="providerMail"
                 variant="outlined"
                 fullWidth

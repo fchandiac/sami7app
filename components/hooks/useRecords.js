@@ -85,6 +85,36 @@ export default function useRecords() {
     return record
   }
 
+  const createCashRegister = async (userId, cashRegisterId) => {
+    const record = await records.create(
+      userId,
+      "crear",
+      "cajas",
+      "crea nueva caja id: " + cashRegisterId
+    )
+    return record
+  }
+
+  const updateProductGeneral = async (userId, product) => {
+    const description = `actualiza producto: ${product.id} - ${product.name} - ${product.description} - ${product.favorite} - ${product.stockControl} - ${product.ivaSubject} - ${product.subcategory.id}`
+    const record = await records.create(
+      userId,
+      "actualizar",
+      "productos",
+      description
+    )
+  }
+
+  const closeCashRegister = async (userId, cashRegisterId) => {
+    const record = await records.create(
+      userId,
+      "cerrar",
+      "cajas",
+      "cierra caja id: " + cashRegisterId
+    )
+    return record
+  }
+
   return {
     create,
     findAll,
@@ -95,5 +125,8 @@ export default function useRecords() {
     createSubcategory,
     createStorage,
     createPriceList,
+    createCashRegister,
+    updateProductGeneral,
+    closeCashRegister
   }
 }

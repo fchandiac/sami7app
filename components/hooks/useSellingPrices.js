@@ -1,8 +1,24 @@
 const sellingPrices = require("@/services/sellingPrices");
 
 export default function useSellingPrices() {
-  const create = async (net, gross, price_list_id, purchase_price_id, purchase_net, utility, taxes) => {
-    const price = await sellingPrices.create(net, gross, price_list_id, purchase_price_id, purchase_net, utility, taxes);
+  const create = async (
+    gross,
+    net,
+    utility,
+    purchase_net,
+    price_list_id,
+    product_id,
+    taxes
+  ) => {
+    const price = await sellingPrices.create(
+      gross,
+      net,
+      utility,
+      purchase_net,
+      price_list_id,
+      product_id,
+      taxes
+    );
     return price;
   };
 
@@ -31,6 +47,8 @@ export default function useSellingPrices() {
     return price;
   };
 
+  //Gross = (purchaseNet/(1-percentage))*-1
+
   const utilityAmount = (
     purchaseNetPrice,
     usePercentage,
@@ -40,13 +58,19 @@ export default function useSellingPrices() {
     let netPrice = purchaseNetPrice || 0;
     let utility = { amount: 0, percentage: 0 };
 
+    console.log(netPrice)
+
     if (usePercentage) {
-      utility.amount = (netPrice * percentage) / 100;
-      utility.percentage = percentage;
+      console.log(percentage/100)
+      utility.amount = (netPrice/(1-(percentage/100)))-netPrice
+      utility.percentage = parseInt(percentage);
+      utility.amount = Math.floor(utility.amount)
     } else {
       utility.amount = amount;
-      utility.percentage = (amount / netPrice) * 100;
+      utility.percentage = 100*((amount-netPrice)/amount)
+      utility.amount = Math.floor(utility.amount);
     }
+    console.log(utility);
     return utility;
   };
 
@@ -80,9 +104,8 @@ export default function useSellingPrices() {
     let purchaseNetPriceWithUtility = purchaseNetPrice - utility.amount;
     purchaseNetPriceWithUtility = Math.floor(purchaseNetPriceWithUtility);
     return purchaseNetPriceWithUtility;
-
   };
-  
+
   return {
     create,
     findAll,
@@ -93,6 +116,6 @@ export default function useSellingPrices() {
     utilityAmount,
     netPriceFromPurchase,
     purchaseFromNetPrice,
-    inverseUtilityAmount
+    inverseUtilityAmount,
   };
 }

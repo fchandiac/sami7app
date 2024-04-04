@@ -125,11 +125,35 @@ function destroy(id) {
     return customer
 }
 
+
+
+function findOneByName(name) {
+    const customer = new Promise((resolve, reject) => {
+        fetch(server_url + 'customers/findOneByName', {
+            method: 'POST',
+            body: JSON.stringify({ name }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return customer
+}
+
 export {
     create,
     findAll,
     findOneById,
     findByRut,
     update,
-    destroy
+    destroy,
+    findOneByName
 }

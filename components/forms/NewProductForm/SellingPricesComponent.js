@@ -24,7 +24,7 @@ import PriceListForm from "../PriceListform";
 import useUtils from "@/components/hooks/useUtils";
 import TaxesComponent from "./TaxesComponent";
 import { set } from "autonumeric";
-import TitlePapper from "@/components/custom/TitlePapper";
+import TitlePapper from "@/components/custom/TitlePaper";
 import useSellingPrices from "@/components/hooks/useSellingPrices";
 import { useAppContext } from "@/appProvider";
 
@@ -75,6 +75,8 @@ export default function SellingPricesComponent() {
     setPurchaseUse(true);
   };
 
+ // Gross = (purchaseNet/(1-percentage))*-1
+
   const purchaseNetFromUtilities = () => {
   
     const net = removeThousandsSeparator(sellingPrice.net);
@@ -100,6 +102,7 @@ export default function SellingPricesComponent() {
     const purchaseNet = removeThousandsSeparator(purchasePrice.net);
     let percent = 0;
     let amount = 0;
+
     if (usePercentUtility === true) {
       amount = 0;
       percent = percentUtility || 0;
@@ -114,6 +117,7 @@ export default function SellingPricesComponent() {
       percent,
       amount
     );
+
     const netPrice = sellingPrices.netPriceFromPurchase(purchaseNet, utility);
     setSellingPriceNet(addThousandsSeparator(netPrice));
     setAmountUtility(addThousandsSeparator(utility.amount));
@@ -301,9 +305,9 @@ export default function SellingPricesComponent() {
                     }
                     label={usePercentUtility ? "%" : "$"}
                   />
-                  <IconButton onClick={() => {purchaseNetFromUtilities()}}  disabled={activeStep !== 2}>
+                  {/* <IconButton onClick={() => {purchaseNetFromUtilities()}}  disabled={activeStep !== 2}>
                     <UndoIcon />
-                  </IconButton>
+                  </IconButton> */}
                   <IconButton
                     onClick={() => {
                       netPriceFromPurchase();

@@ -43,6 +43,12 @@ export default function usePriceLists() {
     return formattedList;
   }
 
+  const defaultList = async() =>  {
+    const list = await priceLists.findOneByName('MINORISTA')
+    const listFormatted = { id: list.id, key:list.id, name: list.name }
+    return list
+  }
+
   return {
     create,
     findAll,
@@ -50,6 +56,7 @@ export default function usePriceLists() {
     update,
     destroy,
     findAllToAutocomplete,
-    findAllToGrid
+    findAllToGrid,
+    defaultList
   };
 }

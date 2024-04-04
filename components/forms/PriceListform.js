@@ -32,7 +32,7 @@ export default function PriceListForm(props) {
         setPriceListData({ id: 0, name: "", description: "" });
         afterSubmit();
         openSnack("Lista de precios creada", "success");
-        // await records.createPriceList(user.id, newPriceList.name);
+        await records.createPriceList(user.id, newPriceList.name);
       } catch (err) {
         openSnack(err.errors[0].message, "error");
       }

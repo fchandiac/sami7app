@@ -33,7 +33,7 @@ export default function SotoragesGrid(props) {
         },
         {
             field: "sales_room",
-            headerName: "Punto de venta",
+            headerName: "Sala de venta",
             flex: 1,
             type: "boolean",
             renderCell: (params) => {

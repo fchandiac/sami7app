@@ -43,7 +43,7 @@ export default function StocksGrid() {
 
     useEffect(() => {
         const fecth = async () => {
-            const data = await stocks.findAllGroupByProduct()
+            const data = await stocks.findAll()
             setStockList(data)
         }
         fecth()

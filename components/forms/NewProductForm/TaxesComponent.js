@@ -1,4 +1,4 @@
-import TitlePapper from "@/components/custom/TitlePapper";
+import TitlePapper from "@/components/custom/TitlePaper";
 import useTaxes from "@/components/hooks/useTaxes";
 import {
   Grid,

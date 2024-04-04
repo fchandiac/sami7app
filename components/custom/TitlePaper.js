@@ -1,14 +1,18 @@
-import { Paper, Typography, useTheme, Box } from '@mui/material'
+import { Paper, Typography, Box, useTheme } from '@mui/material'
 import React from 'react'
 
-export default function TitlePapper(props) {
-    const { title } = props 
+
+
+
+export default function TitlePaper(props) {
+    const { title, group=false } = props 
     const theme = useTheme()
+
     return (
         <>
 
 
-            <Paper variant='outlined' sx={{ borderColor: theme.palette.papperBorder.main}}>
+            <Paper variant='outlined' sx={{ borderColor: group? theme.palette.MUIBorder.main: theme.palette.papperBorder.main}}>
                 <Typography
                     variant='caption'
                     sx={{

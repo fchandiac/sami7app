@@ -3,7 +3,6 @@ import useSellingPrices from "./useSellingPrices";
 import useStocks from "./useStocks";
 import useUtils from "./useUtils";
 
-
 const products = require("@/services/products");
 
 export default function useProducts() {
@@ -17,10 +16,9 @@ export default function useProducts() {
     code,
     description,
     stock_control,
-    ivaSubject,
+    iva_subject,
     favorite,
     purchase_price_id,
-    selling_price_id,
     subcategory_id
   ) => {
     const product = await products.create(
@@ -28,10 +26,9 @@ export default function useProducts() {
       code,
       description,
       stock_control,
-      ivaSubject,
+      iva_subject,
       favorite,
       purchase_price_id,
-      selling_price_id,
       subcategory_id
     );
     return product;
@@ -53,7 +50,7 @@ export default function useProducts() {
     code,
     description,
     stock_control,
-    ivaSubject,
+    iva_subject,
     favorite,
     subcategory_id
   ) => {
@@ -63,7 +60,7 @@ export default function useProducts() {
       code,
       description,
       stock_control,
-      ivaSubject,
+      iva_subject,
       favorite,
       subcategory_id
     );
@@ -71,11 +68,8 @@ export default function useProducts() {
   };
 
   const newProduct = async (general, purchase, selling, stock) => {
-
-
-
-    console.log('purchase', purchase)
-    console.log('selling', selling)
+    console.log("purchase", purchase);
+    console.log("selling", selling);
 
     const newPurchase = await purchasePrices.create(
       parseInt(removeThousandsSeparator(purchase.net)),
@@ -84,16 +78,15 @@ export default function useProducts() {
       purchase.taxes
     );
 
-    const newSelling = await sellingPrices.create(
-      parseInt(removeThousandsSeparator(selling.net)),
-      parseInt(removeThousandsSeparator(selling.gross)),
-      selling.priceList.id,
-      newPurchase.id,
-      parseInt(removeThousandsSeparator(purchase.net)),
-      selling.utility,
-      selling.taxes
-   
-    );
+    // const newSelling = await sellingPrices.create(
+    //   parseInt(removeThousandsSeparator(selling.net)),
+    //   parseInt(removeThousandsSeparator(selling.gross)),
+    //   selling.priceList.id,
+    //   newPurchase.id,
+    //   parseInt(removeThousandsSeparator(purchase.net)),
+    //   selling.utility,
+    //   selling.taxes
+    // );
 
     const newProduct = await products.create(
       general.name,
@@ -103,29 +96,81 @@ export default function useProducts() {
       general.ivaSubject,
       general.favorite,
       newPurchase.id,
-      newSelling.id,
       general.subcategory.id
-    )
+    );
+
+    const newSellingPrice = await sellingPrices.create(
+      parseInt(removeThousandsSeparator(selling.gross)),
+      parseInt(removeThousandsSeparator(selling.net)),
+      selling.utility,
+      parseInt(removeThousandsSeparator(purchase.net)),
+      selling.priceList.id,
+      newProduct.id,
+      selling.taxes
+    );
 
     const newProductStock = await stocks.createProductMovement(
       stock.total,
       stock.critical,
       newProduct.id,
       stock.storage.id
-    )
+    );
 
     return {
       newPurchase: newPurchase,
-      newSelling: newSelling,
       newProduct: newProduct,
-      newProductStock: newProductStock
-    }
+      newProductStock: newProductStock,
+      newSelling: newSellingPrice,
+    };
   };
-
 
   const existByName = async (name) => {
     const product = await products.existByName(name);
     return product;
+  };
+
+  const findAllToSalePoint = async (price_list_id, storage_id) => {
+    const product = await products.findAllToSalePoint(
+      price_list_id,
+      storage_id
+    );
+    return product;
+  };
+
+  const findOneByIdToCart = async (id) => {
+    const product = await products.findOneByIdToCart(id);
+    return product;
+  };
+
+  // findOneByIAndStorageAndPriceList(
+  //   id,
+  //   storage_id,
+  //   price_list_id
+  // );
+
+  const findOneByIAndStorageAndPriceList = async (
+    id,
+    storage_id,
+    price_list_id
+  ) => {
+    const product = await products.findOneByIAndStorageAndPriceList(
+      id,
+      storage_id,
+      price_list_id
+    );
+    return product;
+  };
+
+  const findAllToAutocomplete = async () => {
+    const product = await products.findAll()
+    const data = product.map((product) => {
+      return {
+        id: product.id,
+        key: product.id,
+        name: product.name,
+      };
+    });
+    return data;
   }
 
   return {
@@ -134,6 +179,10 @@ export default function useProducts() {
     findOneById,
     generalUpdate,
     newProduct,
-    existByName
+    existByName,
+    findAllToSalePoint,
+    findOneByIdToCart,
+    findOneByIAndStorageAndPriceList,
+    findAllToAutocomplete
   };
 }

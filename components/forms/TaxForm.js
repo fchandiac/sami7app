@@ -3,6 +3,8 @@ import { Grid, Paper, Typography, TextField, Button } from "@mui/material";
 import { useAppContext } from "@/appProvider";
 import useTaxes from "../hooks/useTaxes";
 import InputAdornment from "@mui/material/InputAdornment";
+import useRecords from "../hooks/useRecords";
+
 
 export default function TaxForm(props) {
   const {
@@ -16,7 +18,8 @@ export default function TaxForm(props) {
     afterSubmit = () => {},
   } = props;
   const taxes = useTaxes();
-  const { openSnack } = useAppContext();
+  const records = useRecords();
+  const { openSnack, user } = useAppContext();
   const [taxData, setTaxData] = useState(data);
 
   const save = async () => {
@@ -29,8 +32,10 @@ export default function TaxForm(props) {
           taxData.description,
           taxData.percentage
         );
+        await records.createTax(user.id, taxData.name);
         setTaxData({ id: 0, name: "", percentage: '', description: "" });
         afterSubmit();
+        openSnack("Impuesto creado", "success");
       } catch (err) {
         openSnack(err.errors[0].message, "error");
       }

@@ -40,6 +40,16 @@ export default function useStorages() {
     }));
   }
 
+  const findOneByName = async(name) =>{
+    const storage = await storages.findOneByName(name);
+    return storage;
+  }
+
+  const defaultStorage = async () => {
+    const storage = await storages.findOneByName("SALA DE VENTAS");
+    return storage;
+  }
+
   return {
     create,
     findAll,
@@ -48,5 +58,7 @@ export default function useStorages() {
     update,
     destroy,
     findAllToAutocomplete,
+    findOneByName,
+    defaultStorage,
   };
 }

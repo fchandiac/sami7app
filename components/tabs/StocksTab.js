@@ -39,7 +39,7 @@ function a11yProps(index) {
 }
 
 export default function StocksTab(props) {
-    const { Stocks, Alerts, Storages } = props
+    const { Stocks, Alerts, Storages, Movements } = props
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -51,17 +51,21 @@ export default function StocksTab(props) {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Stocks" {...a11yProps(0)} />
-                    <Tab label="Alertas" {...a11yProps(1)} />
-                    <Tab label="Almacenes" {...a11yProps(2)} />
+                    <Tab label="Movimientos" {...a11yProps(1)} />
+                    <Tab label="Alertas" {...a11yProps(2)} />
+                    <Tab label="Almacenes" {...a11yProps(3)} />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
                 {Stocks}
             </TabPanel>
             <TabPanel value={value} index={1}>
-                {Alerts}
+                {Movements}
             </TabPanel>
             <TabPanel value={value} index={2}>
+                {Alerts}
+            </TabPanel>
+            <TabPanel value={value} index={3}>
                 {Storages}
             </TabPanel>
        

@@ -1,7 +1,7 @@
 const server_url = process.env.API_URL
 
-function create(net, gross, price_list_id, purchase_price_id, purchase_net, utility, taxes) {
-    let data = { net, gross, price_list_id, purchase_price_id, purchase_net, utility, taxes }
+function create(gross, net, utility,purchase_net, price_list_id, product_id,  taxes) {
+    let data = {gross, net, utility,purchase_net, price_list_id, product_id,  taxes }
     const price = new Promise((resolve, reject) => {
         fetch(server_url + 'sellingPrices/create', {
             method: 'POST',

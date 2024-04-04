@@ -18,7 +18,7 @@ import GeneralComponent from "./GeneralComponent";
 import PurchasePriceComponent from "./PurchasePriceComponent";
 import SellingPricesComponent from "./SellingPricesComponent";
 import StockComponent from "./StockComponent";
-import TitlePapper from "@/components/custom/TitlePapper";
+import TitlePapper from "@/components/custom/TitlePaper";
 import useUtils from "@/components/hooks/useUtils";
 import { useRouter } from "next/router";
 import useProducts from "@/components/hooks/useProducts";

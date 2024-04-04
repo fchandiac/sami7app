@@ -88,12 +88,48 @@ export default function Layout(props) {
                         }}
                         />
                     </ListItem>
+                    <ListItem button>
+                        <ListItemText primary="Clientes" 
+                        onClick={() => { 
+                            router.push('/customers')
+                            setPageTitle('Clientes') 
+                            setOpenDrawer(false)
+                        }}
+                        />
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary="Pagos" 
+                        onClick={() => { 
+                            router.push('/payments')
+                            setPageTitle('Pagos') 
+                            setOpenDrawer(false)
+                        }}
+                        />
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary="Puntos de venta" 
+                        onClick={() => { 
+                            router.push('/salePoints')
+                            setPageTitle('Puntos de venta') 
+                            setOpenDrawer(false)
+                        }}
+                        />
+                    </ListItem>
 
                     <ListItem button>
                         <ListItemText primary="Registros" 
                         onClick={() => { 
                             router.push('/records')
                             setPageTitle('Registros') 
+                            setOpenDrawer(false)
+                        }}
+                        />
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary="Punto de venta" 
+                        onClick={() => { 
+                            router.push('/salePoint')
+                            setPageTitle('Punto de venta') 
                             setOpenDrawer(false)
                         }}
                         />
