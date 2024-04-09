@@ -39,7 +39,7 @@ const initialState = {
       tax: 0,
       discounts: 0,
       customer: { id: 1001, key: 1001, name: "SIN CLIENTE" },
-      documentType:  { id: 1, key: 1, name: "Ticket" },
+      documentType: null,
       items: [],
     },
     {
@@ -50,7 +50,7 @@ const initialState = {
       tax: 0,
       discounts: 0,
       customer: { id: 1001, key: 1001, name: "SIN CLIENTE" },
-      documentType:  { id: 1, key: 1, name: "Ticket" },
+      documentType: null,
       items: [],
     },
     {
@@ -61,7 +61,7 @@ const initialState = {
       tax: 0,
       customer: { id: 1001, key: 1001, name: "SIN CLIENTE" },
       discounts: 0,
-      documentType:  { id: 1, key: 1, name: "Ticket" },
+      documentType: null,
       items: [],
     },
     {
@@ -72,7 +72,7 @@ const initialState = {
       tax: 0,
       discounts: 0,
       customer: { id: 1001, key: 1001, name: "SIN CLIENTE" },
-      documentType:  { id: 1, key: 1, name: "Ticket" },
+      documentType: null,
       items: [],
     },
   ],
@@ -83,11 +83,18 @@ const reducer = (state, action) => {
     case "TOGGLE_SIDEBAR":
       return { ...state, sideBarOpen: !state.sideBarOpen };
     case "SET_INFO":
-      const { id, name, address, phone, status, storage, cashRegisterId } = action.payload;
-      return { ...state, info: { id, name, address, phone, status, storage, cashRegisterId } };
+      const { id, name, address, phone, status, storage, cashRegisterId } =
+        action.payload;
+      return {
+        ...state,
+        info: { id, name, address, phone, status, storage, cashRegisterId },
+      };
     case "SET_INFO_CASH_REGISTER":
       const { cashRegister_id } = action.payload;
-      return { ...state, info: { ...state.info, cashRegisterId: cashRegister_id } };
+      return {
+        ...state,
+        info: { ...state.info, cashRegisterId: cashRegister_id },
+      };
     case "SET_INFO_STATUS":
       return { ...state, info: { ...state.info, status: action.payload } };
     case "SET_PRICE_LIST":
@@ -120,7 +127,7 @@ const reducer = (state, action) => {
       });
       return { ...state, carts: updatedCarts_1 };
     case "SET_DOCUMENT_TYPE":
-      const {cartId_2, documentType} = action.payload;
+      const { cartId_2, documentType } = action.payload;
       const updatedCarts_2 = state.carts.map((cart) => {
         if (cart.id === cartId_2) {
           return { ...cart, documentType };
@@ -128,18 +135,21 @@ const reducer = (state, action) => {
           return cart;
         }
       });
-      case "SET_CUSTOMER":
-        const {cartId_3, customer} = action.payload;
-        const updatedCarts_3 = state.carts.map((cart) => {
-          if (cart.id === cartId_3) {
-            return { ...cart, customer };
-          } else {
-            return cart;
-          }
-        });
-        case "SET_CASH_AMOUNT_CASH_REGISTER":
-          return { ...state, cashAmountCashRegister: action.payload };
-     
+
+      return { ...state, carts: updatedCarts_2 };
+    case "SET_CUSTOMER":
+      const { cartId_3, customer } = action.payload;
+      const updatedCarts_3 = state.carts.map((cart) => {
+        if (cart.id === cartId_3) {
+          return { ...cart, customer };
+        } else {
+          return cart;
+        }
+      });
+      return { ...state, carts: updatedCarts_3 };
+    case "SET_CASH_AMOUNT_CASH_REGISTER":
+      return { ...state, cashAmountCashRegister: action.payload };
+
     default:
       return state;
   }
@@ -166,7 +176,15 @@ const SalePointProvider = ({ children }) => {
     });
   };
 
-  const setInfo = ( id, name, address, phone, status, storage, cashRegisterId) => {
+  const setInfo = (
+    id,
+    name,
+    address,
+    phone,
+    status,
+    storage,
+    cashRegisterId
+  ) => {
     dispatch({
       type: "SET_INFO",
       payload: { id, name, address, phone, status, storage, cashRegisterId },
@@ -197,18 +215,18 @@ const SalePointProvider = ({ children }) => {
       type: "SET_DOCUMENT_TYPE",
       payload: { cartId_2: cartId, documentType },
     });
-  }
+  };
 
   const setCustomer = (cartId, customer) => {
     dispatch({
       type: "SET_CUSTOMER",
       payload: { cartId_3: cartId, customer },
     });
-  }
+  };
 
   const setCashAmountCashRegister = (amount) => {
     dispatch({ type: "SET_CASH_AMOUNT_CASH_REGISTER", payload: amount });
-  }
+  };
 
   return (
     <SalePointContext.Provider
@@ -238,7 +256,7 @@ const SalePointProvider = ({ children }) => {
         setTotalsCart,
         setDocumentType,
         setCustomer,
-        setCashAmountCashRegister
+        setCashAmountCashRegister,
       }}
     >
       {children}

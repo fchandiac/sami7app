@@ -115,6 +115,16 @@ export default function useRecords() {
     return record
   }
 
+  const createCustomer = async (userId, customerName) => {
+    const record = await records.create(
+      userId,
+      "crear",
+      "clientes",
+      "crea nuevo cliente: " + customerName
+    )
+    return record
+  }
+
   return {
     create,
     findAll,
@@ -127,6 +137,7 @@ export default function useRecords() {
     createPriceList,
     createCashRegister,
     updateProductGeneral,
-    closeCashRegister
+    closeCashRegister,
+    createCustomer
   }
 }

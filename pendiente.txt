@@ -16,3 +16,14 @@ Venta cuando  haga
 Sistema de stock con Nota de venta: 
 en la practica la nota de venta es un aresrrva de stock. 
 
+[out:json][timeout:25];
+// gather results
+(
+  nwr["surface"="concrete"]({{bbox}});
+  nwr["natural"="wood"]({{bbox}});
+  nwr["industrial"="port"]({{bbox}});
+  nwr["landuse"="industrial"]({{bbox}});
+  nwr["landuse"="residential"]({{bbox}});
+);
+// print results
+out geom;

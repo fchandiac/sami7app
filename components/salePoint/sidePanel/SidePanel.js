@@ -13,6 +13,7 @@ import Info from "./Info";
 import Exchange from "./Exchange";
 import CashAmount from "./CashAmount";
 import Close from "./Close";
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 export default function SidePanel(props) {
   const {setOpenLoadDialog} = props;

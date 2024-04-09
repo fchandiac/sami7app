@@ -1,10 +1,10 @@
 const server_url = process.env.API_URL
 
-function create(rut, name, address, phone, mail) {
+function create(rut, name, activity, district, city, address, phone, mail) {
     const customer = new Promise((resolve, reject) => {
         fetch(server_url + 'customers/create', {
             method: 'POST',
-            body: JSON.stringify({ rut, name, address, phone, mail }),
+            body: JSON.stringify({rut, name, activity, district, city, address, phone, mail}),
             headers: { 'Content-Type': 'application/json' }
         }).then(res => {
             res.json().then(res => {

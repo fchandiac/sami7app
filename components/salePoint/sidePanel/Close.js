@@ -22,16 +22,6 @@ export default function Close(props) {
       setOpenLoadDialog(true);
       openSnack("Caja cerrada", "success");
       setCashAmountCashRegister(0);
-      setInfo({
-        id: null,
-        name: "",
-        description: "",
-        address: "",
-        phone: "",
-        status: false,
-        storage: { id: 1001, key: 1001, name: "SALA DE VENTAS" },
-        cashRegisterId: null,
-      });
       setInfoStatus(false);
     } else {
       openSnack("Error al cerrar caja", "error");

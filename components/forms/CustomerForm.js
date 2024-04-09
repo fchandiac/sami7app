@@ -8,13 +8,15 @@ import {
   TextField,
   IconButton,
   Button,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import { useAppContext } from "@/appProvider";
 import useCustomers from "../hooks/useCustomers";
 import useUtils from "../hooks/useUtils";
 import SearchIcon from "@mui/icons-material/Search";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import useRecords from "../hooks/useRecords";
+
 
 export default function CustomerForm(props) {
   const {
@@ -39,6 +41,7 @@ export default function CustomerForm(props) {
   const [customerData, setCustomerData] = useState(data);
   const [districtsOptions, setDistrictsOptions] = useState([]);
   const [citiesOptions, setCitiesOptions] = useState([]);
+  const records = useRecords();
 
   useEffect(() => {
     const fetch = async () => {
@@ -72,22 +75,57 @@ export default function CustomerForm(props) {
     if (edit) {
       console.log("edit");
     } else {
+
+      try{
+        const newCustomer = await customers.create(
+          customerData.rut,
+          customerData.name,
+          customerData.activity,
+          customerData.district.id,
+          customerData.city.id,
+          customerData.address,
+          customerData.phone,
+          customerData.mail
+      
+        );
+        openSnack("Cliente creado correctamente", "success");
+        records.create(user.id, "crear", "clientes", "crea nuevo cliente: " + customerData.name);
+        setCustomerData({
+          id: null,
+          rut: "",
+          name: "",
+          activity: "",
+          address: "",
+          phone: "",
+          mail: "",
+          district: null,
+          city: null,
+        });
+      } catch (err) {
+        console.log(err);
+        openSnack(err.errors[0].message, 'error')
+      }
     }
+     
   };
 
-  const findSii= async () => {
+  const findSii = async () => {
     try {
-        if (customerData.rut == ''){
-            openSnack('Debe completar el Rut', 'error')
-            return
-        } else {
-            const infoSii = await customers.findFromSII(customerData.rut)
-            setCustomerData({...customerData, name: infoSii.razon_social, activity: infoSii.actividades[0].giro} )
-        }
-    } catch(err){
-        console.log(err)
+      if (customerData.rut == "") {
+        openSnack("Debe completar el Rut", "error");
+        return;
+      } else {
+        const infoSii = await customers.findFromSII(customerData.rut);
+        setCustomerData({
+          ...customerData,
+          name: infoSii.razon_social,
+          activity: infoSii.actividades[0].giro,
+        });
+      }
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   return (
     <>
@@ -121,7 +159,11 @@ export default function CustomerForm(props) {
                 required
                 sx={{ flexGrow: 1 }}
               />
-              <IconButton onClick={(e) => {findSii()}}>
+              <IconButton
+                onClick={(e) => {
+                  findSii();
+                }}
+              >
                 <SearchIcon />
               </IconButton>
             </Grid>
@@ -133,24 +175,27 @@ export default function CustomerForm(props) {
                 fullWidth
                 value={customerData.name}
                 onChange={(e) => {
-                  setCustomerData({...customerData, name: e.target.value})
+                  setCustomerData({ ...customerData, name: e.target.value });
                 }}
                 size="small"
                 required
               />
             </Grid>
             <Grid item>
-                <TextField
-                label='Actividad'
+              <TextField
+                label="Actividad"
                 name="customerActivity"
                 variant="outlined"
                 fullWidth
                 value={customerData.activity}
                 onChange={(e) => {
-                    setCustomerData({...customerData, activity: e.target.value})
+                  setCustomerData({
+                    ...customerData,
+                    activity: e.target.value,
+                  });
                 }}
                 size="small"
-                />
+              />
             </Grid>
             <Grid item>
               <Autocomplete
@@ -229,14 +274,12 @@ export default function CustomerForm(props) {
                 }}
                 size="small"
                 InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            +56
-                        </InputAdornment>
-                    ),
+                  startAdornment: (
+                    <InputAdornment position="start">+56</InputAdornment>
+                  ),
                 }}
                 inputProps={{
-                    maxLength: 9, // Máximo de 9 caracteres
+                  maxLength: 9, // Máximo de 9 caracteres
                 }}
                 required
               />
@@ -253,20 +296,16 @@ export default function CustomerForm(props) {
                 }}
                 size="small"
                 InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <MailOutlineIcon />
-                        </InputAdornment>
-                    ),
-                }}
-                inputProps={{
-                    pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
-                    title: 'Ingrese una dirección de correo electrónico válida',
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <MailOutlineIcon />
+                    </InputAdornment>
+                  ),
                 }}
               />
             </Grid>
-            <Grid item textAlign={'right'}>
-            <Button type="submit" variant="contained" color="primary">
+            <Grid item textAlign={"right"}>
+              <Button type="submit" variant="contained" color="primary">
                 {edit ? "Actualizar" : "Guardar"}
               </Button>
             </Grid>

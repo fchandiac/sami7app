@@ -2,8 +2,8 @@ const customers = require("@/services/customers.js");
 const https = require("https");
 
 export default function useCustomers() {
-  const create = async (rut, name, address, phone, mail) => {
-    const customer = await customers.create(rut, name, address, phone, mail);
+  const create = async (rut, name, activity, district, city, address, phone, mail) => {
+    const customer = await customers.create(rut, name, activity, district, city, address, phone, mail);
     return customer;
   };
 

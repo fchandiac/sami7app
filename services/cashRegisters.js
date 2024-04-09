@@ -199,11 +199,37 @@ function balanceCashRegister(cash_register_id, debit, credit) {
     return cashRegister
 }
 
+
+
+
+function updateClose(id, close, close_user_id) {
+    const cashRegister = new Promise((resolve, reject) => {
+        fetch(server_url + 'cashRegisters/updateClose', {
+            method: 'POST',
+            body: JSON.stringify({ id, close, close_user_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return cashRegister
+}
+
+
 export {
     create,
     findAll,
     findOneById,
     updateStatus,
     findAllOpenBySalePoint,
-    balanceCashRegister
+    balanceCashRegister,
+    updateClose
 }

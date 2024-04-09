@@ -75,11 +75,15 @@ export default function ShoppingCart(props) {
               value={cart.documentType}
               onChange={(event, newValue) => {
                 if (newValue) {
-                  setDocumentType(newValue);
+                  console.log("newValue", newValue);
+                  console.log("cart.id", cart.id);
+                  setDocumentType(cart.id, newValue);
+
+                  console.log("cart", cart);
                 }
+                
               }}
               disablePortal
-              defaultValue={null}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField

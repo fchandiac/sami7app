@@ -44,6 +44,11 @@ export default function useCashRegisters() {
         return updatedCashRegister
     }
 
+    const updateClose = async (id, close, close_user_id) => {
+        const cashRegister = await cashRegisters.updateClose(id, close, close_user_id)
+        return cashRegister
+    }
+
     const closeCashRegister = async (cashRegisterId, userId) => {
         const lastMovement = await cashregisterMovements.findLastByCashRegister(cashRegisterId)
         const newMovement = await cashregisterMovements.create(
@@ -58,10 +63,12 @@ export default function useCashRegisters() {
             userId,
             cashRegisterId
         );
-        const close = await cashRegisters.updateStatus(cashRegisterId, false)
+        const changeStatus = await cashRegisters.updateStatus(cashRegisterId, false)
+        const close = await cashRegisters.updateClose(cashRegisterId,lastMovement.balance, userId)
         const record = await records.closeCashRegister(userId, cashRegisterId)
         return close
     }
+
 
 
   return {
@@ -71,6 +78,7 @@ export default function useCashRegisters() {
     updateStatus,
     findAllOpenBySalePoint,
     balanceCashRegister,
-    closeCashRegister
+    closeCashRegister,
+    updateClose
   }
 }

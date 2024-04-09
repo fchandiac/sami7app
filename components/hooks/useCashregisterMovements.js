@@ -1,10 +1,13 @@
 import { useAppContext } from '@/appProvider'
+import usePaymentMethods from './usePaymentMethods'
 
 const cashRegisterMovements = require('@/services/cashRegistersMovements')
 
 
+
 export default function useCashregisterMovements() {
     const { user } = useAppContext()
+    const paymentMethods = usePaymentMethods()
 
     const create = async (cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id) => {
         const newCashRegisterMovement = await cashRegisterMovements.create(cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id)
@@ -35,6 +38,8 @@ export default function useCashregisterMovements() {
                 return 'Gasto'
             case 6:
                 return 'Pago'
+            case 7:
+                return 'Venta directa'
             default:
                 return 'N/A'
         }
@@ -98,6 +103,26 @@ export default function useCashregisterMovements() {
         return lastMovement.balance
     }
 
+    const createSaleMovement = async (cashRegisterId, amount, reference_id, cash) => {
+        const lastMovement = await findLastByCashRegister(cashRegisterId)
+        const balance = lastMovement.balance + amount
+        const newMovement = await create(
+            cash,
+            'Venta directa: ' + reference_id,
+            7,
+            lastMovement.balance,
+            amount,
+            0,
+            balance,
+            reference_id,
+            user.id,
+            cashRegisterId
+        )
+       
+        
+        return newMovement
+    }
+
     return {
         create,
         findAllByCashRegister,
@@ -106,7 +131,8 @@ export default function useCashregisterMovements() {
         createOpen,
         cerateInput,
         createOutput,
-        cashAmount
+        cashAmount,
+        createSaleMovement
     }
 
 

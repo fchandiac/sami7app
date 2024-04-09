@@ -11,6 +11,7 @@ import SubcategoriesGrid from "@/components/grids/SubcategoriesGrid";
 import PriceListsGrid from "@/components/grids/PriceListsGrid";
 import PriceListForm from "@/components/forms/PriceListform";
 import ProductsGrid from "@/components/grids/ProductsGrid";
+import SellingPricesGrid from "@/components/grids/SellingPricesGrid";
 
 export default function products() {
   return (
@@ -22,6 +23,7 @@ export default function products() {
         Subcategories={Subcategories()}
         PriceLists={PriceLists()}
         Taxes={Taxes()}
+        SellingPrices={SellingPrices()}
       />
     </>
   );
@@ -127,6 +129,14 @@ function PriceLists() {
           <PriceListsGrid update={gridState} />
         </Grid>
       </Grid>
+    </>
+  );
+}
+
+function SellingPrices() {
+  return (
+    <>
+      <SellingPricesGrid />
     </>
   );
 }

@@ -5,6 +5,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -39,7 +40,7 @@ function a11yProps(index) {
 }
 
 export default function ProductsTab(props) {
-    const { Products, NewProduct, Categories, Subcategories, Taxes, PriceLists } = props
+    const { Products, NewProduct, Categories, Subcategories, Taxes, PriceLists , SellingPrices} = props
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -56,6 +57,7 @@ export default function ProductsTab(props) {
                     <Tab label="Subcategorias" {...a11yProps(3)} />
                     <Tab label="Listas de precios" {...a11yProps(4)} />
                     <Tab label="Impuestos" {...a11yProps(5)} />
+                    <Tab label="Precios de venta" {...a11yProps(6)} />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
@@ -75,6 +77,9 @@ export default function ProductsTab(props) {
             </TabPanel>
             <TabPanel value={value} index={5}>
                 {Taxes}
+            </TabPanel>
+            <TabPanel value={value} index={6}>
+                {SellingPrices}
             </TabPanel>
         </Box>
     );

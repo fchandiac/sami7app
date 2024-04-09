@@ -33,11 +33,13 @@ export default function Finder() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
 
   useEffect(() => {
+    // console.log("Finder: ", priceList, info.storage);
     const fetch = async () => {
       const list = await products.findAllToSalePoint(
         priceList.id,
         info.storage.id
       );
+      //console.log("List", list);
       setFinderProductsList(list);
     };
     fetch();
@@ -92,7 +94,7 @@ export default function Finder() {
               ),
             }}
           />
-          <IconButton onClick={() => setUpdateList(!updateList)} sx={{ marginBottom: 1, flexGrow: 1 }}>
+          <IconButton onClick={() => {setUpdateList(!updateList)}} sx={{ marginBottom: 1, flexGrow: 1 }}>
             <RefreshIcon />
           </IconButton>
         </Grid>
@@ -106,10 +108,10 @@ export default function Finder() {
                 id={product.id}
                 name={product.name}
                 code={product.code}
-                subcategory={product.subcategory}
-                gross={product.gross}
-                stockControl={product.stockControl}
-                availableStock={product.available}
+                subcategory={{id: product.Subcategory.id, key: product.Subcategory.id, name: product.Subcategory.name}}
+                gross={product.SellingPrices[0].gross}
+                stockControl={product.stock_control}
+                availableStock={product.Stocks[0].available}
               />
             </Grid>
           ))}

@@ -134,6 +134,7 @@ export default function useProducts() {
       price_list_id,
       storage_id
     );
+    // console.log("Product", product);  
     return product;
   };
 

@@ -17,7 +17,7 @@ export default function usePaymentMethods() {
     }
 
     const findOneById = async (id) => {
-        const paymentMethod = await paymentMethods.findOne(id)
+        const paymentMethod = await paymentMethods.findOneById(id)
         return paymentMethod
     }
 

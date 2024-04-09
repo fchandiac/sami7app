@@ -79,9 +79,14 @@ export default function ProductCardFinder(props) {
             >
               <Box p={1} textAlign={"center"} flexGrow={1}>
                 <IconButton
-                  onClick={() => {
+                  onClick={async () => {
                     if(priceList){
+                      const authSubmit =  await salePoint.authSubmitItemToCart(id);
+                      if(authSubmit){
                       salePoint.submitItemToCart(id);
+                      } else {
+                        openSnack("Stock insuficiente", "error");
+                      }
                     } else {
                       openSnack("Debe seleccionar una lista de precios", "error");
                     }
