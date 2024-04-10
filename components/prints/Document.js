@@ -20,8 +20,6 @@ import useDte from "../hooks/useDte";
 export default function Document(props) {
   const { documentData } = props;
 
-  con
-
 
 
   const typeDocument = () => {

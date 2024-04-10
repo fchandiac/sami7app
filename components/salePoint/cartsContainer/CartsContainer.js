@@ -15,7 +15,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React, { useState, useEffect } from "react";
 import ShoppingCart from "./ShoppingCart";
 import { useSalePointContext } from "../salePointProvider";
-import CartsTab from "./cartsTab";
+import CartsTab from "@/components/salePoint/cartsContainer/CartsTab";
 
 export default function CartsContainer() {
   const { getCartById, carts, cart1, cart2, cart3, cart4 } = useSalePointContext();
