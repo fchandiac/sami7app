@@ -14,6 +14,8 @@ import Exchange from "./Exchange";
 import CashAmount from "./CashAmount";
 import Close from "./Close";
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import Movements from "./movements";
+
 
 export default function SidePanel(props) {
   const {setOpenLoadDialog} = props;
@@ -44,7 +46,9 @@ export default function SidePanel(props) {
       case 6:
         return <Info />;
       case 7:
-        return <div>settings</div>;
+        return <Movements />;
+      case 8:
+        return <div>Settings</div>;
       default:
         return <div>default</div>;
     }
@@ -87,6 +91,11 @@ export default function SidePanel(props) {
             </Grid>
             <Grid item>
               <IconButton onClick={() => openContent(7)}>
+                <ListAltIcon />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton onClick={() => openContent(8)}>
                 <SettingsIcon />
               </IconButton>
             </Grid>

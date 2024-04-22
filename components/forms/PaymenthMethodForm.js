@@ -1,5 +1,10 @@
-import { Grid, Paper, Typography, TextField } from "@mui/material";
+import { useAppContext } from "@/appProvider";
+import { Grid, Paper, Typography, TextField, FormControlLabel, Switch, Button } from "@mui/material";
 import React, { useState } from "react";
+import usePaymentMethods from "../hooks/usePaymentMethods";
+import useRecords from "../hooks/useRecords";
+
+
 
 export default function PaymenthMethodForm(props) {
   const {
@@ -12,11 +17,34 @@ export default function PaymenthMethodForm(props) {
     edit = false,
     afterSubmit = () => {},
   } = props;
-
+  const {user, openSnack} = useAppContext();
+  const paymentMethods = usePaymentMethods();
+  const records = useRecords();
   const [paymentMethodData, setPaymentMethodData] = useState(data);
 
   const save = async () => {
-    console.log("save");
+    if (edit) {
+      console.log("Actualizar");
+    } else {
+      const newPaymentMethod =  await paymentMethods.create(
+        paymentMethodData.name,
+        paymentMethodData.description,
+        paymentMethodData.credit,
+      )
+      if (newPaymentMethod) {
+        openSnack("Medio de pago creado correctamente", "success");
+        setPaymentMethodData({
+          id: null,
+          name: "",
+          description: "",
+          credit: false,
+        
+        });
+        afterSubmit();
+      } else {
+        openSnack("Error al crear el medio de pago", "error");
+      }
+    }
   };
 
   return (
@@ -69,6 +97,39 @@ export default function PaymenthMethodForm(props) {
                 rows={2}
               />
             </Grid>
+            <Grid item>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={paymentMethodData.credit}
+                  onChange={(e) => {
+                    setPaymentMethodData({
+                      ...paymentMethodData,
+                      credit: e.target.checked,
+                    });
+                  }}
+                  color="primary"
+                />
+              }
+              label={
+                paymentMethodData.credit
+                  ? "Otorga crédito"
+                  : "No otorga crédito"
+              }
+            />
+          </Grid>
+          <Grid item textAlign={'right'}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="small"
+            >
+              {edit ? "Actualizar" : "Guardar"}
+            </Button>
+            </Grid>
+
+
           </Grid>
         </form>
       </Paper>

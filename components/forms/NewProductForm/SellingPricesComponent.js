@@ -78,7 +78,6 @@ export default function SellingPricesComponent() {
  // Gross = (purchaseNet/(1-percentage))*-1
 
   const purchaseNetFromUtilities = () => {
-  
     const net = removeThousandsSeparator(sellingPrice.net);
     let percentage = percentUtility;
     let amount = removeThousandsSeparator(amountUtility);

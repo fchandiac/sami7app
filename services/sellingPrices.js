@@ -130,11 +130,37 @@ function destroy(id) {
     return price
 }
 
+
+
+function findAllByProductAndPriceList(product_id, price_list_id) {
+    let data = { product_id, price_list_id }
+    const price = new Promise((resolve, reject) => {
+        fetch(server_url + 'sellingPrices/findAllByProductAndPriceList', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return price
+}
+
+
 export {
     create,
     findAll,
     findOneById,
     findAllByPriceList,
     update,
-    destroy
+    destroy,
+    findAllByProductAndPriceList
 }

@@ -27,7 +27,7 @@ export default function ProductsGrid() {
   useEffect(() => {
     const fecth = async () => {
       const data = await products.findAll();
-      console.log(data);
+      // console.log(data);
       setProductsList(data);
     };
     fecth();
@@ -35,9 +35,9 @@ export default function ProductsGrid() {
 
   const columns = [
     { field: "id", headerName: "Id", flex: 0.6 },
-    { field: "code", headerName: "Code", flex: 1 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "description", headerName: "Description", flex: 1 },
+    { field: "code", headerName: "Código", flex: 1 },
+    { field: "name", headerName: "Nombre", flex: 1 },
+    { field: "description", headerName: "Descripción", flex: 1 },
     { field: "subcategoryName", headerName: "Subcategoría", flex: 1 },
     {
       field: "stockControl",

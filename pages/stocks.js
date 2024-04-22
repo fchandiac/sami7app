@@ -2,7 +2,7 @@ import StockMovementForm from "@/components/forms/StockMovementForm";
 import StorageForm from "@/components/forms/StorageForm";
 import SotoragesGrid from "@/components/grids/SotoragesGrid";
 import StocksGrid from "@/components/grids/StocksGrid";
-import StockMovementsGrid from "@/components/grids/stockMovementsGrid";
+import StockMovementsGrid from "@/components/grids/StockMovementsGrid";
 import useProducts from "@/components/hooks/useProducts";
 import useStocks from "@/components/hooks/useStocks";
 import useStorages from "@/components/hooks/useStorages";
@@ -73,6 +73,7 @@ function Movements() {
           selectedProduct.id
         );
         const movements = await stocks.findAllMovementsByStock(stock.id);
+        console.log(movements);
         const movementsList = movements.map((movement) => {
           return {
             id: movement.id,

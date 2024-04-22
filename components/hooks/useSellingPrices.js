@@ -106,6 +106,15 @@ export default function useSellingPrices() {
     return purchaseNetPriceWithUtility;
   };
 
+  const findAllByProductAndPriceList = async (product_id, price_list_id) => {
+    const price = await sellingPrices.findAllByProductAndPriceList(
+      product_id,
+      price_list_id
+    );
+    return price;
+  
+  }
+
   return {
     create,
     findAll,
@@ -117,5 +126,6 @@ export default function useSellingPrices() {
     netPriceFromPurchase,
     purchaseFromNetPrice,
     inverseUtilityAmount,
+    findAllByProductAndPriceList
   };
 }

@@ -125,6 +125,16 @@ export default function useRecords() {
     return record
   }
 
+  const createSellingPrice = async (userId, productName, priceListName) => {
+    const record = await records.create(
+      userId,
+      "crear",
+      "precios de venta",
+      "crea nuevo precio de venta para el producto " + productName + ' en la lista de precios ' + priceListName
+    )
+    return record
+  }
+
   return {
     create,
     findAll,
@@ -138,6 +148,7 @@ export default function useRecords() {
     createCashRegister,
     updateProductGeneral,
     closeCashRegister,
-    createCustomer
+    createCustomer,
+    createSellingPrice
   }
 }

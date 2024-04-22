@@ -15,8 +15,8 @@ export default function useCashregisterMovements() {
     }
 
     const findAllByCashRegister = async (cash_register_id) => {
-        const cashRegisterMovements = await cashRegisterMovements.findAllByCashRegister(cash_register_id)
-        return cashRegisterMovements
+        const cashRegisterMovements_ = await cashRegisterMovements.findAllByCashRegister(cash_register_id)
+        return cashRegisterMovements_
     }
 
     const findLastByCashRegister = async (cash_register_id) => {

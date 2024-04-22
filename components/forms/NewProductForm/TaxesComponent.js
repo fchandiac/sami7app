@@ -32,6 +32,7 @@ export default function TaxesComponent(props) {
   const theme = useTheme();
   const [taxOptions, setTaxOptions] = useState([]);
   const [openNewTaxDialog, setOpenNewTaxDialog] = useState(false);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -41,7 +42,9 @@ export default function TaxesComponent(props) {
       setTaxOptions(filteredIva);
     };
     fetch();
-  }, []);
+  }, [update]);
+
+
 
   const handlerList = () => {
     if (type === "purchase") {
@@ -53,55 +56,6 @@ export default function TaxesComponent(props) {
 
 
   const renderList = (taxes) => {
-    // purchasePriceTaxes.map((tax, index) => (
-    //   <Grid item key={index}>
-    //     <ButtonGroup size="small">
-    //       <Button
-    //         disabled
-    //         sx={{
-    //           "&.Mui-disabled": {
-    //             borderColor: theme.palette.primary.main,
-    //             color: theme.palette.primary.main,
-    //           },
-    //         }}
-    //       >
-    //         {tax.name + " " + tax.percentage + "%"}
-    //       </Button>
-    //       <Button
-    //         size="small"
-    //         disabled={
-    //           activeStep !== activeStepComponent ||
-    //           tax.name == "IVA"
-    //         }
-    //         sx={{
-    //           "&.Mui-disabled": {
-    //             borderColor: theme.palette.primary.main,
-    //             color: theme.palette.primary.main,
-    //           },
-    //         }}
-    //       >
-    //         <ClearIcon
-    //           fontSize={"small"}
-    //           onClick={() => {
-    //             if (type === "purchase") {
-    //               setPurchaseTaxes(
-    //                 purchasePriceTaxes.filter(
-    //                   (t) => t.id !== tax.id
-    //                 )
-    //               );
-    //             } else if (type === "selling") {
-    //               setSellingPriceTaxes(
-    //                 purchasePriceTaxes.filter(
-    //                   (t) => t.id !== tax.id
-    //                 )
-    //               );
-    //             }
-    //           }}
-    //         />
-    //       </Button>
-    //     </ButtonGroup>
-    //   </Grid>
-    // ));
     return taxes.map((tax, index) => (
       <Grid item key={index}>
         <ButtonGroup size="small">
@@ -212,6 +166,7 @@ export default function TaxesComponent(props) {
           <TaxForm
             afterSubmit={() => {
               setOpenNewTaxDialog(false);
+              setUpdate(!update);
             }}
           />
         </Typography>

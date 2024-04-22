@@ -1,3 +1,9 @@
+- paymentMethodGrid: EDIT
+- stockMovementForm: add Description
+
+
+
+
 Agregar carcateristica descuento en entidad producto.... true or false, set Discount
 autorización de descuento basado en autorización de usuario Administrador.
 
@@ -9,21 +15,12 @@ gastos operativos:
 
 Venta cuando  haga
 
-
-
+- Controlar excepcion sin error: cuando se ingresan productos al carro de diferentes listas de precios, se debe mostrar un mensaje de error.
+- Grid de  precios de venta  no actualiza cuando se crea nuevo precio
 
 
 Sistema de stock con Nota de venta: 
 en la practica la nota de venta es un aresrrva de stock. 
 
-[out:json][timeout:25];
-// gather results
-(
-  nwr["surface"="concrete"]({{bbox}});
-  nwr["natural"="wood"]({{bbox}});
-  nwr["industrial"="port"]({{bbox}});
-  nwr["landuse"="industrial"]({{bbox}});
-  nwr["landuse"="residential"]({{bbox}});
-);
-// print results
-out geom;
+
+FUNCIONES Y COMPONENTES TAXES Y UTILITIES ESTAN REPETIDOS 

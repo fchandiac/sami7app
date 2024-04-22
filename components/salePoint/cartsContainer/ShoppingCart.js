@@ -30,7 +30,15 @@ export default function ShoppingCart(props) {
   useEffect(() => {
     const fetch = async () => {
       const customers_ = await customers.findAll();
-      setCustomerOptions(customers_);
+      const customersFormatted = customers_.map((item) => {
+        return {
+          id: item.id,
+          key: item.id,
+          name: item.rut + ' - ' + item.name,
+        };
+    });
+
+      setCustomerOptions(customersFormatted);
     };
     fetch();
   }, []);
@@ -102,9 +110,9 @@ export default function ShoppingCart(props) {
               value={cart.customer}
               onChange={(event, newValue) => {
                 if (newValue) {
-                  setCustomer(newValue);
+                  setCustomer(cart.id, newValue);
                 } else {
-                  setCustomer({ id: 1001, key: 1001, name: "SIN CLIENTE" });
+                  setCustomer(cart.id, { id: 1001, key: 1001, name: "11.111.111-1 - SIN CLIENTE" });
                 }
               }}
               disablePortal

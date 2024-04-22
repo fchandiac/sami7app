@@ -174,6 +174,23 @@ export default function useProducts() {
     return data;
   }
 
+  const finalAllToSellingPrice = async () => {
+    const product = await products.findAll();
+    //console.log("Product", product);
+    const data = product.map((product) => {
+      return {
+        id: product.id,
+        key: product.id,
+        name: product.name,
+        purchasePrice: product.PurchasePrice,
+        purchasePriceId: product.PurchasePrice.id,
+        netPurchasePrice: product.PurchasePrice.net,
+        ivaSubject: product.ivaSubject,
+      };
+    });
+    return data;
+  }
+
   return {
     create,
     findAll,
@@ -184,6 +201,7 @@ export default function useProducts() {
     findAllToSalePoint,
     findOneByIdToCart,
     findOneByIAndStorageAndPriceList,
-    findAllToAutocomplete
+    findAllToAutocomplete,
+    finalAllToSellingPrice,
   };
 }

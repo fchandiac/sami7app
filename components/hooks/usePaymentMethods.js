@@ -3,11 +3,11 @@ const paymentMethods = require('@/services/paymentMethods')
 export default function usePaymentMethods() {
 
     const create = async (name, description, credit) => {
-        const paymentMethod = await paymentMethods.create({
-            name: name,
-            description: description,
-            credit: credit
-        })
+        const paymentMethod = await paymentMethods.create(
+            name,
+            description,
+            credit
+        )
         return paymentMethod
     }
 

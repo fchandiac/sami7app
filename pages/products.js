@@ -12,6 +12,7 @@ import PriceListsGrid from "@/components/grids/PriceListsGrid";
 import PriceListForm from "@/components/forms/PriceListform";
 import ProductsGrid from "@/components/grids/ProductsGrid";
 import SellingPricesGrid from "@/components/grids/SellingPricesGrid";
+import SellingPriceForm from "@/components/forms/SellingPriceForm";
 
 export default function products() {
   return (
@@ -134,9 +135,26 @@ function PriceLists() {
 }
 
 function SellingPrices() {
+  const [gridState, setGridState] = useState(false);
+
+  const updateGrid = () => {
+    setGridState(!gridState);
+  };
+
   return (
     <>
-      <SellingPricesGrid />
+      <Grid container spacing={1}>
+        <Grid item xs={12} md={3}>
+          <SellingPriceForm
+            afterSubmit={() => {
+              updateGrid();
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={9}>
+          <SellingPricesGrid update={gridState}/>
+        </Grid>
+      </Grid>
     </>
   );
 }

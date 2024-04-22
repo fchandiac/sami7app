@@ -17,7 +17,8 @@ import {
 import useUtils from "../hooks/useUtils";
 
 
-export default function SellingPricesGrid() {
+export default function SellingPricesGrid(props) {
+  const {update} = props;
   const records = useRecords();
   const { addThousandsSeparator } = useUtils();
   const sellingPrices = useSellingPrices();
@@ -40,6 +41,7 @@ export default function SellingPricesGrid() {
   useEffect(() => {
     const fecth = async () => {
       const data = await sellingPrices.findAll();
+      //console.log(data);
       const dataFormatted = data.map((item) => {
         return {
           id: item.id,
@@ -59,7 +61,7 @@ export default function SellingPricesGrid() {
       setSellingPricesList(dataFormatted);
     };
     fecth();
-  }, []);
+  }, [update]);
 
   const columns = [
     { field: "id", headerName: "Id", flex: 0.4 },
