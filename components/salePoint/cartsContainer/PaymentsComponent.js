@@ -166,6 +166,11 @@ export default function PaymentsComponent(props) {
     setOpenProcessDialog(true);
     const procces = globalSaleProcess(payments,change);
     setFinishProcess(true);
+    setPayments([])
+    setSumPayments(0);
+    setChange(0);
+    setBalancesPyments(0);
+    setSumNoCashPayments(0);
     // console.log(procces);
   };
 

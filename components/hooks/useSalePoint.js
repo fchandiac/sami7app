@@ -288,8 +288,16 @@ export default function useSalePoint() {
     
     console.log('amount', amount)
     console.log('change', change)
+    console.log('cash', cash==true ? true: false )
 
-    let debit = cash==true ? amount : amount-change;
+
+    let debit = 0
+
+    if(cash){
+      debit = amount - change
+    }else{
+      debit = amount
+    }
 
     console.log('debit', debit)
  

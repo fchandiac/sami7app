@@ -49,13 +49,29 @@ export default function Finder() {
     if (searchWord === "") {
       setFilteredProducts([]);
     } else {
+      const searchWords = searchWord.toLowerCase().split(" ");
       const filtered = finderProductsList.filter((product) => {
-        return product.name.toLowerCase().includes(searchWord.toLowerCase());
+        const productName = product.name.toLowerCase();
+        return searchWords.every((word) => productName.includes(word));
       });
-      setFilteredProducts(filtered);
-      // console.log("Filtered", filtered);
+      const uniqueFiltered = Array.from(new Set(filtered.map(product => product.id))).map(id => filtered.find(product => product.id === id));
+      setFilteredProducts(uniqueFiltered);
+      // console.log("Filtered", uniqueFiltered);
     }
   }, [searchWord]);
+  
+
+  // useEffect(() => {
+  //   if (searchWord === "") {
+  //     setFilteredProducts([]);
+  //   } else {
+  //     const filtered = finderProductsList.filter((product) => {
+  //       return product.name.toLowerCase().includes(searchWord.toLowerCase());
+  //     });
+  //     setFilteredProducts(filtered);
+  //     // console.log("Filtered", filtered);
+  //   }
+  // }, [searchWord]);
 
   const nextPage = () => {
     setCurrentPage(currentPage + 1);
