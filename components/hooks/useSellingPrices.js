@@ -37,8 +37,8 @@ export default function useSellingPrices() {
     return price;
   };
 
-  const update = async (id, net, gross, price_list_id) => {
-    const price = await sellingPrices.update(id, net, gross, price_list_id);
+  const update = async (id, net, gross, utility, price_list_id) => {
+    const price = await sellingPrices.update(id, net, gross, utility, price_list_id);
     return price;
   };
 
@@ -115,6 +115,11 @@ export default function useSellingPrices() {
   
   }
 
+  const findTaxesBySellingPrice = async (sellingPriceId) => {
+    const taxes = await sellingPrices.findTaxesBySellingPrice(sellingPriceId);
+    return taxes;
+  }
+
   return {
     create,
     findAll,
@@ -126,6 +131,7 @@ export default function useSellingPrices() {
     netPriceFromPurchase,
     purchaseFromNetPrice,
     inverseUtilityAmount,
-    findAllByProductAndPriceList
+    findAllByProductAndPriceList,
+    findTaxesBySellingPrice,
   };
 }

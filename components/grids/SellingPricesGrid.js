@@ -29,7 +29,7 @@ export default function SellingPricesGrid(props) {
     id: 0,
     productCode: "",
     productName: "",
-    priclistId: null,
+    pricelistId: null,
     priceListName: "",
     gross: 0,
     net: 0,
@@ -150,7 +150,8 @@ export default function SellingPricesGrid(props) {
       rowData.id,
       rowData.net,
       rowData.gross,
-      rowData.priclistId,
+      rowData.utility,
+      rowData.priceListId
     )
   
       gridApiRef.current.updateRows([
@@ -205,7 +206,7 @@ export default function SellingPricesGrid(props) {
 
               <Grid item>
                 <TextField
-                  label="Precio Bruto"
+                  label="Precio Bruto / Precio de Venta"
                   value={addThousandsSeparator(rowData.gross)}
                   onChange={(e) =>
                     setRowData({ ...rowData, gross: e.target.value })

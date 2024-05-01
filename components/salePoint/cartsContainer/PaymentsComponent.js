@@ -56,7 +56,7 @@ export default function PaymentsComponent(props) {
   useEffect(() => {
     const fetch = async () => {
       const paymentMethods_ = await paymentMethods.findAll();
-      console.log(paymentMethods_);
+      // console.log(paymentMethods_);
       setPaymentMethodsOptions(paymentMethods_);
     };
     fetch();
@@ -89,12 +89,12 @@ export default function PaymentsComponent(props) {
     let preChange =cart.total - sumNoCash;
     change = (cashPaymentAmount - preChange) < 0 ?  0: cashPaymentAmount - preChange;
 
-    console.log('preChange', preChange);
+    // console.log('preChange', preChange);
 
-    console.log("sumNoCash", sumNoCash);
-    console.log("cashPaymentAmount", cashPaymentAmount);
-    console.log("cart.total", cart.total);
-    console.log("sumNoCash + cashPaymentAmount", sumNoCash + cashPaymentAmount);
+    // console.log("sumNoCash", sumNoCash);
+    // console.log("cashPaymentAmount", cashPaymentAmount);
+    // console.log("cart.total", cart.total);
+    // console.log("sumNoCash + cashPaymentAmount", sumNoCash + cashPaymentAmount);
 
     setSumPayments(isNaN(sum) ? 0 : sum);
     setChange(isNaN(change) ? 0 : change);
@@ -103,12 +103,12 @@ export default function PaymentsComponent(props) {
   }, [payments, cart.total]);
 
   const addPaymentMethodToList = (paymentMethod) => {
-    console.log("Agregando método de pago", paymentMethod);
+    // console.log("Agregando método de pago", paymentMethod);
     const paymentMethodIdToAdd = paymentMethod.id;
     const isPaymentMethodAlreadyAdded = payments.some(
       (payment) => payment.paymentMethodId === paymentMethodIdToAdd
     );
-    console.log("isPaymentMethodAlreadyAdded", isPaymentMethodAlreadyAdded);
+    // console.log("isPaymentMethodAlreadyAdded", isPaymentMethodAlreadyAdded);
 
     if (!isPaymentMethodAlreadyAdded) {
       setPayments([
@@ -127,52 +127,67 @@ export default function PaymentsComponent(props) {
   };
 
   const processSale = async () => {
-    console.log("sumNoCashPayments", sumNoCashPayments);
-    if (sumNoCashPayments > cart.total) {
-      openSnack(
-        "El monto pagado con métodos de pago no efectivo excede el total de la venta",
-        "error"
-      );
-      return;
-    }
-    if (sumPayments < cart.total) {
-      openSnack("El monto pagado es menor al total de la venta", "error");
-      return;
-    }
-    if (payments.length === 0) {
-      openSnack("Debe ingresar al menos un pago", "error");
-      return;
-    }
-    if (cart.items.length === 0) {
-      openSnack("No hay productos en el carro", "error");
-      return;
-    }
 
-    console.log("Procesando venta", payments);
-    // setDocumentData(
-    //   ...documentData,
-    //   documentType: 1,
-    // )
+    globalSaleProcess(payments, change, 1);
+  }
 
-    setDocumentData({
-      ...documentData,
-      documentType: 1,
-      total: cart.total,
-      items: cart.items,
-      payments: payments,
-      change: change,
-    })
-    //const cartToDocument = dte.cartToDocument(1, cart, payments, cart.total, cart.discounts, cart.subjectTotal, cart.exemptTotal, cart.iva, change, 0, 0, 0);
-    setOpenProcessDialog(true);
-    const procces = globalSaleProcess(payments,change);
-    setFinishProcess(true);
-    setPayments([])
-    setSumPayments(0);
-    setChange(0);
-    setBalancesPyments(0);
-    setSumNoCashPayments(0);
-    // console.log(procces);
-  };
+  // const processSale = async () => {
+  //   // console.log("sumNoCashPayments", sumNoCashPayments);
+  //   if (sumNoCashPayments > cart.total) {
+  //     openSnack(
+  //       "El monto pagado con métodos de pago no efectivo excede el total de la venta",
+  //       "error"
+  //     );
+  //     return;
+  //   }
+
+  //   if (sumPayments === 0) {
+  //     openSnack("Debe ingresar al menos un pago", "error");
+  //     return;
+  //   }
+
+  //   if (cart.documentType == null){
+  //     openSnack("Debe seleccionar un tipo de documento", "error");
+  //     return;
+  //   }
+  //   if (sumPayments < cart.total) {
+  //     openSnack("El monto pagado es menor al total de la venta", "error");
+  //     return;
+  //   }
+  //   if (payments.length === 0) {
+  //     openSnack("Debe ingresar al menos un pago", "error");
+  //     return;
+  //   }
+  //   if (cart.items.length === 0) {
+  //     openSnack("No hay productos en el carro", "error");
+  //     return;
+  //   }
+
+  //   console.log("Procesando venta", payments);
+  //   // setDocumentData(
+  //   //   ...documentData,
+  //   //   documentType: 1,
+  //   // )
+
+  //   setDocumentData({
+  //     ...documentData,
+  //     documentType: 1,
+  //     total: cart.total,
+  //     items: cart.items,
+  //     payments: payments,
+  //     change: change,
+  //   })
+  //   //const cartToDocument = dte.cartToDocument(1, cart, payments, cart.total, cart.discounts, cart.subjectTotal, cart.exemptTotal, cart.iva, change, 0, 0, 0);
+  //   setOpenProcessDialog(true);
+  //   const procces = globalSaleProcess(payments,change, 1);
+  //   setFinishProcess(true);
+  //   setPayments([])
+  //   setSumPayments(0);
+  //   setChange(0);
+  //   setBalancesPyments(0);
+  //   setSumNoCashPayments(0);
+  //   // console.log(procces);
+  // };
 
   return (
     <>

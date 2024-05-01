@@ -39,8 +39,6 @@ export default function StocksGrid() {
     const [gridApiRef, setGridApiRef] = useState(null);
     const [rowData, setRowData] = useState({ id: 0, productId: 0, productName: "", storageId: 0, storageName: "", total: 0, available: 0, reserve: 0, critical: 0});
 
-
-
     useEffect(() => {
         const fecth = async () => {
             const data = await stocks.findAll()

@@ -37,7 +37,7 @@ export default function Document(props) {
 
   useEffect(() => {
     const canvas = document.getElementById("barcodeCanvas");
-    PDF417.draw(documentData.code, canvas);
+    PDF417.draw(documentData.stamp, canvas);
   }, []);
 
   const ItemList = (items) => {
@@ -52,8 +52,8 @@ export default function Document(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id}>
+            {items.map((item, index) => (
+              <TableRow key={index}>
                 <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>
                   {item.quanty}
                 </TableCell>

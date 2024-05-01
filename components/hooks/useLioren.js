@@ -25,11 +25,18 @@ export default function useLioren() {
     return cities_data;
   }
 
+  const boleta = async (data) => {
+    const boleta_data = await lioren.boleta(data);
+    return boleta_data;
+  }
+
 
   return {
     states,
     district,
     cities,
-    citiesByDistrict
+    citiesByDistrict,
+    boleta
+
   };
 }

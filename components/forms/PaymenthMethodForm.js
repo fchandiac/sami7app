@@ -175,10 +175,24 @@ const sale = {
   document_id: null,
 };
 
+const sale_detail = {
+  id: null,
+  quantity: 0,
+  price: 0,
+  discount: 0,
+  utility: 0,
+  net: 0,
+  tax: 0,
+  total: 0,
+  sale_id: null,
+  product_id: null,
+};
+
 const paymentMethod = {
   id: null,
   name: "",
   description: "",
+  credit: false,
 };
 
 const cash_register_movements = {

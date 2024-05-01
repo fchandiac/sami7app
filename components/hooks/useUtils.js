@@ -28,6 +28,27 @@ export default function useUtils() {
     return grossPrice;
   };
 
+  const taxesAmount = (net, taxes) => {
+    let netPrice = net || 0;
+    let taxesAmount = 0;
+    taxes.map((tax) => {
+      taxesAmount += (tax.percentage * netPrice) / 100;
+    });
+
+    return Math.floor(taxesAmount);
+  };
+
+  const calculateTaxesFromGross = (grossPrice, taxes) => {
+    let percentageSum = 0;
+  
+    taxes.forEach((tax) => {
+      percentageSum += tax.percentage;
+      
+    });
+  
+    return Math.floor((grossPrice * percentageSum) / 100);
+  };
+
   const netPrice = (gross, taxes) => {
     let taxesTotalPercentage = 0;
 
@@ -55,5 +76,7 @@ export default function useUtils() {
     removeThousandsSeparator,
     grossPrice,
     netPrice,
+    taxesAmount,
+    calculateTaxesFromGross,
   };
 }

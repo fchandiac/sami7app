@@ -1,5 +1,26 @@
+- GENERAR SISTEMA PARA IDENTIFICAR IDEALMENTE MEDIANTE SOCKETS PADA DEFINIR CUANDO NO EXISTA CONEXIÓN A RED Y HABILITAR EL SISTEMA PARA HACER TICKET
+
 - paymentMethodGrid: EDIT
 - stockMovementForm: add Description
+- Edit en varios Grid
+
+- PACKs de productos ---> funciona como un sub carro con la estructirta del carro normal, heradando  propiedades comunes. 
+
+
+tipos de venta:
+
+- Venta directa
+- venta calzada
+
+- LOGO Personalizado
+
+- avaluar calculos con productos excentos de impuestos en carro de compra
+
+
+- en lioren services, states, cities y districs destrabaar el token en las funciones y utilizar la variable de entorno. 
+
+
+
 
 
 

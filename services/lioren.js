@@ -1,3 +1,5 @@
+const lirorenToken = process.env.LIOREN_TOKEN
+
 function states(token) {
     const state = new Promise((resolve, reject) => {
         fetch('http://www.lioren.cl/api/regiones', {
@@ -61,9 +63,32 @@ function cities(token) {
 
 
 
+function boleta(data){
+    const boleta = new Promise((resolve, reject) => {
+        fetch('/lioren/boletas', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + lirorenToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(res => {
+            res.json().then(res => {
+                resolve(res)
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    })
+    return boleta
+}
+
+
 export {
     states,
     district,
-    cities
+    cities,
+    boleta
 
 }

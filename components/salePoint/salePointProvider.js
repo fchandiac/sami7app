@@ -40,6 +40,7 @@ const initialState = {
       discounts: 0,
       customer: { id: 1001, key: 1001, name: "11.111.111-1 - SIN CLIENTE" },
       documentType: null,
+      utility: 0,
       items: [],
     },
     {
@@ -51,6 +52,7 @@ const initialState = {
       discounts: 0,
       customer: { id: 1001, key: 1001, name: "11.111.111-1 - SIN CLIENTE" },
       documentType: null,
+      utility: 0,
       items: [],
     },
     {
@@ -62,6 +64,7 @@ const initialState = {
       customer: { id: 1001, key: 1001, name: "11.111.111-1 - SIN CLIENTE" },
       discounts: 0,
       documentType: null,
+      utility: 0,
       items: [],
     },
     {
@@ -73,6 +76,7 @@ const initialState = {
       discounts: 0,
       customer: { id: 1001, key: 1001, name: "11.111.111-1 - SIN CLIENTE" },
       documentType: null,
+      utility: 0,
       items: [],
     },
   ],
@@ -117,10 +121,10 @@ const reducer = (state, action) => {
       });
       return { ...state, carts: updatedCarts_0 };
     case "SET_TOTALS_CART":
-      const { cartId_1, total, net, tax, discounts } = action.payload;
+      const { cartId_1, total, net, tax, discounts, utility } = action.payload;
       const updatedCarts_1 = state.carts.map((cart) => {
         if (cart.id === cartId_1) {
-          return { ...cart, total, net, tax, discounts };
+          return { ...cart, total, net, tax, discounts, utility };
         } else {
           return cart;
         }
@@ -203,10 +207,10 @@ const SalePointProvider = ({ children }) => {
     dispatch({ type: "SET_PRICE_LIST", payload: priceList });
   };
 
-  const setTotalsCart = (cartId, total, net, tax, discounts) => {
+  const setTotalsCart = (cartId, total, net, tax, discounts, utility) => {
     dispatch({
       type: "SET_TOTALS_CART",
-      payload: { cartId_1: cartId, total, net, tax, discounts },
+      payload: { cartId_1: cartId, total, net, tax, discounts, utility },
     });
   };
 

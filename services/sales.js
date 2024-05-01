@@ -1,9 +1,9 @@
 const server_url = process.env.API_URL
 
-function create(gross, net, utility,purchase_net, price_list_id, product_id,  taxes) {
-    let data = {gross, net, utility,purchase_net, price_list_id, product_id,  taxes }
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/create', {
+function create(description, type, discount, utility, net, tax, total, balance, pay_date, user_id, customer_id, document_type, document_id) {
+    let data = { description, type, discount, utility, net, tax, total, balance, pay_date, user_id, customer_id, document_type, document_id }
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/create', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -19,12 +19,12 @@ function create(gross, net, utility,purchase_net, price_list_id, product_id,  ta
             reject(err)
         })
     })
-    return price
+    return sale
 }
 
 function findAll() {
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/findAll', {
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findAll', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         }).then(res => {
@@ -39,13 +39,13 @@ function findAll() {
             reject(err)
         })
     })
-    return price
+    return sale
 }
 
 function findOneById(id) {
     let data = { id }
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/findOneById', {
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findOneById', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -61,13 +61,13 @@ function findOneById(id) {
             reject(err)
         })
     })
-    return price
+    return sale
 }
 
-function findAllByPriceList(price_list_id) {
-    let data = { price_list_id }
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/findAllByPriceList', {
+function findAllByCustomer(customer_id) {
+    let data = { customer_id }
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findAllByCustomer', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -83,13 +83,13 @@ function findAllByPriceList(price_list_id) {
             reject(err)
         })
     })
-    return price
+    return sale
 }
 
-function update(id, net, gross, utility, price_list_id) {
-    let data = { id, net, gross, utility, price_list_id }
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/update', {
+function findOneByDocument(document_type, document_id) {
+    let data = { document_type, document_id }
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findOneByDocument', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -105,13 +105,13 @@ function update(id, net, gross, utility, price_list_id) {
             reject(err)
         })
     })
-    return price
+    return sale
 }
 
-function destroy(id) {
-    let data = { id }
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/destroy', {
+function findAllByDocumentType(document_type) {
+    let data = { document_type }
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findAllByDocumentType', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -127,15 +127,13 @@ function destroy(id) {
             reject(err)
         })
     })
-    return price
+    return sale
 }
 
-
-
-function findAllByProductAndPriceList(product_id, price_list_id) {
-    let data = { product_id, price_list_id }
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/findAllByProductAndPriceList', {
+function findAllByDocumentId(document_id) {
+    let data = { document_id }
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findAllByDocumentId', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -151,15 +149,13 @@ function findAllByProductAndPriceList(product_id, price_list_id) {
             reject(err)
         })
     })
-    return price
+    return sale
 }
 
-
-
-function findTaxesBySellingPrice(sellingPriceId) {
-    let data = { sellingPriceId }
-    const price = new Promise((resolve, reject) => {
-        fetch(server_url + 'sellingPrices/findTaxesBySellingPrice', {
+function findAllByType(type) {
+    let data = { type }
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findAllByType', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -175,17 +171,17 @@ function findTaxesBySellingPrice(sellingPriceId) {
             reject(err)
         })
     })
-    return price
+    return sale
 }
-
 
 export {
     create,
     findAll,
     findOneById,
-    findAllByPriceList,
-    update,
-    destroy,
-    findAllByProductAndPriceList,
-    findTaxesBySellingPrice
+    findAllByCustomer,
+    findOneByDocument,
+    findAllByDocumentType,
+    findAllByDocumentId,
+    findAllByType
 }
+

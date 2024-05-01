@@ -2,6 +2,7 @@ import CustomerForm from "@/components/forms/CustomerForm";
 import CustomersTab from "@/components/tabs/CustomersTab";
 import React, {useState} from "react";
 import { Grid } from "@mui/material";
+import CustomersGrid from "@/components/grids/CustomersGrid";
 
 export default function customers() {
   return (
@@ -31,7 +32,7 @@ function Customers() {
         />
       </Grid>
       <Grid item xs={12} md={9}>
-    
+          <CustomersGrid update={gridState} />
       </Grid>
     </Grid>
   );

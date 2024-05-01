@@ -101,6 +101,7 @@ export default function CustomerForm(props) {
           district: null,
           city: null,
         });
+        afterSubmit();
       } catch (err) {
         console.log(err);
         openSnack(err.errors[0].message, 'error')
