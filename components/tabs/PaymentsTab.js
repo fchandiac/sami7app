@@ -39,7 +39,7 @@ function a11yProps(index) {
 }
 
 export default function PaymentsTab(props) {
-    const {PaymentMethods} = props
+    const {Payments, PaymentMethods} = props
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -50,10 +50,14 @@ export default function PaymentsTab(props) {
         <Box sx={{ width: '100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="Medios de pago" {...a11yProps(0)} />
+                    <Tab label="Pagos" {...a11yProps(0)} />
+                    <Tab label="Medios de pago" {...a11yProps(1)} />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
+                {Payments}
+            </TabPanel>
+            <TabPanel value={value} index={1}>
                 {PaymentMethods}
             </TabPanel>
         </Box>

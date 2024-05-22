@@ -1,3 +1,18 @@
+CASHREGISTER MOEVEMENTS cards ( se AvanZo)
+CLOSE CASHREGISTER
+BOLETA
+FACTURA
+
+- Implementar la funcionalidad de cierre de caja
+- Implementar la funcionalidad de apertura de caja
+- Implementar la funcionalidad de cierre de caja
+- Implementar la funcionalidad de cierre de caja
+- Implementar la funcionalidad de cierre de caja
+
+
+
+
+
 - GENERAR SISTEMA PARA IDENTIFICAR IDEALMENTE MEDIANTE SOCKETS PADA DEFINIR CUANDO NO EXISTA CONEXIÓN A RED Y HABILITAR EL SISTEMA PARA HACER TICKET
 
 - paymentMethodGrid: EDIT
@@ -5,6 +20,23 @@
 - Edit en varios Grid
 
 - PACKs de productos ---> funciona como un sub carro con la estructirta del carro normal, heradando  propiedades comunes. 
+- COPIAR de ZENIZ la configurración para los dias de la semana en el calendario en español
+
+_UPDATE SALEPOINT NO VISUALIZA LISTA CUANDO SE ACTUALIZA
+
+- Visualización tabla Stock-multiAlmacen 
+- IMPLEMENTAR IMPRESIÓN DE CODIFGO DE BARRAS  EN GRID PRODUCT
+- HABILITAR ELIMINACION
+
+- cuando se aplique un filtro va de titulo solo "filtro"
+
+- Medio de Pago 1002 quedara fijo para PAGO CLIENTE CON SU CUENTA
+- Medio de Pago 1001 quedara fijo para PAGO CON EFECTIVO
+- Medio de Pago 1003 quedara fijo para PAGO CON CHUEQUE
+
+- en loas Tabs (pages) cambiar f() por <Component />
+
+- Mover todas la cards a Components/cards   (evauluando complejidad)
 
 
 tipos de venta:

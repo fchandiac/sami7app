@@ -7,6 +7,9 @@ import useStocks from "./useStocks";
 import useUtils from "./useUtils";
 import useSellingPrices from "./useSellingPrices";
 import useLioren from "./useLioren";
+import useCustomerAccountMovements from "./useCustomerAccountMovements";
+import usePayments from "./usePayments";
+import useDte from "./useDte";
 
 export default function useSalePoint() {
   const {
@@ -24,9 +27,12 @@ export default function useSalePoint() {
   const products = useProducts();
   const stocks = useStocks();
   const sales = useSales();
+  const dte = useDte();
+  const payments = usePayments();
   const lioren = useLioren();
   const sellingPrices = useSellingPrices();
   const cashRegisterMovements = useCashregisterMovements();
+  const customerAccountMovements = useCustomerAccountMovements();
   const {
     addThousandsSeparator,
     removeThousandsSeparator,
@@ -94,6 +100,7 @@ export default function useSalePoint() {
       totalNet: product.SellingPrices[0].net,
       quanty: 1,
       total: product.SellingPrices[0].gross,
+      subTotal: product.SellingPrices[0].gross,
       unitDiscount: 0,
       discount: 0,
       taxes: itemTaxes,
@@ -117,6 +124,7 @@ export default function useSalePoint() {
     const cart = getActiveCart();
     const items = cart.items;
     let total = 0;
+    let subTotal = 0;
     let net = 0;
     let tax = 0;
     let discounts = 0;
@@ -124,13 +132,16 @@ export default function useSalePoint() {
 
     items.forEach((item) => {
       total += item.total;
+      subTotal += item.subTotal;
       net += item.totalNet;
       tax += item.tax;
       discounts += item.discount;
       utility += item.utility;
     });
 
-    setTotalsCart(activeCart, total, net, tax, discounts, utility);
+    console.log("setTotalCart", total, net, tax, discounts, utility, subTotal);
+
+    setTotalsCart(activeCart, total, net, tax, discounts, utility, subTotal);
   };
 
   const addItemToCart = async (productId) => {
@@ -150,6 +161,7 @@ export default function useSalePoint() {
       }
       itemInCart.quanty = quanty;
       itemInCart.total = itemInCart.gross * itemInCart.quanty;
+      itemInCart.subTotal = itemInCart.originalGross * itemInCart.quanty;
       itemInCart.tax =
         taxesAmount(itemInCart.net, itemInCart.taxes) * itemInCart.quanty;
       itemInCart.utility = itemInCart.unitUtility * itemInCart.quanty;
@@ -183,6 +195,7 @@ export default function useSalePoint() {
         }
         itemInCart.quanty = quanty;
         itemInCart.total = itemInCart.gross * itemInCart.quanty;
+        itemInCart.subTotal = itemInCart.originalGross * itemInCart.quanty;
         itemInCart.tax =
           taxesAmount(itemInCart.net, itemInCart.taxes) * itemInCart.quanty;
         itemInCart.utility = itemInCart.unitUtility * itemInCart.quanty;
@@ -246,7 +259,9 @@ export default function useSalePoint() {
       itemInCart.utility = unitUtility * itemInCart.quanty;
       itemInCart.discount = 0;
       itemInCart.unitDiscount = 0;
+      itemInCart.originalGross = gross;
       itemInCart.total = itemInCart.gross * itemInCart.quanty;
+      itemInCart.subTotal = itemInCart.gross * itemInCart.quanty;
       itemInCart.maxDiscount = 0;
       setCartItems(activeCart, items);
       setTotalCart();
@@ -254,10 +269,12 @@ export default function useSalePoint() {
   };
 
   const changeQuantityToItem = async (productId, quanty) => {
+    console.log("Change quantity to item", productId, quanty);
     //CAMBIA CANTIDAD POR UNIDAD
     const cart = getActiveCart();
     const items = cart.items;
     const product = await products.findOneByIdToCart(productId);
+
     const itemInCart = items.find((item) => item.id === product.id);
     if (itemInCart === undefined) {
       return;
@@ -280,12 +297,15 @@ export default function useSalePoint() {
       const gross = itemInCart.gross;
       const net = Math.ceil(gross / (1 + totalTaxPercentage));
 
+      console.log("Gross", gross);
+
       itemInCart.gross = gross;
       itemInCart.net = net;
       itemInCart.totalNet = net * quanty;
       itemInCart.tax = (gross - net) * quanty;
       itemInCart.discount = itemInCart.unitDiscount * quanty;
       itemInCart.total = itemInCart.gross * quanty;
+      itemInCart.subTotal = itemInCart.originalGross * quanty;
       itemInCart.utility = itemInCart.unitUtility * quanty;
       itemInCart.quanty = quanty;
       setCartItems(activeCart, items);
@@ -322,6 +342,7 @@ export default function useSalePoint() {
       itemInCart.unitUtility = itemInCart.originalUnitUtility - amount;
       itemInCart.discount = amount * itemInCart.quanty;
       itemInCart.total = itemInCart.gross * itemInCart.quanty;
+      itemInCart.subTotal = itemInCart.originalGross * itemInCart.quanty;
       itemInCart.utility = itemInCart.unitUtility * itemInCart.quanty;
       setCartItems(activeCart, items);
       setTotalCart();
@@ -360,7 +381,7 @@ export default function useSalePoint() {
       priceList.id
     );
 
-    console.log("Product", product);
+    // console.log("Product", product);
 
     const itemInCart = items.find((item) => item.id === product.id);
 
@@ -512,56 +533,131 @@ export default function useSalePoint() {
     setTotalsCart(activeCart, cart.total, net, cart.tax, cart.discounts);
   };
 
-  const globalSaleProcess = async (payments, change, saleType) => {
-    // Obtiene el carrito activo
-    preProcessCart();
-    const cart = getActiveCart();
-    const boletaData = boletaProcess(cart);
-
-    const boleta = await lioren.boleta(boletaData);
-
-    console.log("Boleta", boleta);
-
-    //const timbre = await parseDteXML(boleta.xml);
-    console.log("Timbre", parseDteXML(boleta.xml));
-
+  const globalSaleProcess = async (saleInfo) => {
     try {
+      console.log("Sale Info", saleInfo);
+      // SALE
+      const newSale = await sales.createDirectSale(
+        saleInfo.description,
+        saleInfo.discount,
+        saleInfo.utility,
+        saleInfo.net,
+        saleInfo.tax,
+        saleInfo.total,
+        user.id,
+        saleInfo.customerId,
+        saleInfo.documentTypeId,
+        null
+      );
 
+      saleInfo.id = newSale.id;
 
+      // SALE CUSTOMER ACCOUNT MOVEMENT
 
-      // const newSale = await sales.create(
-      //   saleDescription,
-      //   saleType,
-      //   discounts,
-      //   utility,
-      //   net,
-      //   tax,
-      //   total,
-      //   0,
-      //   new Date(),
-      //   user.id,
-      //   customer.id,
-      //   documentType.id,
-      //   null
-      // )
+      if (saleInfo.customerId !== 1001) {
+        const saleCustomerAccountMovement =
+          await customerAccountMovements.createSaleMovement(
+            saleInfo.description,
+            saleInfo.total,
+            newSale.id,
+            saleInfo.customerId
+          );
+        console.log(
+          "Sale Customer Account Movement: " + saleCustomerAccountMovement.id
+        );
+      } else {
+        console.log("No customer account movement");
+      }
 
-      // Registra los pagos de la venta
-      // const saleMovements = await Promise.all(payments.map(async (payment) => {
-      //     return await createSaleMovementByPayment(payment, null, change);
-      // }));
+      // STOCK MOVEMENTS
+      const items = saleInfo.items;
+      const stockMovements = await Promise.all(
+        items.map(async (item) => {
+          if (item.stockControl === true) {
+            return await createSaleStockMovement(
+              item.id,
+              info.storage.id,
+              item.quanty,
+              newSale.id
+            );
+          }
+        })
+      );
 
-      // Registra los movimientos de stock para cada artículo vendido, si es necesario
-      // const stockMovements = await Promise.all(items.map(async (item) => {
-      //     if (item.stockControl === true) {
-      //         return await createSaleStockMovement(item.id, info.storage.id, item.quanty, null);
-      //     }
-      // }));
+      // PAYMENTS
+      const payMovements = await Promise.all(
+        saleInfo.pays.map(async (payment) => {
+          const amount = payment.amount - payment.change;
+          const isCash = payment.id == 1001 ? true : false;
 
-      // Muestra información de depuración en la consola
-      console.log("Cart", cart);
+          // SALE CASH REGISTER MOVEMENT
+          const newSaleMovement =
+            await cashRegisterMovements.createSaleMovement(
+              info.cashRegisterId,
+              amount,
+              newSale.id,
+              isCash,
+              payment.id
+            );
+          console.log("Sale Cash Register Movement: " + newSaleMovement.id);
 
-      // Limpia el carrito después del proceso de venta
-      //clearCart(); // MOVER DESPUES CLERA CART FUERA
+          
+     
+            // SALE PAYMENTS
+            const newPayment = await payments.create(
+              saleInfo.description,
+              1,
+              amount,
+              payment.credit ? amount : 0,
+              newSale.id,
+              user.id,
+              payment.payDate,
+              payment.id,
+              saleInfo.customerId,
+              newSaleMovement.id
+            );
+            console.log("Sale Payment: " + newPayment.id);
+
+            // EXCLUDE PAYMENT METHOD 1001 (CASH)
+            if (saleInfo.customerId !== 1001) {
+              // SALE CUSTOMER ACCOUNT MOVEMENT PAYMENT
+            if (payment.credit == false) {
+              const newCustomerPayAccountMovement =
+                await customerAccountMovements.createPayMovement(
+                  saleInfo.description,
+                  amount,
+                  newSale.id,
+                  saleInfo.customerId
+                );
+              console.log(
+                "Pay no credit Customer Account Movement: " +
+                  newCustomerPayAccountMovement.id
+              );
+            }
+          }
+        })
+      );
+
+      // SALE DETAILS
+      const saleDetails = await Promise.all(
+        items.map(async (item) => {
+          return await sales.createSaleDetail(
+            item.quanty,
+            item.gross,
+            item.discount,
+            item.utility,
+            item.net,
+            item.tax,
+            item.total,
+            newSale.id,
+            item.id
+          );
+        })
+      );
+
+      console.log("New Sale", newSale);
+      console.log("TiketInfo", dte.ticketProcess(saleInfo));
+      return dte.ticketProcess(saleInfo);
     } catch (error) {
       // Manejo de errores
       console.error("Error en globalSaleProcess:", error);
@@ -569,91 +665,89 @@ export default function useSalePoint() {
     }
   };
 
-  const saleProcess = (payments, change) => {
-    // Obtiene el carrito activo
-    const cart = getActiveCart();
-    // Obtiene los artículos del carrito
-    const items = cart.items;
+  // const saleProcess = (payments, change) => {
+  //   // Obtiene el carrito activo
+  //   const cart = getActiveCart();
+  //   // Obtiene los artículos del carrito
+  //   const items = cart.items;
 
-    // Obtiene el total del carrito
-    const total = cart.total;
-    // Obtiene el total neto del carrito
-    const net = cart.net;
-    // Obtiene el impuesto total del carrito
-    const tax = cart.tax;
-    // Obtiene los descuentos aplicados al carrito
-    const discounts = cart.discounts;
+  //   // Obtiene el total del carrito
+  //   const total = cart.total;
+  //   // Obtiene el total neto del carrito
+  //   const net = cart.net;
+  //   // Obtiene el impuesto total del carrito
+  //   const tax = cart.tax;
+  //   // Obtiene los descuentos aplicados al carrito
+  //   const discounts = cart.discounts;
 
-    // Procesa cada pago en paralelo utilizando la función map con async/await
-    const pay = payments.map(async (payment) => {
-      const amount = parseInt(removeThousandsSeparator(payment.amount));
-      const toPay = amount - change;
-      console.log("Payment", payment);
-      +console.log("amount", amount);
+  //   // Procesa cada pago en paralelo utilizando la función map con async/await
+  //   const pay = payments.map(async (payment) => {
+  //     const amount = parseInt(removeThousandsSeparator(payment.amount));
+  //     const toPay = amount - change;
+  //     console.log("Payment", payment);
+  //     +console.log("amount", amount);
 
-      const newSaleMovement = await cashRegisterMovements.createSaleMovement(
-        info.cashRegisterId,
-        toPay,
-        cart.id,
-        payment.credit,
-        payment.paymentMethodId
-      );
+  //     const newSaleMovement = await cashRegisterMovements.createSaleMovement(
+  //       info.cashRegisterId,
+  //       toPay,
+  //       cart.id,
+  //       payment.credit,
+  //       payment.paymentMethodId
+  //     );
 
-      // return newSaleMovement;
-    });
+  //     // return newSaleMovement;
+  //   });
 
-    items.map(async (item) => {
-      console.log(item.stockControl);
-      if (item.stockControl === true) {
-        const stockProduct = await stocks.findOneByStorageAndProduct(
-          info.storage.id,
-          item.id
-        );
-        const quanty = item.quanty;
-        const newStocDecrement = await stocks.decrementStock(
-          stockProduct.id,
-          quanty
-        );
-        const newStockMovement = await stocks.createDecrementMovement(
-          stockProduct.id,
-          quanty,
-          null,
-          1
-        );
-      }
-      // return newSaleDetail;
-    });
-    console.log("Cart", cart);
-    console.log("Items", items);
-    clearCart();
-  };
+  //   items.map(async (item) => {
+  //     console.log(item.stockControl);
+  //     if (item.stockControl === true) {
+  //       const stockProduct = await stocks.findOneByStorageAndProduct(
+  //         info.storage.id,
+  //         item.id
+  //       );
+  //       const quanty = item.quanty;
+  //       const newStocDecrement = await stocks.decrementStock(
+  //         stockProduct.id,
+  //         quanty
+  //       );
+  //       const newStockMovement = await stocks.createDecrementMovement(
+  //         stockProduct.id,
+  //         quanty,
+  //         null,
+  //         1
+  //       );
+  //     }
+  //     // return newSaleDetail;
+  //   });
+  //   console.log("Cart", cart);
+  //   console.log("Items", items);
+  //   clearCart();
+  // };
 
   const preProcessCart = () => {
     const cart = getActiveCart();
 
     const items = cart.items;
     let total = 0;
+    let subTotal = 0;
     let net = 0;
     let tax = 0;
     let discounts = 0;
     let utility = 0;
 
+    console.log("Items", items);
+
     items.forEach((item) => {
       total += item.total;
+      subTotal += item.subTotal;
       net += item.totalNet;
       tax += item.tax;
       discounts += item.discount;
       utility += item.utility;
     });
 
-    setTotalsCart(activeCart, total, net, tax, discounts);
+    setTotalsCart(activeCart, total, net, tax, discounts, utility, subTotal);
   };
-
-  const ticketProcess = (cart) => {
-    const data = {}
-  }
-
-
 
   const clearCart = () => {
     setCartItems(activeCart, []);
@@ -677,7 +771,8 @@ export default function useSalePoint() {
         console.error("Error al parsear el XML:", err);
       } else {
         // Acceder a los valores específicos
-        const ivaValue = result.DTE.Documento[0].Encabezado[0].Totales[0].IVA[0];
+        const ivaValue =
+          result.DTE.Documento[0].Encabezado[0].Totales[0].IVA[0];
         const RE = result.DTE.Documento[0].TED[0].DD[0].RE[0];
         const TD = result.DTE.Documento[0].TED[0].DD[0].TD[0];
         const F = result.DTE.Documento[0].TED[0].DD[0].F[0];
@@ -726,8 +821,8 @@ export default function useSalePoint() {
           FRMT +
           "</FRMT></TED>";
 
-          iva = parseFloat(ivaValue);
-          folio = parseInt(F);
+        iva = parseFloat(ivaValue);
+        folio = parseInt(F);
       }
     });
 
@@ -735,12 +830,8 @@ export default function useSalePoint() {
       timbre: timbreStr,
       iva: iva,
       folio: folio,
-
     };
-}
-
-
- 
+  };
 
   return {
     submitItemToCart,
@@ -752,9 +843,10 @@ export default function useSalePoint() {
     addDiscountToItem,
     authDiscount,
     authSubmitItemToCart,
-    saleProcess,
     globalSaleProcess,
     changeGrossToItem,
     changeQuantityToItem,
+    preProcessCart,
+    clearCart,
   };
 }

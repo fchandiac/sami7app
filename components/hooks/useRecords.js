@@ -135,6 +135,16 @@ export default function useRecords() {
     return record
   }
 
+  const createSalePoint = async (userId, salePointName) => {
+    const record = await records.create(
+      userId,
+      "crear",
+      "puntos de venta",
+      "crea nuevo punto de venta: " + salePointName
+    )
+    return record
+  }
+
   return {
     create,
     findAll,
@@ -149,6 +159,7 @@ export default function useRecords() {
     updateProductGeneral,
     closeCashRegister,
     createCustomer,
-    createSellingPrice
+    createSellingPrice,
+    createSalePoint
   }
 }

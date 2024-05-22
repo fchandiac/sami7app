@@ -14,11 +14,13 @@ import React, { useState, useEffect } from "react";
 import PDF417 from "pdf417-generator";
 import moment from "moment";
 import useDte from "../hooks/useDte";
+import Pdf417 from "./Pdf417";
 
 
 
 export default function Document(props) {
   const { documentData } = props;
+  
 
 
 
@@ -35,10 +37,6 @@ export default function Document(props) {
     }
   };
 
-  useEffect(() => {
-    const canvas = document.getElementById("barcodeCanvas");
-    PDF417.draw(documentData.stamp, canvas);
-  }, []);
 
   const ItemList = (items) => {
     return (
@@ -61,7 +59,7 @@ export default function Document(props) {
                   {item.name}
                 </TableCell>
                 <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>
-                  {item.total.toLocaleString("es-CL", {
+                  {item.subTotal.toLocaleString("es-CL", {
                     style: "currency",
                     currency: "CLP",
                   })}
@@ -157,6 +155,17 @@ export default function Document(props) {
               sx={{ pl: 1, pr: 1, lineHeight: 1 }}
               textAlign={"right"}
             >
+              Subtotal{" "}
+              {documentData.subTotal.toLocaleString("es-CL", {
+                style: "currency",
+                currency: "CLP",
+              })}
+            </Typography>
+            <Typography
+              fontSize={10}
+              sx={{ pl: 1, pr: 1, lineHeight: 1 }}
+              textAlign={"right"}
+            >
               Descuentos{" "}
               {documentData.discounts.toLocaleString("es-CL", {
                 style: "currency",
@@ -215,9 +224,10 @@ export default function Document(props) {
           </Typography>
         </Grid>
 
-        <Grid item textAlign={"center"} p={1} width={"100%"}>
-          <canvas id="barcodeCanvas" height={"90px"} width={"90px"} />
+        <Grid item textAlign={"center"} p={0} m={0} width={"100%"}>
+          <Pdf417 stamp={documentData.stamp} />
         </Grid>
+
         <Grid item>
           <Typography
             fontSize={10}
@@ -259,6 +269,7 @@ function documenteDataDefault() {
   return {
     documentType: 1,
     total: 0,
+    suvTotal: 0,
     subjectTotal: 0,
     exemptTotal: 0,
     discounts: 0,

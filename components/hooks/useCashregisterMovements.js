@@ -9,8 +9,8 @@ export default function useCashregisterMovements() {
     const { user } = useAppContext()
     const paymentMethods = usePaymentMethods()
 
-    const create = async (cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id) => {
-        const newCashRegisterMovement = await cashRegisterMovements.create(cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id)
+    const create = async (cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id,  payment_method_id ) => {
+        const newCashRegisterMovement = await cashRegisterMovements.create(cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id,  payment_method_id )
         return newCashRegisterMovement
     }
 
@@ -40,10 +40,48 @@ export default function useCashregisterMovements() {
                 return 'Pago'
             case 7:
                 return 'Venta directa'
+            case 8:
+                return 'Nota de crédito'
             default:
                 return 'N/A'
         }
     }
+
+    const movementTypeList = () => ([{
+        id: 1,
+        name: 'Apertura'
+    },
+    {
+        id: 2,
+        name: 'Cierre'
+    },
+    {
+        id: 3,
+        name: 'Egreso'
+    },
+    {
+        id: 4,
+        name: 'Ingreso'
+    },
+    {
+        id: 5,
+        name: 'Gasto'
+    },
+    {
+        id: 6,
+        name: 'Pago'
+    },
+    {
+        id: 7,
+        name: 'Venta directa'
+    
+    },
+    {
+        id: 8,
+        name: 'Nota de crédito'
+    }
+
+])
 
     const createOpen = async ( cash_register_id, amount) => {
         const openMovement = await create(
@@ -99,11 +137,11 @@ export default function useCashregisterMovements() {
     }
 
     const cashAmount = async (cash_register_id) => {
-        const lastMovement = await findLastByCashRegister(cash_register_id)
-        return lastMovement.balance
+        const  value = await  cashRegisterMovements.cashAmount(cash_register_id)
+        return value
     }
 
-    const createSaleMovement = async (cashRegisterId, amount, reference_id, cash) => {
+    const createSaleMovement = async (cashRegisterId, amount, reference_id, cash,  paymentMethodId ) => {
         const lastMovement = await findLastByCashRegister(cashRegisterId)
         const balance = lastMovement.balance + amount
         const newMovement = await create(
@@ -116,11 +154,38 @@ export default function useCashregisterMovements() {
             balance,
             reference_id,
             user.id,
-            cashRegisterId
+            cashRegisterId,
+            paymentMethodId
+
         )
        
         
         return newMovement
+    }
+
+    const noCashAmount = async (cash_register_id) => {
+        const  value = await  cashRegisterMovements.noCashAmount(cash_register_id)
+        return value
+    }
+
+    //findAllByCashRegisterAndPaymentMethod(cash_register_id, payment_method_id)
+
+    const findAllByCashRegisterAndPaymentMethod = async (cash_register_id, payment_method_id) => {
+        const cashRegisterMovements_ = await cashRegisterMovements.findAllByCashRegisterAndPaymentMethod(cash_register_id, payment_method_id)
+        return cashRegisterMovements_
+    }
+
+    // findAllByCashRegisterAndType(cash_register_id, type)
+
+    const findAllByCashRegisterAndType = async (cash_register_id, type) => {
+        const cashRegisterMovements_ = await cashRegisterMovements.findAllByCashRegisterAndType(cash_register_id, type)
+        return cashRegisterMovements_
+    }
+
+    // function voidById(id)
+    const voidById = async (id) => {
+        const cashRegisterMovement = await cashRegisterMovements.voidById(id)
+        return cashRegisterMovement
     }
 
     return {
@@ -132,7 +197,12 @@ export default function useCashregisterMovements() {
         cerateInput,
         createOutput,
         cashAmount,
-        createSaleMovement
+        createSaleMovement,
+        noCashAmount,
+        findAllByCashRegisterAndPaymentMethod,
+        findAllByCashRegisterAndType,
+        movementTypeList,
+        voidById
     }
 
 

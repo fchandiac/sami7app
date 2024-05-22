@@ -1,13 +1,12 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import useCashRegisters from "../hooks/useCashRegisters";
 import useRecords from "../hooks/useRecords";
 import { useAppContext } from "@/appProvider";
-import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import useUtils from "../hooks/useUtils";
 import { useSalePointContext } from "../salePoint/salePointProvider";
 import useCashregisterMovements from "../hooks/useCashregisterMovements";
-
-
+import OpenCashRegister from "../prints/OpenCashRegister";
 
 //description, status, open, balance, close, open_user_id, close_user_id, sale_point_id
 export default function CashRegistersForm(props) {
@@ -32,6 +31,8 @@ export default function CashRegistersForm(props) {
   const { user, openSanck } = useAppContext();
   const { info } = useSalePointContext();
   const [cashRegisterData, setCashRegisterData] = useState(data);
+  const [openMovementToPrint, setOpenMovementToPrint] = useState({});
+  const [printState, setPrintState] = useState(false);
 
   const save = async () => {
     if (edit) {
@@ -48,12 +49,27 @@ export default function CashRegistersForm(props) {
         info.id
       );
       await records.createCashRegister(user.id, newCashRegister.id);
-      await cashRegisterMovements.createOpen(
+
+      const movement_ = await cashRegisterMovements.createOpen(
         newCashRegister.id,
-        parseInt(removeThousandsSeparator(cashRegisterData.open)),
-      )
-      afterSubmit()
+        parseInt(removeThousandsSeparator(cashRegisterData.open))
+      );
+
+      setOpenMovementToPrint(movement_);
+
+      console.log("movement", movement_);
+      print()
+      setTimeout(() => {
+        afterSubmit();
+      }, 2000);
+
+
+     
     }
+  };
+
+  const print = () => {
+    setPrintState(true);
   };
 
   return (
@@ -108,11 +124,20 @@ export default function CashRegistersForm(props) {
               />
             </Grid>
             <Grid item textAlign={"right"}>
-              <Button variant="contained" type="submir">{edit ? "Actualizar" : "Guardar"}</Button>
+              <Button variant="contained" type="submir">
+                {edit ? "Actualizar" : "Guardar"}
+              </Button>
             </Grid>
           </Grid>
         </form>
       </Paper>
+
+      <Box display={"block"}>
+        <OpenCashRegister
+          movement={openMovementToPrint}
+          printState={printState}
+        />
+      </Box>
     </>
   );
 }

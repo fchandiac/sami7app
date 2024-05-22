@@ -1,40 +1,42 @@
 const salePoints = require("@/services/salePoints");
 
 export default function useSalePoints() {
-  const create = (name, description, address, phone, status, storage_id) => {
+  const create = async (name, description, address, phone, status, storage_id, commerce_name,commerce_rut) => {
     const newSalePoint = salePoints.create(
       name,
       description,
       address,
       phone,
       status,
-      storage_id
+      storage_id,
+      commerce_name,commerce_rut
     );
     return newSalePoint;
+
   };
-  const findAll = () => {
+  const findAll = async () => {
     const salePoint = salePoints.findAll();
     return salePoint;
   };
 
-  const findOneById = (id) => {
+  const findOneById = async (id) => {
     const salePoint = salePoints.findOneById(id);
     return salePoint;
   };
 
-  const findOneByName = (name) => {
+  const findOneByName =  async (name) => {
     const salePoint = salePoints.findOneByName(name);
     return salePoint;
   };
 
-  const update = (
+  const update = async (
     id,
     name,
     description,
     address,
     phone,
     status,
-    storage_id
+    storage_id, commerce_name,commerce_rut
   ) => {
     const salePoint = salePoints.update(
       id,
@@ -43,12 +45,12 @@ export default function useSalePoints() {
       address,
       phone,
       status,
-      storage_id
+      storage_id, commerce_name,commerce_rut
     );
     return salePoint;
   };
 
-  const destroy = (id) => {
+  const destroy = async (id) => {
     const salePoint = salePoints.destroy(id);
     return salePoint;
   };

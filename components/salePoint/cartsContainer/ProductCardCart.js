@@ -11,6 +11,7 @@ import {
   Button,
   Stack,
   InputAdornment,
+  Divider,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,6 +21,7 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import DiscountIcon from "@mui/icons-material/Discount";
 import EditIcon from "@mui/icons-material/Edit";
 import PaidIcon from "@mui/icons-material/Paid";
+import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import { useAppContext } from "@/appProvider";
 import { set } from "autonumeric";
 
@@ -33,6 +35,7 @@ export default function ProductCardCart(props) {
     addDiscountToItem,
     changeGrossToItem,
     changeQuantityToItem,
+    
   } = useSalePoint();
   const { item } = props;
   const theme = useTheme();
@@ -44,6 +47,8 @@ export default function ProductCardCart(props) {
   const [openDiscountDialog, setOpenDiscountDialog] = useState(false);
   const [openEditPriceDialog, setOpenEditPriceDialog] = useState(false);
   const [openEditQuantyDialog, setOpenEditQuantyDialog] = useState(false);
+
+  const [showMore, setShowMore] = useState(false);
 
   const disabledAdd = (virtualStock, controlStock) => {
     if (controlStock) {
@@ -58,28 +63,87 @@ export default function ProductCardCart(props) {
     <>
       <Paper variant="outlined" sx={{ p: 1, mb: 1 }}>
         <Box display={"flex"}>
-          <Box display={"inline-flex"} lignItems={"center"}>
-            {item.quanty}
+          <Box display="flex" alignItems="center">
+            <Typography fontSize={14}>{item.quanty}</Typography>
+          </Box>
+
+          <IconButton
+            size="small"
+            onClick={() => {
+              //console.log("item", item);
+              setOpenEditQuantyDialog(true);
+            }}
+          >
+            <EditIcon sx={{ fontSize: 17 }} />
+          </IconButton>
+
+          <Box flexGrow={1} display="flex" alignItems="center">
+            <Typography fontSize={14}>{item.name}</Typography>
+          </Box>
+
+          <Box width={"12%"}>
+            <Box display="flex" alignItems="center">
+              <Typography fontSize={14}>
+                {item.total.toLocaleString("es-CL", {
+                  style: "currency",
+                  currency: "CLP",
+                })}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box display={"flex"}>
             <IconButton
               size="small"
+              sx={{ display: "block", margin: "auto", display: "flex" }}
               onClick={() => {
                 console.log("item", item);
-                setOpenEditQuantyDialog(true);
+                setOpenDiscountDialog(true);
               }}
             >
-              <EditIcon sx={{ fontSize: 17 }} />
+              <DiscountIcon sx={{ fontSize: 17 }} />
             </IconButton>
-          </Box>
-          <Box flexGrow={1}>{item.name}</Box>
-          <Box width={"12%"}>
-            {item.total.toLocaleString("es-CL", {
-              style: "currency",
-              currency: "CLP",
-            })}
+            <IconButton
+              size="small"
+              sx={{ display: "block", margin: "auto", display: "flex" }}
+              onClick={() => {
+                removeItemToCart(item.id);
+              }}
+            >
+              <DeleteIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+            <IconButton
+              size="small"
+              sx={{ display: "block", margin: "auto", display: "flex" }}
+              onClick={() => {
+                subtractItemToCart(item.id);
+              }}
+            >
+              <RemoveCircleIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+            <IconButton
+              disabled={disabledAdd(item.virtualStock, item.stockControl)}
+              size="small"
+              sx={{ display: "block", margin: "auto", display: "flex" }}
+              onClick={() => {
+                addItemToCart(item.id);
+              }}
+            >
+              <AddCircleIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+            <IconButton
+              size="small"
+              sx={{ display: "block", margin: "auto", display: "flex" }}
+              onClick={() => {
+                setShowMore(!showMore);
+              }}>
+              <MoreVertOutlinedIcon sx={{ fontSize: 18 }} />
+              </IconButton>
           </Box>
         </Box>
+
         <Box
-          display={"flex"}
+          display={showMore ? "block" : "none"}
           pt={1}
           sx={{ borderTop: `1px solid ${theme.palette.MUIBorder.main}` }}
         >
@@ -137,7 +201,7 @@ export default function ProductCardCart(props) {
             <Stack spacing={0} ml={1}>
               <Typography fontSize={9}>
                 Precio unidad:{" "}
-                {item.gross.toLocaleString("es-CL", {
+                {item.originalGross.toLocaleString("es-CL", {
                   style: "currency",
                   currency: "CLP",
                 })}
@@ -156,48 +220,10 @@ export default function ProductCardCart(props) {
               </Button>
             </Stack>
           </Box>
-
-          <Box flexGrow={1} />
-          <IconButton
-            size="small"
-            sx={{ display: "block", margin: "auto", display: "flex" }}
-            onClick={() => {
-              console.log("item", item);
-              setOpenDiscountDialog(true);
-            }}
-          >
-            <DiscountIcon sx={{ fontSize: 17 }} />
-          </IconButton>
-          <IconButton
-            size="small"
-            sx={{ display: "block", margin: "auto", display: "flex" }}
-            onClick={() => {
-              removeItemToCart(item.id);
-            }}
-          >
-            <DeleteIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-          <IconButton
-            size="small"
-            sx={{ display: "block", margin: "auto", display: "flex" }}
-            onClick={() => {
-              subtractItemToCart(item.id);
-            }}
-          >
-            <RemoveCircleIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-          <IconButton
-            disabled={disabledAdd(item.virtualStock, item.stockControl)}
-            size="small"
-            sx={{ display: "block", margin: "auto", display: "flex" }}
-            onClick={() => {
-              addItemToCart(item.id);
-            }}
-          >
-            <AddCircleIcon sx={{ fontSize: 18 }} />
-          </IconButton>
         </Box>
       </Paper>
+
+
       <Dialog
         open={openDiscountDialog}
         onClose={() => {
@@ -324,10 +350,14 @@ export default function ProductCardCart(props) {
               e.preventDefault();
               console.log("newQuanty", newQuanty);
 
-              if (newQuanty > item.stock) {
-                openSnack("Cantidad no disponible", "error");
-                return;
+              if (item.stockControl) {
+                if (newQuanty > item.stock) {
+                  openSnack("Cantidad no disponible", "error");
+                  return;
+                }
               }
+
+              
 
               let newQuantyvalue = parseFloat(newQuanty);
 
@@ -344,6 +374,7 @@ export default function ProductCardCart(props) {
                 openSnack("Cantidad no puede ser negativa", "error");
                 return;
               }
+
               changeQuantityToItem(item.id, newQuantyvalue);
 
               setOpenEditQuantyDialog(false);

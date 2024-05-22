@@ -1,8 +1,8 @@
 
 const server_url = process.env.API_URL;
 
-function create(name, description, address, phone, status, storage_id){
-    let data = {name, description, address, phone, status, storage_id}
+function create(name, description, address, phone, status, storage_id, commerce_name,commerce_rut){
+    let data = {name, description, address, phone, status, storage_id, commerce_name,commerce_rut}
     const salepoint = new Promise((resolve, reject) => {
         fetch(server_url + 'salePoints/create', {
             method: 'POST',
@@ -20,6 +20,8 @@ function create(name, description, address, phone, status, storage_id){
             reject(err)
         })
     })
+
+    return salepoint
     
 }
 
@@ -85,8 +87,8 @@ function findOneByName(name) {
     return salepoint
 }       
 
-function update(id, name, description, address, phone, status, storage_id) {
-    let data = {id, name, description, address, phone, status, storage_id}
+function update(id, name, description, address, phone, status, storage_id, commerce_name,commerce_rut ) {
+    let data = {id, name, description, address, phone, status, storage_id, commerce_name,commerce_rut}
     const salepoint = new Promise((resolve, reject) => {
         fetch(server_url + 'salePoints/update', {
             method: 'POST',
@@ -104,6 +106,7 @@ function update(id, name, description, address, phone, status, storage_id) {
             reject(err)
         })
     })
+    return salepoint
 }
 
 function destroy(id) {

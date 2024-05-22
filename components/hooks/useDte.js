@@ -29,6 +29,7 @@ export default function useDte() {
       return {
         documentType: 1,
         total: 0,
+        subTotal: 0,
         subjectTotal: 0,
         exemptTotal: 0,
         discounts: 0,
@@ -89,6 +90,36 @@ export default function useDte() {
     const data = {}
   }
 
+  const ticketProcess = (saleInfo) => {
+    const data = documenteDataDefault();
+    data.comerceInfo= {
+      fantasyName: saleInfo.comerceInfo.fantasyName,
+      name: saleInfo.comerceInfo.name,
+      address: saleInfo.comerceInfo.address,
+      phone: saleInfo.comerceInfo.phone,
+      rut: saleInfo.comerceInfo.rut,
+    }
+    data.documentType = 1;
+    data.total = saleInfo.total;
+    data.subTotal = saleInfo.subTotal;
+    data.subjectTotal = 0;
+    data.exemptTotal = 0;
+    data.discounts = saleInfo.discounts;
+    data.iva = 0;
+    data.change = saleInfo.change;
+    data.items = saleInfo.items;
+    data.payments = saleInfo.pays;
+    data.saleId = saleInfo.id;
+    data.stamp= '<SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7>' + saleInfo.id + '<SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7><SAMI7>';
+
+    return data;
+  }
+
+
+
+
+
+
   const documentProcess = async (cart) => {
     const type = cart.documentType.id;
 
@@ -114,5 +145,5 @@ export default function useDte() {
 
   }
 
-  return { cartToDocument, documenteDataDefault };
+  return { cartToDocument, documenteDataDefault, ticketProcess, boletaProcess, documentProcess};
 }

@@ -63,7 +63,9 @@ export default function SalePoint() {
           address: salePoint.address,
           phone: salePoint.phone,
           status: salePoint.status,
-          storage: { id: salePoint.storage_id, key: salePoint.Storage.id, name: salePoint.Storage.name}
+          storage: { id: salePoint.storage_id, key: salePoint.Storage.id, name: salePoint.Storage.name},
+          commerceName: salePoint.commerce_name,
+          commerceRut: salePoint.commerce_rut,
         };
       });
       setSalePointsOpenOptions(salePointFormatted);
@@ -122,7 +124,9 @@ export default function SalePoint() {
         selectedSalePoint.phone,
         true,
         selectedSalePoint.storage,
-        selectedCasRegister.id
+        selectedCasRegister.id,
+        selectedSalePoint.commerceName,
+        selectedSalePoint.commerceRut
       );
       setSelectedCashRegister(null);
       setSelectedSalePoint(null);

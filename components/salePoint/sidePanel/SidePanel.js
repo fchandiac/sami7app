@@ -14,7 +14,8 @@ import Exchange from "./Exchange";
 import CashAmount from "./CashAmount";
 import Close from "./Close";
 import ListAltIcon from '@mui/icons-material/ListAlt';
-import Movements from "./movements";
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+import Movements from "./Movements";
 
 
 export default function SidePanel(props) {
@@ -46,7 +47,7 @@ export default function SidePanel(props) {
       case 6:
         return <Info />;
       case 7:
-        return <Movements />;
+        return (<Movements />);
       case 8:
         return <div>Settings</div>;
       default:
@@ -59,11 +60,11 @@ export default function SidePanel(props) {
       <Paper variant="outlined" sx={{ p: 1 }}>
         <Box display={"flex"}>
           <Grid container direction={"column"} alignContent={"center"}>
-            <Grid item>
+            {/* <Grid item>
               <IconButton onClick={() => openContent(1)}>
                 <FavoriteIcon />
               </IconButton>
-            </Grid>
+            </Grid> */}
             <Grid item>
               <IconButton onClick={() => openContent(2)}>
                 <MoneyIcon />
@@ -74,11 +75,11 @@ export default function SidePanel(props) {
                 <CurrencyExchangeIcon />
               </IconButton>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <IconButton onClick={() => openContent(4)}>
                 <LockIcon />
               </IconButton>
-            </Grid>
+            </Grid> */}
             <Grid item>
               <IconButton onClick={() => openContent(5)}>
                 <PointOfSaleIcon />
@@ -96,7 +97,7 @@ export default function SidePanel(props) {
             </Grid>
             <Grid item>
               <IconButton onClick={() => openContent(8)}>
-                <SettingsIcon />
+               <ChangeCircleIcon />
               </IconButton>
             </Grid>
           </Grid>

@@ -167,17 +167,18 @@ const sale = {
   net: 0,
   tax: 0,
   total: 0,
-  balance: 0,
-  pay_date: new Date(),
   user_id: null,
   customer_id: null,
   document_type: null,
   document_id: null,
+  nulled: false,
 };
+
+
 
 const sale_detail = {
   id: null,
-  quantity: 0,
+  quanty: 0,
   price: 0,
   discount: 0,
   utility: 0,
@@ -187,6 +188,17 @@ const sale_detail = {
   sale_id: null,
   product_id: null,
 };
+
+const credit_notes = {
+  id: null,
+  description: "",
+  type: 0,
+  amount: 0,
+  reference_id_id: null,
+  user_id: null,
+  customer_id: null,
+  
+}
 
 const paymentMethod = {
   id: null,
@@ -208,18 +220,22 @@ const cash_register_movements = {
   reference_id: null,
   paymentMethod_id: null,
   user_id: null,
+  nulled: false,
 };
 
-const payment = {
+const payments = {
   id: null,
   description: "",
   type: null,
   amount: 0,
+  balance: 0,
+  sale_id: null,
   user_id: null,
+  pay_date: null,
   payment_method_id: null,
   customer_id: null,
-  reference_id: null,
   cash_register_movement_id: null,
+  nulled: false,
 };
 
 const customer_account_movements = {
@@ -233,4 +249,8 @@ const customer_account_movements = {
   reference_id: null,
   customer_id: null,
   user_id: null,
+  nulled: false,
 };
+
+
+

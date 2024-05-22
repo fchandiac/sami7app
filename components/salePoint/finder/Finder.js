@@ -117,7 +117,7 @@ export default function Finder() {
 
         <Divider sx={{ marginBottom: 1 }} />
 
-        <Box overflow="auto" height={"23.2rem"}>
+        <Box overflow="auto" height={"20.1rem"}>
           {currentProducts.map((product) => (
             <Grid item key={product.id} paddingTop={1}>
               <ProductCardFinder

@@ -181,7 +181,6 @@ export default function GeneralComponent() {
                   setSubcategory(null);
                 }
               }}
-              disablePortal
               defaultValue={null}
               disabled={activeStep !== 0}
               getOptionLabel={(option) => option.name}

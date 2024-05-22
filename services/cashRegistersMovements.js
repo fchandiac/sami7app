@@ -51,11 +51,11 @@
 
 const server_url = process.env.API_URL
 
-function create(cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id) {
+function create(cash, description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id,  payment_method_id ) {
     const cashRegisterMovement = new Promise((resolve, reject) => {
         fetch(server_url + 'cashRegisterMovements/create', {
             method: 'POST',
-            body: JSON.stringify({cash,  description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id }),
+            body: JSON.stringify({cash,  description, type, previous_balance, debit, credit, balance, reference_id, user_id, cash_register_id,  payment_method_id }),
             headers: { 'Content-Type': 'application/json' }
         }).then(res => {
             res.json().then(res => {
@@ -141,11 +141,113 @@ function cashAmount(cash_register_id) {
     return cashRegisterMovement
 }
 
+//function noCashAmount(cash_register_id)
+
+function noCashAmount(cash_register_id){
+    const cashRegisterMovement = new Promise((resolve, reject) => {
+        fetch(server_url + 'cashRegisterMovements/noCashAmount', {
+            method: 'POST',
+            body: JSON.stringify({ cash_register_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    }
+    )
+    return cashRegisterMovement
+
+}
+
+
+
+function findAllByCashRegisterAndPaymentMethod(cash_register_id, payment_method_id){
+    const cashRegisterMovement = new Promise((resolve, reject) => {
+        fetch(server_url + 'cashRegisterMovements/findAllByCashRegisterAndPaymentMethod', {
+            method: 'POST',
+            body: JSON.stringify({ cash_register_id, payment_method_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    }
+    )
+    return cashRegisterMovement
+}
+
+
+
+function findAllByCashRegisterAndType(cash_register_id, type){
+    const cashRegisterMovement = new Promise((resolve, reject) => {
+        fetch(server_url + 'cashRegisterMovements/findAllByCashRegisterAndType', {
+            method: 'POST',
+            body: JSON.stringify({ cash_register_id, type }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    }
+    )
+    return cashRegisterMovement
+}
+
+
+// function voidById(id)
+
+function voidById(id) {
+    const cashRegisterMovement = new Promise((resolve, reject) => {
+        fetch(server_url + 'cashRegisterMovements/voidById', {
+            method: 'POST',
+            body: JSON.stringify({ id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    }
+    )
+    return cashRegisterMovement
+}
+
 export {
     create,
     findAllByCashRegister,
     findLastByCashRegister,
-    cashAmount
+    cashAmount,
+    noCashAmount,
+    findAllByCashRegisterAndPaymentMethod,
+    findAllByCashRegisterAndType,
+    voidById
 }
 
 

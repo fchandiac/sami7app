@@ -33,6 +33,16 @@ export default function Info() {
           </Grid>
           <Grid item>
             <Typography fontSize={12}>
+              Nombre Comercial: {info.commerceName}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography fontSize={12}>
+              Rut del comercio: {info.commerceRut}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography fontSize={12}>
               Almacén: {info.storage.name}
             </Typography>
           </Grid>

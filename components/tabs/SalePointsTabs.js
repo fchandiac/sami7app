@@ -51,6 +51,8 @@ export default function SalePointsTabs(props) {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Puntos de Venta" {...a11yProps(0)} />
+                    <Tab label="Cajas abiertas" {...a11yProps(1)} />
+                    <Tab label="Cajas cerradas" {...a11yProps(2)} />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>

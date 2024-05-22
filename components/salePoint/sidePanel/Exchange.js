@@ -20,6 +20,16 @@ export default function Exchange() {
       key: 2,
       name: "Egreso",
     },
+    {
+      id: 5,
+      key: 5,
+      name: 'Gasto'
+    },
+    {
+      id: 6,
+      key: 6,
+      name: 'Pago'
+    },
   ]);
   const { addThousandsSeparator, removeThousandsSeparator } = useUtils();
   const {info} = useSalePointContext();
@@ -61,8 +71,52 @@ export default function Exchange() {
         description,
         3,
         lastMovement.balance,
-        parseInt(removeThousandsSeparator(amount)),
         0,
+        parseInt(removeThousandsSeparator(amount)),
+        balance,
+        null,
+        user.id,
+        info.cashRegisterId
+      );
+      if (newMovement) {
+        openSnack("Movimiento guardado", "success");
+        setAmount("");
+        setDescription("");
+      } else {
+        openSnack("Error al guardar el movimiento", "error");
+      }
+    } else if (selectedMovement.id === 5) {
+      const lastMovement = await cashregisterMovements.findLastByCashRegister(info.cashRegisterId)
+      const balance = lastMovement.balance - parseInt(removeThousandsSeparator(amount))
+      const newMovement = await cashregisterMovements.create(
+        true,
+        description,
+        5,
+        lastMovement.balance,
+        0,
+        parseInt(removeThousandsSeparator(amount)),
+        balance,
+        null,
+        user.id,
+        info.cashRegisterId
+      );
+      if (newMovement) {
+        openSnack("Movimiento guardado", "success");
+        setAmount("");
+        setDescription("");
+      } else {
+        openSnack("Error al guardar el movimiento", "error");
+      }
+    } else if (selectedMovement.id === 6) {
+      const lastMovement = await cashregisterMovements.findLastByCashRegister(info.cashRegisterId)
+      const balance = lastMovement.balance - parseInt(removeThousandsSeparator(amount))
+      const newMovement = await cashregisterMovements.create(
+        true,
+        description,
+        6,
+        lastMovement.balance,
+        0,
+        parseInt(removeThousandsSeparator(amount)),
         balance,
         null,
         user.id,

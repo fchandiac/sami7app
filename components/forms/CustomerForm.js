@@ -124,6 +124,7 @@ export default function CustomerForm(props) {
         });
       }
     } catch (err) {
+      window.open('https://zeus.sii.cl/cvc/stc/stc.html', '_blank');
       console.log(err);
     }
   };
@@ -171,7 +172,7 @@ export default function CustomerForm(props) {
             <Grid item>
               <TextField
                 label="Nombre / Razón Social"
-                name="customerName"
+                name="customerNameField"
                 variant="outlined"
                 fullWidth
                 value={customerData.name}
@@ -201,7 +202,7 @@ export default function CustomerForm(props) {
             <Grid item>
               <Autocomplete
                 sx={{ flexGrow: 1 }}
-                id="district"
+                id="districtField"
                 options={districtsOptions}
                 onChange={(event, newValue) => {
                   if (newValue) {
@@ -227,7 +228,7 @@ export default function CustomerForm(props) {
             <Grid item>
               <Autocomplete
                 sx={{ flexGrow: 1 }}
-                id="city"
+                id="cityField"
                 options={citiesOptions}
                 onChange={(event, newValue) => {
                   if (newValue) {
@@ -253,7 +254,7 @@ export default function CustomerForm(props) {
             <Grid item>
               <TextField
                 label="Dirección"
-                name="customerAddress"
+                name="customerAddressField"
                 variant="outlined"
                 fullWidth
                 value={customerData.address}
@@ -261,12 +262,16 @@ export default function CustomerForm(props) {
                   setCustomerData({ ...customerData, address: e.target.value });
                 }}
                 size="small"
+                required
+                inputProps={{
+                  minLength: 9, // Máximo de 9 caracteres
+                }}
               />
             </Grid>
             <Grid item>
               <TextField
                 label="Teléfono"
-                name="providerPhone"
+                name="cuscomerPhone"
                 variant="outlined"
                 fullWidth
                 value={customerData.phone}
@@ -282,7 +287,6 @@ export default function CustomerForm(props) {
                 inputProps={{
                   maxLength: 9, // Máximo de 9 caracteres
                 }}
-                required
               />
             </Grid>
             <Grid item>
