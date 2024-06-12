@@ -19,13 +19,17 @@ import { Title } from "@mui/icons-material";
 import TitlePaper from "@/components/custom/TitlePaper";
 import SaleDetailCard from "@/components/cards/SaleDetailCard";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useSalePoint from "@/components/hooks/useSalePoint";
+
 
 export default function MovementCard(props) {
   const { movement } = props;
   const cashregisterMovements = useCashregisterMovements();
+  const {voidSaleProcess} = useSalePoint();
   const [showDetail, setShowDetail] = useState(false);
   const [openSaleDetailDialog, setOpenSaleDetailDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [voidDescription, setVoidDescription] = useState("");
 
   const [movementData, setMovementData] = useState({
     id: 0,
@@ -57,13 +61,25 @@ export default function MovementCard(props) {
       previous_balance: movement.previous_balance,
       balance: movement.balance,
       referenceId: movement.reference_id || "sin referencia",
+      nulled: movement.nulled,
     });
   }, []);
+
+  const voidSale = async () => {
+
+    const voidSale = await voidSaleProcess(
+      movementData.referenceId, 
+      voidDescription,
+      movementData.id
+    );
+
+    console.log("voidSale");
+  }
 
   return (
     <>
       <Box minWidth={500}>
-        <Paper variant="outlined" sx={{ p: 1 }}>
+        <Paper variant="outlined" sx={{ p: 1, backgroundColor:(movementData.nulled? '#ffcdd2':'') }}>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <Box
@@ -175,11 +191,27 @@ export default function MovementCard(props) {
           </Grid>
           <Grid item>
             <Alert severity="warning">
-            Al anular una venta, se restablecerá el stock de los productos vendidos, se actualizará el saldo en caja, y se generará una nota de crédito de anulación de venta que revertirá los movimientos registrados en la cuenta del cliente correspondiente.
+            Al anular una venta, se restablecerá el stock de los productos vendidos, se actualizará el saldo en caja, y se generará una nota de crédito/debito de anulación de venta que revertirá los movimientos registrados en la cuenta del cliente correspondiente.
             </Alert>    
             </Grid>
+            <Grid item>
+              <TextField
+                label="Motivo de anulación"
+                fullWidth
+                size="small"
+                multiline
+                rows={2}
+                value={voidDescription}
+                onChange={(e) => {
+                  setVoidDescription(e.target.value);
+                }}
+              />
+            </Grid>
             <Grid item textAlign={'right'}>
-              <Button variant="contained" color="error">
+              <Button variant="contained"
+               color="error"
+               onClick={ () => {voidSale()}}
+               >
                 Anular venta
               </Button>
               </Grid>

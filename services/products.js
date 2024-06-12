@@ -163,6 +163,7 @@ function findAllToSalePoint(price_list_id, storage_id) {
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => {
+        console.log("res", res);
         res.json().then((res) => {
           if (res.code === 0) {
             reject(res.data);
@@ -226,6 +227,33 @@ function findOneByIAndStorageAndPriceList(id, storage_id, price_list_id) {
   return product;
 }
 
+
+// function updateStockControlById(id, stock_control)
+
+function updateStockControlById(id, stock_control) {
+  let data = { id, stock_control };
+  const product = new Promise((resolve, reject) => {
+    fetch(server_url + "products/updateStockControlById", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        res.json().then((res) => {
+          if (res.code === 0) {
+            reject(res.data);
+          } else {
+            resolve(res.data);
+          }
+        });
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+  return product;
+}
+
 export {
   create,
   findAll,
@@ -235,4 +263,5 @@ export {
   findAllToSalePoint,
   findOneByIdToCart,
   findOneByIAndStorageAndPriceList,
+  updateStockControlById
 };

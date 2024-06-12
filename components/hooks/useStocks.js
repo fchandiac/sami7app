@@ -22,6 +22,8 @@ export default function useStocks() {
                 return 'recepción'
             case 6:
                 return 'despacho'
+            case 7:
+                return 'anulación de venta'
             default:
                 return ''
         }
@@ -99,6 +101,8 @@ export default function useStocks() {
         const newMovement = await stocksMovements.create(0, decrement, balance, type, reference, stock_id)
         return newMovement
     }
+
+    
 
 
 

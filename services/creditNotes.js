@@ -33,8 +33,8 @@
 
 const server_url = process.env.API_URL
 
-function create(description, type, discount, utility, net, tax, total, user_id, customer_id, document_type, document_id) {
-    let data = { description, type, discount, utility, net, tax, total, user_id, customer_id, document_type, document_id }
+function create(description, type, amount, reference_id, user_id, customer_id) {
+    let data = {description, type, amount, reference_id, user_id, customer_id}
     const creditNote = new Promise((resolve, reject) => {
         fetch(server_url + 'creditNotes/create', {
             method: 'POST',

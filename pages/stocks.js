@@ -15,10 +15,13 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
+import useProductCards from "@/components/hooks/useProductCards";
+
 
 
 
 export default function stocks() {
+  
   return (
     <>
       <StocksTab
@@ -32,13 +35,41 @@ export default function stocks() {
 
 function Stocks() {
   const [gridState, setGridState] = useState(false);
+  const productCards = useProductCards();
+  const [stockList, setStockList] = useState([]);
+
+
+  useEffect(() => {
+    const fetchProductCards = async () => {
+      const productCardsList = await productCards.findAllGroupByProductAvailable();
+      console.log(productCardsList);
+      setStockList(productCardsList);
+    };
+    fetchProductCards();
+  }, []);
+
+
 
   const updateGrid = () => {
     setGridState(!gridState);
   };
+
+
+
+
   return (
     <>
-      <StocksGrid update={gridState} />
+    {
+      stockList.map((stock) => {
+        return (
+          <div key={stock.Product.product_id}>
+            <p>{stock.Product.name}</p>
+            <p>stock total: {stock.total}</p>
+          </div>
+        );
+      })
+    }
+      {/* <StocksGrid update={gridState} /> */}
     </>
   );
 }
@@ -80,7 +111,7 @@ function Movements() {
             add: movement.add,
             decrement: movement.decrement,
             balance: movement.balance,
-            referece: movement.reference,
+            reference: movement.reference,
             type: movement.type,
             created_at: movement.created_at,
             stock_id: movement.stock_id,

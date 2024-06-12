@@ -107,6 +107,15 @@ export default function Layout(props) {
                         />
                     </ListItem>
                     <ListItem button>
+                        <ListItemText primary="Compras" 
+                        onClick={() => { 
+                            router.push('/purchases')
+                            setPageTitle('Compras') 
+                            setOpenDrawer(false)
+                        }}
+                        />
+                    </ListItem>
+                    <ListItem button>
                         <ListItemText primary="Ventas" 
                         onClick={() => { 
                             router.push('/sales')

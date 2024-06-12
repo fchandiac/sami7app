@@ -191,6 +191,12 @@ export default function useProducts() {
     return data;
   }
 
+
+  const updateStockControlById = async (id, stock_control) => {
+    const product = await products.updateStockControlById(id, stock_control);
+    return product;
+  }
+
   return {
     create,
     findAll,
@@ -203,5 +209,6 @@ export default function useProducts() {
     findOneByIAndStorageAndPriceList,
     findAllToAutocomplete,
     finalAllToSellingPrice,
+    updateStockControlById,
   };
 }

@@ -188,6 +188,27 @@ export default function useCashregisterMovements() {
         return cashRegisterMovement
     }
 
+    const createVoidSaleMovement = async (cashRegisterId, amount, reference_id) => {
+        const lastMovement = await findLastByCashRegister(cashRegisterId)
+        const balance = lastMovement.balance + amount
+        const newMovement = await create(
+            false,
+            'Venta directa: ' + reference_id,
+            7,
+            lastMovement.balance,
+            amount,
+            0,
+            balance,
+            reference_id,
+            user.id,
+            cashRegisterId,
+            null
+        )
+       
+        
+        return newMovement
+    }
+
     return {
         create,
         findAllByCashRegister,

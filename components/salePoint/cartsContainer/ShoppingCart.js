@@ -234,7 +234,7 @@ export default function ShoppingCart(props) {
         maxWidth={"sm"}
         fullWidth
       >
-        <PayDialog cart={cart} />
+        <PayDialog cart={cart} setOpenPayDialog={setOpenPayDialog} />
       </Dialog>
     </>
   );

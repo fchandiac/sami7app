@@ -145,5 +145,22 @@ export default function useDte() {
 
   }
 
-  return { cartToDocument, documenteDataDefault, ticketProcess, boletaProcess, documentProcess};
+  // { id: 1, key: 1, name: "Ticket" },
+  // { id: 2, key: 2, name: "Boleta" },
+  // { id: 3, key: 3, name: "Factura" },
+
+  const documentType = (type) => {
+    switch (type) {
+      case 1:
+        return "Ticket";
+      case 2:
+        return "Boleta";
+      case 3:
+        return "Factura";
+      default:
+        return "N/A";
+    }
+  }
+
+  return { cartToDocument, documenteDataDefault, ticketProcess, boletaProcess, documentProcess, documentType};
 }

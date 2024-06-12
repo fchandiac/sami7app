@@ -35,7 +35,14 @@ function Sales() {
       useEffect(() => {
         const fetchSales = async () => {
           const sales_ = await sales.findAllBetweenDates(filterDates.start, filterDates.end);
-          setSalesList(sales_);
+          const salesList_ = sales_.map((sale) => ({
+            ...sale,
+            userName: sale.User.name,
+            customerName: sale.Customer.name,
+
+          }));
+        
+          setSalesList(salesList_);
         };
         fetchSales();
       }
@@ -44,7 +51,7 @@ function Sales() {
   return (
     <>
       <Grid container spacing={1}>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={2}>
           <Paper variant="outlined" sx={{ p: 1 }}>
             <Grid container spacing={1} direction={"column"}>
               <Grid item>
@@ -85,7 +92,7 @@ function Sales() {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={9}>
+        <Grid item xs={12} md={10}>
             <SalesGrid salesList={salesList} /> 
         </Grid>
       </Grid>

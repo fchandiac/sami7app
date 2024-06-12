@@ -30,14 +30,14 @@ import useCustomerAccountMovements from "@/components/hooks/useCustomerAccountMo
 
 
 export default function PayDialog(props) {
-  const { cart } = props;
+  const { cart, setOpenPayDialog } = props;
   const [paymentsOptions, setPaymentsOptions] = useState([]);
   const paymentMethods = usePaymentMethods();
   const customerAccountMovements = useCustomerAccountMovements();
   const { info } = useSalePointContext();
   const dte = useDte();
   const { user, openSnack } = useAppContext();
-  const { globalSaleProcess } = useSalePoint();
+  const { globalSaleProcess, clearCart } = useSalePoint();
   const [paysList, setPaysList] = useState([
     // {
     //   id: 1001,
@@ -428,7 +428,12 @@ export default function PayDialog(props) {
         </Grid>
       </Paper>
 
-      <Dialog open={openDteDialog} onClose={() => setOpenDteDialog(false)}
+      <Dialog open={openDteDialog} onClose={() => {
+        setOpenDteDialog(false)
+        clearCart()
+        setOpenPayDialog(false)
+
+      }}
       >
         <Box sx={{ p: 2 }}>
           <Typography variant="subtitle1" sx={{mb:2}}>Documento</Typography>

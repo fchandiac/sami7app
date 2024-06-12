@@ -39,8 +39,8 @@ export default function Finder() {
         priceList.id,
         info.storage.id
       );
-      //console.log("List", list);
-      setFinderProductsList(list);
+      console.log("List", list);
+    setFinderProductsList(list);
     };
     fetch();
   }, [priceList, updateList, info.storage]);
@@ -117,7 +117,7 @@ export default function Finder() {
 
         <Divider sx={{ marginBottom: 1 }} />
 
-        <Box overflow="auto" height={"20.1rem"}>
+        <Box overflow="auto" height={"24.1rem"}>
           {currentProducts.map((product) => (
             <Grid item key={product.id} paddingTop={1}>
               <ProductCardFinder
@@ -127,7 +127,7 @@ export default function Finder() {
                 subcategory={{id: product.Subcategory.id, key: product.Subcategory.id, name: product.Subcategory.name}}
                 gross={product.SellingPrices[0].gross}
                 stockControl={product.stock_control}
-                availableStock={product.Stocks[0].available}
+                availableStock={product.availableStock}
               />
             </Grid>
           ))}

@@ -10,6 +10,9 @@ import useLioren from "./useLioren";
 import useCustomerAccountMovements from "./useCustomerAccountMovements";
 import usePayments from "./usePayments";
 import useDte from "./useDte";
+import useCreditNotes from "./useCreditNotes";
+import useProductCards from "./useProductCards";
+
 
 export default function useSalePoint() {
   const {
@@ -29,6 +32,7 @@ export default function useSalePoint() {
   const sales = useSales();
   const dte = useDte();
   const payments = usePayments();
+  const productCards = useProductCards();
   const lioren = useLioren();
   const sellingPrices = useSellingPrices();
   const cashRegisterMovements = useCashregisterMovements();
@@ -402,10 +406,10 @@ export default function useSalePoint() {
 
   const calcStocks = async (productId, quanty) => {
     const product = await products.findOneByIdToCart(productId);
-    const stock = product.Stocks.find(
-      (stock) => stock.StorageId === info.storage.id
-    );
-    const stockAvailable = stock.available;
+    const stock = await productCards.countAllGroupByProductStorageAndStatus(productId, info.storage.id, 0)
+
+
+    const stockAvailable = stock[0].count;
     const stockVirtual = stockAvailable - quanty;
 
     return {
@@ -478,17 +482,33 @@ export default function useSalePoint() {
 
   const createSaleStockMovement = async (
     productId,
-    StorageId,
+    storageId,
     quanty,
     saleId
   ) => {
     const stockProduct = await stocks.findOneByStorageAndProduct(
-      StorageId,
+      storageId,
       productId
     );
     const decrementStock = await stocks.decrementStock(stockProduct.id, quanty);
+
+    // Procesa las tarjetas de producto correspondientes
+    const product_cards = [];
+    for (let i = 0; i < quanty; i++) {
+      const productCard = await productCards.findFirstCardByProductAndStorage(productId, storageId)
+
+      const updateStatusCard = await productCards.updateStatus(productCard.id, 2);
+      console.log("Update Status Card", updateStatusCard);
+      if (!productCard) {
+        throw new Error(`Product card not found for product ${productId} and storage ${storageId}.`);
+      }
+      console.log("Product Card", productCard);
+      product_cards.push(productCard);
+    }
+
+
     const newStockMovement = await stocks.createDecrementMovement(
-      stockProduct.id,
+      1001,
       quanty,
       saleId,
       1
@@ -601,26 +621,24 @@ export default function useSalePoint() {
             );
           console.log("Sale Cash Register Movement: " + newSaleMovement.id);
 
-          
-     
-            // SALE PAYMENTS
-            const newPayment = await payments.create(
-              saleInfo.description,
-              1,
-              amount,
-              payment.credit ? amount : 0,
-              newSale.id,
-              user.id,
-              payment.payDate,
-              payment.id,
-              saleInfo.customerId,
-              newSaleMovement.id
-            );
-            console.log("Sale Payment: " + newPayment.id);
+          // SALE PAYMENTS
+          const newPayment = await payments.create(
+            saleInfo.description,
+            1,
+            amount,
+            payment.credit ? amount : 0,
+            newSale.id,
+            user.id,
+            payment.payDate,
+            payment.id,
+            saleInfo.customerId,
+            newSaleMovement.id
+          );
+          console.log("Sale Payment: " + newPayment.id);
 
-            // EXCLUDE PAYMENT METHOD 1001 (CASH)
-            if (saleInfo.customerId !== 1001) {
-              // SALE CUSTOMER ACCOUNT MOVEMENT PAYMENT
+          // EXCLUDE PAYMENT METHOD 1001 (CASH)
+          if (saleInfo.customerId !== 1001) {
+            // SALE CUSTOMER ACCOUNT MOVEMENT PAYMENT
             if (payment.credit == false) {
               const newCustomerPayAccountMovement =
                 await customerAccountMovements.createPayMovement(
@@ -751,7 +769,7 @@ export default function useSalePoint() {
 
   const clearCart = () => {
     setCartItems(activeCart, []);
-    setTotalsCart(activeCart, 0, 0, 0, 0);
+    setTotalsCart(activeCart, 0, 0, 0, 0, 0, 0);
   };
 
   const parseString = require("xml2js").parseString;
@@ -833,6 +851,55 @@ export default function useSalePoint() {
     };
   };
 
+  const voidSaleProcess = async (saleId, description, movementId) => {
+    const findSale = await sales.findOneById(saleId);
+    const items = await sales.findAllSaleDetailBySaleId(saleId);
+    console.log("Find Sale", findSale);
+    console.log("Items", items);
+
+    const voidMovement = await cashRegisterMovements.voidById(movementId)
+
+
+    if (findSale.customer_id === 1001) {  
+
+      // Crear una lista de promesas para procesar cada item
+      const itemPromises = items.map(async (item) => {
+        // Si el producto tiene control de stock
+        if (item.Product.stock_control === true) {
+          const stockProduct = await stocks.findOneByStorageAndProduct(
+            info.storage.id,  
+            item.ProductId
+          );
+          console.log("Stock Product", stockProduct);
+          // Nuevo movimiento de stock
+          const incrementStock = await stocks.createAddMovement(
+            stockProduct.id,
+            item.quanty,
+            saleId,
+            7
+          )
+
+          return stockProduct;
+        } else {
+          console.log("No stock control");
+          return null;
+        }
+
+
+      });
+
+
+
+      // Esperar a que todas las promesas se resuelvan
+      const stockResults = await Promise.all(itemPromises);
+      console.log("Stock Results", stockResults);
+    }
+
+  
+  };
+
+  const voidSaleNoClient = async (saleId, description, items) => {};
+
   return {
     submitItemToCart,
     getActiveCart,
@@ -848,5 +915,6 @@ export default function useSalePoint() {
     changeQuantityToItem,
     preProcessCart,
     clearCart,
+    voidSaleProcess,
   };
 }
