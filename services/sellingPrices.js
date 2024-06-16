@@ -178,6 +178,30 @@ function findTaxesBySellingPrice(sellingPriceId) {
     return price
 }
 
+//  findAllByPriceListGroupByProduct(price_list_id)
+
+function findAllByPriceListGroupByProduct(price_list_id) {
+    let data = { price_list_id }
+    const price = new Promise((resolve, reject) => {
+        fetch(server_url + 'sellingPrices/findAllByPriceListGroupByProduct', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return price
+}
+
 
 export {
     create,
@@ -187,5 +211,6 @@ export {
     update,
     destroy,
     findAllByProductAndPriceList,
-    findTaxesBySellingPrice
+    findTaxesBySellingPrice,
+    findAllByPriceListGroupByProduct
 }

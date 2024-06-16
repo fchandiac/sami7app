@@ -49,7 +49,6 @@ export default function NewProductComponent() {
         general,
         purchasePrice,
         sellingPrice,
-        stock
       );
       console.log(newProduct);
       setInitialState();
@@ -75,7 +74,7 @@ export default function NewProductComponent() {
                 <StepLabel>Precio de venta</StepLabel>
               </Step>
               <Step>
-                <StepLabel>Stock</StepLabel>
+                <StepLabel>Ver resumen</StepLabel>
               </Step>
             </Stepper>
           </Grid>
@@ -219,7 +218,7 @@ export default function NewProductComponent() {
               </Stack>
             </TitlePapper>
           </Grid>
-
+{/* 
           <Grid item xs={12}>
             <TitlePapper title={"Stock"}>
               <Stack direction={"column"}>
@@ -234,7 +233,7 @@ export default function NewProductComponent() {
                 </Typography>
               </Stack>
             </TitlePapper>
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} textAlign={"right"}>
             <Button

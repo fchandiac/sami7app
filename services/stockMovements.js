@@ -1,7 +1,8 @@
 const server_url = process.env.API_URL
 
-function create(add, decrement, balance, type, reference,  stock_id) {
-    let data = { add, decrement, balance, type, reference, stock_id }
+
+function create(description, add, decrement, balance, type, reference, user_id, product_id, storage_id) {
+    let data = { description, add, decrement, balance, type, reference, user_id, product_id, storage_id }
     const stockMovement = new Promise((resolve, reject) => {
         fetch(server_url + 'stockMovements/create', {
             method: 'POST',
@@ -22,11 +23,10 @@ function create(add, decrement, balance, type, reference,  stock_id) {
     return stockMovement
 }
 
-
-function findLastByStock(stock_id) {
-    let data = { stock_id }
+function findAllByProductAndStorage(product_id, storage_id) {
+    let data = { product_id, storage_id }
     const stockMovement = new Promise((resolve, reject) => {
-        fetch(server_url + 'stockMovements/findLastByStock', {
+        fetch(server_url + 'stockMovements/findAllByProductAndStorage', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -45,12 +45,10 @@ function findLastByStock(stock_id) {
     return stockMovement
 }
 
-
-
-function findAllByStock(stock_id) {
-    let data = { stock_id }
+function findLastByProductAndStorage(product_id, storage_id) {
+    let data = { product_id, storage_id }
     const stockMovement = new Promise((resolve, reject) => {
-        fetch(server_url + 'stockMovements/findAllByStock', {
+        fetch(server_url + 'stockMovements/findLastByProductAndStorage', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' }
@@ -71,6 +69,6 @@ function findAllByStock(stock_id) {
 
 export {
     create,
-    findLastByStock,
-    findAllByStock
+    findAllByProductAndStorage,
+    findLastByProductAndStorage
 }

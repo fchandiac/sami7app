@@ -67,9 +67,8 @@ export default function useProducts() {
     return product;
   };
 
-  const newProduct = async (general, purchase, selling, stock) => {
-    console.log("purchase", purchase);
-    console.log("selling", selling);
+  const newProduct = async (general, purchase, selling) => {
+
 
     const newPurchase = await purchasePrices.create(
       parseInt(removeThousandsSeparator(purchase.net)),
@@ -78,15 +77,7 @@ export default function useProducts() {
       purchase.taxes
     );
 
-    // const newSelling = await sellingPrices.create(
-    //   parseInt(removeThousandsSeparator(selling.net)),
-    //   parseInt(removeThousandsSeparator(selling.gross)),
-    //   selling.priceList.id,
-    //   newPurchase.id,
-    //   parseInt(removeThousandsSeparator(purchase.net)),
-    //   selling.utility,
-    //   selling.taxes
-    // );
+
 
     const newProduct = await products.create(
       general.name,
@@ -109,17 +100,17 @@ export default function useProducts() {
       selling.taxes
     );
 
-    const newProductStock = await stocks.createProductMovement(
-      stock.total,
-      stock.critical,
-      newProduct.id,
-      stock.storage.id
-    );
+    // const newProductStock = await stocks.createProductMovement(
+    //   stock.total,
+    //   stock.critical,
+    //   newProduct.id,
+    //   stock.storage.id
+    // );
 
     return {
       newPurchase: newPurchase,
       newProduct: newProduct,
-      newProductStock: newProductStock,
+      // newProductStock: newProductStock,
       newSelling: newSellingPrice,
     };
   };

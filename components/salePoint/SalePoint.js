@@ -160,6 +160,7 @@ export default function SalePoint() {
                   }
                 }}
                 //defaultValue={{ id: 1001, key: 1001, name: 'MINORISTA' }}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
                   <TextField

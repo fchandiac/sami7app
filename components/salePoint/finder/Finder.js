@@ -17,11 +17,14 @@ import useProducts from "@/components/hooks/useProducts";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import useSellingPrices from "@/components/hooks/useSellingPrices";
+
 
 export default function Finder() {
   const { finderProductsList, setFinderProductsList, priceList, info } =
     useSalePointContext();
   const products = useProducts();
+  const sellingPrices = useSellingPrices();
   const [searchWord, setSearchWord] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -35,6 +38,10 @@ export default function Finder() {
   useEffect(() => {
     // console.log("Finder: ", priceList, info.storage);
     const fetch = async () => {
+      const productsList = await sellingPrices.findAllByPriceList(priceList.id);
+
+      console.log("ProductsList", productsList);
+      
       const list = await products.findAllToSalePoint(
         priceList.id,
         info.storage.id

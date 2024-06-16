@@ -120,6 +120,13 @@ export default function useSellingPrices() {
     return taxes;
   }
 
+  //  findAllByPriceListGroupByProduct(price_list_id)
+
+  const findAllByPriceListGroupByProduct = async (price_list_id) => {
+    const price = await sellingPrices.findAllByPriceListGroupByProduct(price_list_id);
+    return price;
+  }
+
   return {
     create,
     findAll,
@@ -133,5 +140,6 @@ export default function useSellingPrices() {
     inverseUtilityAmount,
     findAllByProductAndPriceList,
     findTaxesBySellingPrice,
+    findAllByPriceListGroupByProduct
   };
 }

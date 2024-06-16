@@ -313,6 +313,29 @@ function voidById(id) {
 }
 
 
+
+function updateDocumentId(id, document_id) {
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/updatedocumentId', {
+            method: 'POST',
+            body: JSON.stringify({ id, document_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return sale
+}
+
+
 export {
     create,
     findAll,
@@ -327,7 +350,8 @@ export {
     findAllBetweenDates,
     findAllBetweenDatesByCustomer,
     findAllBetweenDatesByUser,
-    voidById
+    voidById,
+    updateDocumentId
 }
 
 

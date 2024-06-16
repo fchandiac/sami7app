@@ -21,6 +21,9 @@ import { useAppContext } from "@/appProvider";
 import usePurchases from "@/components/hooks/usePurchases";
 import useReceptions from "@/components/hooks/useReceptions";
 import useProductCards from "@/components/hooks/useProductCards";
+import useStocks from "@/components/hooks/useStocks";
+import usePaymentMethods from "@/components/hooks/usePaymentMethods";
+
 
 export default function NewPurchaseForm(props) {
   // prop para definir uso cambiar luego cuando se cree OrdendeCompra
@@ -34,6 +37,8 @@ export default function NewPurchaseForm(props) {
   const purchases = usePurchases();
   const receptions = useReceptions();
   const productCards = useProductCards();
+  const stocks = useStocks();
+  const paymentMethods = usePaymentMethods();
 
   const [description, setDescription] = useState("");
 
@@ -45,6 +50,9 @@ export default function NewPurchaseForm(props) {
 
   const [selectedReference, setSelectedReference] = useState(null);
   const [reference_id, setReference_id] = useState("");
+
+  const [paymentMethodsOptions, setPaymentMethodsOptions] = useState([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   const [productList, setProductList] = useState([]);
   const { grossPrice, taxesAmount } = useUtils();
@@ -68,9 +76,16 @@ export default function NewPurchaseForm(props) {
       setStorageOptions(data);
     };
 
+    const fetchPaymentMethods = async () => {
+      const data = await paymentMethods.findAll();
+      const filterData = data.filter((item) => item.id !== 1001);
+      setPaymentMethodsOptions(filterData);
+    }
+
     fetchProviders();
     fetchProducts();
     fetchStorages();
+    fetchPaymentMethods();
   }, []);
 
   const addProduct = async (productId) => {
@@ -285,6 +300,15 @@ export default function NewPurchaseForm(props) {
             console.log("New Card", newCard);
           }
         }
+
+        if (item.stockControl) {
+          const newStockMovemet = await stocks.createPurchaseStockMovement(
+            item.quanty,
+            newPurchase.id,
+            item.id,
+            item.storage.id
+          );
+        }
       });
 
       openSnack("Compra guardada", "success");
@@ -361,6 +385,7 @@ export default function NewPurchaseForm(props) {
                   )}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   label="N° de referencia"
@@ -370,6 +395,7 @@ export default function NewPurchaseForm(props) {
                   fullWidth
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <Autocomplete
                   options={providersOptions}
@@ -388,6 +414,17 @@ export default function NewPurchaseForm(props) {
                   renderInput={(params) => (
                     <TextField {...params} label="Almacen" size="small" />
                   )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Descripción"
+                  size="small"
+                  multiline
+                  rows={2}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  fullWidth
                 />
               </Grid>
               <Grid item xs={12}>
@@ -439,20 +476,34 @@ export default function NewPurchaseForm(props) {
                 <Typography fontSize={14}>Subtotal</Typography>
                 <Box flexGrow={0.3}></Box>
               </Grid>
+
               <Divider />
               {cart.items.map((item, index) => (
-                <PurchaseProductCard
-                  product={item}
-                  index={index}
-                  updateStockControl={updateStockControl}
-                  incrementQuanty={incrementQuanty}
-                  decrementQuanty={decrementQuanty}
-                  removeProduct={removeProduct}
-                  updateItem={updateItem}
-                />
+                <Grid item xs={12} key={index}>
+                  <PurchaseProductCard
+                    product={item}
+                    index={index}
+                    updateStockControl={updateStockControl}
+                    incrementQuanty={incrementQuanty}
+                    decrementQuanty={decrementQuanty}
+                    removeProduct={removeProduct}
+                    updateItem={updateItem}
+                  />
+                </Grid>
               ))}
+              <Divider sx={{mt:1}}/>
+              <Grid item xs={12} textAlign={"right"}>
+                <Typography fontSize={20} fontWeight={"bold"}>
+                  Total:{" "}
+                  {cart.total.toLocaleString("es-CL", {
+                    style: "currency",
+                    currency: "CLP",
+                  })}
+                </Typography>
+              </Grid>
             </Paper>
           </Grid>
+
           <Grid item xs={12} textAlign={"right"}>
             <Button variant="contained" color="primary" onClick={() => save()}>
               Guardar

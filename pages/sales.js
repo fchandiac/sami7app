@@ -35,6 +35,7 @@ function Sales() {
       useEffect(() => {
         const fetchSales = async () => {
           const sales_ = await sales.findAllBetweenDates(filterDates.start, filterDates.end);
+          console.log(sales_);
           const salesList_ = sales_.map((sale) => ({
             ...sale,
             userName: sale.User.name,

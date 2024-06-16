@@ -44,22 +44,29 @@ export default function Document(props) {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>#</TableCell>
-              <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>Producto</TableCell>
-              <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>Subtotal</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>#</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Producto</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Subtotal</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Desc.</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {items.map((item, index) => (
               <TableRow key={index}>
-                <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
                   {item.quanty}
                 </TableCell>
-                <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
                   {item.name}
                 </TableCell>
-                <TableCell sx={{ fontSize: 10, p: 0, pl: 1 }}>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
                   {item.subTotal.toLocaleString("es-CL", {
+                    style: "currency",
+                    currency: "CLP",
+                  })}
+                </TableCell>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                  {item.discount.toLocaleString("es-CL", {
                     style: "currency",
                     currency: "CLP",
                   })}
@@ -74,21 +81,21 @@ export default function Document(props) {
 
   return (
     <>
-      <Grid container spacing={1} direction={"column"} width={"80mm"}>
+      <Grid container spacing={1} direction={"column"}>
         <Grid item textAlign={"center"}>
           <Typography variant={"h7"} sx={{ p: 0, m: 0, lineHeight: 1 }}>
             {documentData.comerceInfo.fantasyName}
           </Typography>
-          <Typography fontSize={10} sx={{ p: 0, m: 0, lineHeight: 1 }}>
+          <Typography fontSize={12} sx={{ p: 0, m: 0, lineHeight: 1 }}>
             {documentData.comerceInfo.name}
           </Typography>
-          <Typography fontSize={10} sx={{ p: 0, m: 0, lineHeight: 1 }}>
+          <Typography fontSize={12} sx={{ p: 0, m: 0, lineHeight: 1 }}>
             {documentData.comerceInfo.rut}
           </Typography>
-          <Typography fontSize={10} sx={{ p: 0, m: 0, lineHeight: 1 }}>
+          <Typography fontSize={12} sx={{ p: 0, m: 0, lineHeight: 1 }}>
             {documentData.comerceInfo.address}
           </Typography>
-          <Typography fontSize={10} sx={{ p: 0, m: 0, lineHeight: 1 }}>
+          <Typography fontSize={12} sx={{ p: 0, m: 0, lineHeight: 1 }}>
             {documentData.comerceInfo.phone}
           </Typography>
         </Grid>
@@ -101,15 +108,15 @@ export default function Document(props) {
             fontSize={12}
             sx={{ p: 0, m: 0, lineHeight: 1, fontWeight: "bold" }}
           >
-            {typeDocument() + " Nro " + documentData.referenceId}
+            {typeDocument() + " Nº " + documentData.referenceId}
           </Typography>
         </Grid>
         <Grid item textAlign={"center"}>
           <Typography
-            fontSize={12}
+            fontSize={11}
             sx={{ p: 0, m: 0, lineHeight: 0.5, fontWeight: "bold" }}
           >
-            {"Venta Nro " + documentData.saleId}
+            {"Venta Nº " + documentData.saleId}
           </Typography>
         </Grid>
 
@@ -126,7 +133,7 @@ export default function Document(props) {
             </Typography>
             {documentData.payments.map((payment) => (
               <Typography
-                fontSize={10}
+                fontSize={12}
                 sx={{ pl: 1, pr: 1, lineHeight: 1 }}
                 textAlign={"left"}
               >
@@ -151,7 +158,7 @@ export default function Document(props) {
               })}
             </Typography>
             <Typography
-              fontSize={10}
+              fontSize={12}
               sx={{ pl: 1, pr: 1, lineHeight: 1 }}
               textAlign={"right"}
             >
@@ -162,7 +169,7 @@ export default function Document(props) {
               })}
             </Typography>
             <Typography
-              fontSize={10}
+              fontSize={12}
               sx={{ pl: 1, pr: 1, lineHeight: 1 }}
               textAlign={"right"}
             >
@@ -174,7 +181,7 @@ export default function Document(props) {
             </Typography>
             <Typography
               display={documentData.documentType == 1 ? "none" : "block"}
-              fontSize={10}
+              fontSize={12}
               sx={{ pl: 1, pr: 1, lineHeight: 1 }}
               textAlign={"right"}
             >
@@ -186,7 +193,7 @@ export default function Document(props) {
             </Typography>
             <Typography
               display={documentData.documentType == 1 ? "none" : "block"}
-              fontSize={10}
+              fontSize={12}
               sx={{ pl: 1, pr: 1, lineHeight: 1 }}
               textAlign={"right"}
             >
@@ -197,7 +204,7 @@ export default function Document(props) {
               })}
             </Typography>
             <Typography
-              fontSize={10}
+              fontSize={12}
               sx={{ pl: 1, pr: 1, lineHeight: 1 }}
               textAlign={"right"}
             >
@@ -212,7 +219,7 @@ export default function Document(props) {
 
         <Grid item display={documentData.documentType == 1 ? "none" : "block"}>
           <Typography
-            fontSize={10}
+            fontSize={12}
             textAlign={"center"}
             sx={{ p: 0, m: 0, lineHeight: 1 }}
           >
@@ -224,7 +231,7 @@ export default function Document(props) {
           </Typography>
         </Grid>
 
-        <Grid item textAlign={"center"} p={0} m={0} width={"100%"}>
+        <Grid item textAlign={"center"} p={0} m={0}>
           <Pdf417 stamp={documentData.stamp} />
         </Grid>
 
@@ -239,21 +246,21 @@ export default function Document(props) {
         </Grid>
         <Grid item display={documentData.documentType == 1 ? "none" : "block"}>
           <Typography
-            fontSize={8}
+            fontSize={10}
             textAlign={"center"}
             sx={{ p: 0, m: 0, lineHeight: 1 }}
           >
             Timbre Electronico SII
           </Typography>
           <Typography
-            fontSize={8}
+            fontSize={10}
             textAlign={"center"}
             sx={{ p: 0, m: 0, lineHeight: 1 }}
           >
             Res. Nro 80 de 2014-08-22
           </Typography>
           <Typography
-            fontSize={8}
+            fontSize={10}
             textAlign={"center"}
             sx={{ p: 0, m: 0, lineHeight: 1 }}
           >
@@ -269,7 +276,7 @@ function documenteDataDefault() {
   return {
     documentType: 1,
     total: 0,
-    suvTotal: 0,
+    subTotal: 0,
     subjectTotal: 0,
     exemptTotal: 0,
     discounts: 0,

@@ -170,6 +170,13 @@ export default function useSales() {
     return sale;
   }
 
+  // updatedocumentId(id, document_id)
+
+  const updateDocumentId = async (id, document_id) => {
+    const sale = await sales.updateDocumentId(id, document_id);
+    return sale;
+  }
+
 
   return {
     create,
@@ -186,6 +193,7 @@ export default function useSales() {
     findAllSaleDetailBySaleId,
     findAllBetweenDates,
     findAllBetweenDatesByCustomer,
-    voidById
+    voidById,
+    updateDocumentId,
   };
 }

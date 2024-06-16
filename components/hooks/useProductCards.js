@@ -43,6 +43,16 @@ const products = require('@/services/productCards')
 //     res.json(productCard)
 // })
 
+const statusList = {
+    0: "available",
+    1: "reserved",
+    2: "sold",
+    3: "returned",
+    4: "to receive",
+    5: "to dispatch",
+    6: 'internal consumption'
+  };
+
 export default function useProductCards() {
     const create = async (product_id, puchase_net, purchase_gross, purchase_tax, sale_net, sale_gross, sale_tax, utility, sale_price_list_id, sale_id, sale_detail_id, purchase_id, purchase_detail_id, storage_id, reception_id, status) => {
         const productCard = await products.create(product_id, puchase_net, purchase_gross, purchase_tax, sale_net, sale_gross, sale_tax, utility, sale_price_list_id, sale_id, sale_detail_id, purchase_id, purchase_detail_id, storage_id, reception_id, status)
@@ -100,6 +110,27 @@ export default function useProductCards() {
         return productCard
     }
 
+    //updateSaleId(id, sale_id) 
+
+    const updateSaleId = async (id, sale_id) => {
+        const productCard = await products.updateSaleId(id, sale_id)
+        return productCard
+    }
+
+    // function findAllBySale(sale_id)
+
+    const findAllBySale = async (sale_id) => {
+        const productCard = await products.findAllBySale(sale_id)
+        return productCard
+    }
+
+    // function updateSaleValues(id, sale_id, sale_net, sale_tax, sale_gross, sale_price_list_id) 
+
+    const updateSaleValues = async (id, sale_id, sale_net, sale_tax, sale_gross, sale_price_list_id) => {
+        const productCard = await products.updateSaleValues(id, sale_id, sale_net, sale_tax, sale_gross, sale_price_list_id)
+        return productCard
+    }
+
 
     return {
         create,
@@ -111,7 +142,10 @@ export default function useProductCards() {
         updateStatus,
         findAllGroupByProduct,
         findFirstCardByProductAndStorage,
-        findAllGroupByProductAvailable
+        findAllGroupByProductAvailable,
+        updateSaleId,
+        findAllBySale,
+        updateSaleValues
     }
 
 }

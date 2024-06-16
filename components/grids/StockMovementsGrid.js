@@ -20,6 +20,7 @@ export default function StockMovementsGrid(props) {
 
   const columns = [
     { field: "id", headerName: "Id", flex: 1 },
+    { field: "description", headerName: "Descripción", flex: 1},
     { field: "add", headerName: "Incremento", flex: 1 },
     { field: "decrement", headerName: "Descuento", flex: 1 },
     { field: "balance", headerName: "Balance", flex: 1 },
@@ -37,11 +38,12 @@ export default function StockMovementsGrid(props) {
       headerName: "Fecha",
       flex: 1,
       type: "date",
+      headerClassName: "data-grid-last-column-header",
       valueFormatter: (params) => {
         return moment(params.value).format("DD-MM-YYYY HH:mm");
       },
     },
-    { field: "stock_id", headerName: "Stock", flex: 1,},
+
   ];
 
   return (

@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import useProductCards from "@/components/hooks/useProductCards";
+import StockCard from "@/components/cards/StockCard";
+import { Description } from "@mui/icons-material";
 
 
 
@@ -42,7 +44,6 @@ function Stocks() {
   useEffect(() => {
     const fetchProductCards = async () => {
       const productCardsList = await productCards.findAllGroupByProductAvailable();
-      console.log(productCardsList);
       setStockList(productCardsList);
     };
     fetchProductCards();
@@ -59,16 +60,19 @@ function Stocks() {
 
   return (
     <>
+    <Grid container spacing={1}>
     {
-      stockList.map((stock) => {
+      stockList.map((stock, index) => {
         return (
-          <div key={stock.Product.product_id}>
-            <p>{stock.Product.name}</p>
-            <p>stock total: {stock.total}</p>
-          </div>
+          <Grid item xs={12} md={6} key={index}>
+
+         <StockCard productId={stock.product_id} />
+          </Grid>
+
         );
       })
     }
+    </Grid>
       {/* <StocksGrid update={gridState} /> */}
     </>
   );
@@ -99,22 +103,20 @@ function Movements() {
   useEffect(() => {
     const fetchMovements = async () => {
       if (selectedProduct && selectedStorage) {
-        const stock = await stocks.findOneByStorageAndProduct(
-          selectedStorage.id,
-          selectedProduct.id
-        );
-        const movements = await stocks.findAllMovementsByStock(stock.id);
+
+      
+        const movements =  await stocks.findAllStockMovementsByProductAndStorage(selectedProduct.id, selectedStorage.id);
         console.log(movements);
         const movementsList = movements.map((movement) => {
           return {
             id: movement.id,
+            description: movement.description,
             add: movement.add,
             decrement: movement.decrement,
             balance: movement.balance,
             reference: movement.reference,
             type: movement.type,
             created_at: movement.created_at,
-            stock_id: movement.stock_id,
           };
         })
         // console.log(movements);
@@ -193,7 +195,11 @@ function Movements() {
               </Paper>
             </Grid>
             <Grid item>
-              <StockMovementForm product={selectedProduct} storage={selectedStorage} afterSubmit={()=>{setUpdateMovementList(!updateMovementList)}}/>
+              <StockMovementForm product={selectedProduct} storage={selectedStorage} afterSubmit={()=>{
+                setUpdateMovementList(!updateMovementList);
+                setSelectedProduct(null);
+                setSelectedStorage(null);
+                }}/>
             </Grid>
           </Grid>
         </Grid>

@@ -259,6 +259,72 @@ function findAllGroupByProductAvailable() {
     return productCard
 }
 
+//updateSaleId(id, sale_id)
+
+function updateSaleId(id, sale_id) {
+    const productCard = new Promise((resolve, reject) => {
+        fetch(server_url + 'productCards/updateSaleId', {
+            method: 'POST',
+            body: JSON.stringify({ id, sale_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return productCard
+}
+
+function findAllBySale(sale_id){
+    const productCard = new Promise((resolve, reject) => {
+        fetch(server_url + 'productCards/findAllBySale', {
+            method: 'POST',
+            body: JSON.stringify({ sale_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return productCard
+}
+
+function updateSaleValues(id, sale_id, sale_net, sale_tax, sale_gross, sale_price_list_id) {
+    const productCard = new Promise((resolve, reject) => {
+        fetch(server_url + 'productCards/updateSaleValues', {
+            method: 'POST',
+            body: JSON.stringify({ id, sale_id, sale_net, sale_tax, sale_gross, sale_price_list_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return productCard
+
+}
+
 export {
     create,
     findAllByProduct,
@@ -269,5 +335,8 @@ export {
     updateStatus,
     findAllGroupByProduct,
     findFirstCardByProductAndStorage,
-    findAllGroupByProductAvailable
+    findAllGroupByProductAvailable,
+    updateSaleId,
+    findAllBySale,
+    updateSaleValues
 }

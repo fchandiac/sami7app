@@ -13,7 +13,6 @@ import useDte from "./useDte";
 import useCreditNotes from "./useCreditNotes";
 import useProductCards from "./useProductCards";
 
-
 export default function useSalePoint() {
   const {
     setCartItems,
@@ -78,8 +77,17 @@ export default function useSalePoint() {
   };
 
   const formatProductToCart = async (product) => {
-    let stock = product.Stocks[0].available;
-    let virtualStock = product.Stocks[0].available;
+    let stock = await productCards.countAllGroupByProductStorageAndStatus(
+      product.id,
+      info.storage.id,
+      0
+    );
+    let virtualStock =
+      await productCards.countAllGroupByProductStorageAndStatus(
+        product.id,
+        info.storage.id,
+        0
+      );
 
     console.log("Product", product);
 
@@ -87,6 +95,9 @@ export default function useSalePoint() {
       const stocks = await calcStocks(product.id, 1);
       stock = stocks.stockAvailable;
       virtualStock = stocks.stockVirtual;
+    } else {
+      stock = 0;
+      virtualStock = 0;
     }
 
     const itemTaxes = await sellingPrices.findTaxesBySellingPrice(
@@ -379,6 +390,7 @@ export default function useSalePoint() {
   const submitItemToCart = async (productId) => {
     const cart = getActiveCart();
     const items = cart.items;
+
     const product = await products.findOneByIAndStorageAndPriceList(
       productId,
       info.storage.id,
@@ -389,8 +401,8 @@ export default function useSalePoint() {
 
     const itemInCart = items.find((item) => item.id === product.id);
 
-    // console.log('Product', product)
-    // console.log('Stock', stock)
+    console.log("Product", product);
+    console.log("ItemInCart", itemInCart);
 
     if (itemInCart === undefined) {
       const item = await formatProductToCart(product);
@@ -405,11 +417,13 @@ export default function useSalePoint() {
   };
 
   const calcStocks = async (productId, quanty) => {
-    const product = await products.findOneByIdToCart(productId);
-    const stock = await productCards.countAllGroupByProductStorageAndStatus(productId, info.storage.id, 0)
+    const stock = await productCards.countAllGroupByProductStorageAndStatus(
+      productId,
+      info.storage.id,
+      0
+    );
 
-
-    const stockAvailable = stock[0].count;
+    const stockAvailable = stock[0]?.count || 0;
     const stockVirtual = stockAvailable - quanty;
 
     return {
@@ -421,11 +435,7 @@ export default function useSalePoint() {
   const authSubmitItemToCart = async (productId) => {
     const cart = getActiveCart();
     const items = cart.items;
-    const product = await products.findOneByIAndStorageAndPriceList(
-      productId,
-      info.storage.id,
-      priceList.id
-    );
+    const product = await products.findOneById(productId);
 
     if (product.stock_control === true) {
       const itemInCart = items.find((item) => item.id === product.id);
@@ -484,35 +494,48 @@ export default function useSalePoint() {
     productId,
     storageId,
     quanty,
-    saleId
+    saleId,
+    saleNet,
+    saleTax,
+    saleGross,
+    priceListId
   ) => {
-    const stockProduct = await stocks.findOneByStorageAndProduct(
-      storageId,
-      productId
-    );
-    const decrementStock = await stocks.decrementStock(stockProduct.id, quanty);
-
-    // Procesa las tarjetas de producto correspondientes
     const product_cards = [];
     for (let i = 0; i < quanty; i++) {
-      const productCard = await productCards.findFirstCardByProductAndStorage(productId, storageId)
-
-      const updateStatusCard = await productCards.updateStatus(productCard.id, 2);
-      console.log("Update Status Card", updateStatusCard);
+      const productCard = await productCards.findFirstCardByProductAndStorage(
+        productId,
+        storageId
+      );
       if (!productCard) {
-        throw new Error(`Product card not found for product ${productId} and storage ${storageId}.`);
+        throw new Error(
+          `Product card not found for product ${productId} and storage ${storageId}.`
+        );
       }
+      const updateStatusCard = await productCards.updateStatus(
+        productCard.id,
+        2
+      ); // cambia status a vendido
+      const updateSaleInfoCard = await productCards.updateSaleValues(
+        productCard.id,
+        saleId,
+        saleNet,
+        saleTax,
+        saleGross,
+        priceListId
+      );
       console.log("Product Card", productCard);
+      // console.log("Update Status Card", updateStatusCard);
+      // console.log("Update Sale Id Card", updateSaleIdCard);
       product_cards.push(productCard);
     }
 
-
-    const newStockMovement = await stocks.createDecrementMovement(
-      1001,
+    const newStockMovement = await stocks.createSaleStockMovement(
       quanty,
       saleId,
-      1
+      productId,
+      storageId
     );
+
     return newStockMovement;
   };
 
@@ -592,73 +615,87 @@ export default function useSalePoint() {
       // STOCK MOVEMENTS
       const items = saleInfo.items;
       const stockMovements = await Promise.all(
+        //Modificación en createSaleStockMovement para actualizar todas las cards correspondientes a la venta esta pendiente.
         items.map(async (item) => {
           if (item.stockControl === true) {
             return await createSaleStockMovement(
               item.id,
               info.storage.id,
               item.quanty,
-              newSale.id
+              newSale.id,
+              item.net,
+              item.tax,
+              item.gross,
+              item.sale_price_list_id
             );
           }
         })
       );
 
       // PAYMENTS
-      const payMovements = await Promise.all(
-        saleInfo.pays.map(async (payment) => {
-          const amount = payment.amount - payment.change;
-          const isCash = payment.id == 1001 ? true : false;
+      // const payMovements = await Promise.all(
+      //   saleInfo.pays.map(async (payment) => {
+      //     const amount = payment.amount - payment.change;
+      //     const isCash = payment.id == 1001 ? true : false;
+      //     const isCresditCustomer = payment.id == 1002 ? true : false;
 
-          // SALE CASH REGISTER MOVEMENT
-          const newSaleMovement =
-            await cashRegisterMovements.createSaleMovement(
-              info.cashRegisterId,
-              amount,
-              newSale.id,
-              isCash,
-              payment.id
-            );
-          console.log("Sale Cash Register Movement: " + newSaleMovement.id);
+      //     // SALE CASH REGISTER MOVEMENT
+      //     const newSaleMovement =
+      //       await cashRegisterMovements.createSaleMovement(
+      //         info.cashRegisterId,
+      //         amount,
+      //         newSale.id,
+      //         isCash,
+      //         payment.id
+      //       );
+      //     console.log("Sale Cash Register Movement: " + newSaleMovement.id);
 
-          // SALE PAYMENTS
-          const newPayment = await payments.create(
-            saleInfo.description,
-            1,
-            amount,
-            payment.credit ? amount : 0,
-            newSale.id,
-            user.id,
-            payment.payDate,
-            payment.id,
-            saleInfo.customerId,
-            newSaleMovement.id
-          );
-          console.log("Sale Payment: " + newPayment.id);
+      //     // SALE PAYMENTS
+      //     const newPayment = await payments.create(
+      //       saleInfo.description,
+      //       1,
+      //       amount,
+      //       payment.credit ? amount : 0,
+      //       newSale.id,
+      //       user.id,
+      //       payment.payDate,
+      //       payment.id,
+      //       saleInfo.customerId,
+      //       newSaleMovement.id
+      //     );
 
-          // EXCLUDE PAYMENT METHOD 1001 (CASH)
-          if (saleInfo.customerId !== 1001) {
-            // SALE CUSTOMER ACCOUNT MOVEMENT PAYMENT
-            if (payment.credit == false) {
-              const newCustomerPayAccountMovement =
-                await customerAccountMovements.createPayMovement(
-                  saleInfo.description,
-                  amount,
-                  newSale.id,
-                  saleInfo.customerId
-                );
-              console.log(
-                "Pay no credit Customer Account Movement: " +
-                  newCustomerPayAccountMovement.id
-              );
-            }
-          }
-        })
-      );
+      //     console.log("Sale Payment: " + newPayment.id);
+
+      //     // EXCLUDE PAYMENT METHOD 1001 (CASH)
+      //     if (saleInfo.customerId !== 1001) {
+      //       // SALE CUSTOMER ACCOUNT MOVEMENT PAYMENT
+      //       if (payment.credit == false) {
+      //         if (payment.id !== 1002) {
+      //           const newCustomerPayAccountMovement =
+      //             await customerAccountMovements.createPayMovement(
+      //               saleInfo.description,
+      //               amount,
+      //               newSale.id,
+      //               saleInfo.customerId
+      //             );
+      //           console.log(
+      //             "Pay no credit Customer Account Movement: " +
+      //               newCustomerPayAccountMovement.id
+      //           );
+      //         }
+      //       }
+      //     }
+      //   })
+      // );
+      processPayments(newSale, saleInfo);
 
       // SALE DETAILS
+
+      const productCardsList = await productCards.findAllBySale(newSale.id);
+      console.log("Product Cards List", productCardsList);
       const saleDetails = await Promise.all(
         items.map(async (item) => {
+          console.log("Item", item);
           return await sales.createSaleDetail(
             item.quanty,
             item.gross,
@@ -673,9 +710,20 @@ export default function useSalePoint() {
         })
       );
 
-      console.log("New Sale", newSale);
-      console.log("TiketInfo", dte.ticketProcess(saleInfo));
-      return dte.ticketProcess(saleInfo);
+      // console.log("New Sale", newSale);
+      // console.log("TiketInfo", dte.ticketProcess(saleInfo));
+      // const boletainfo = await dte.boletaProcess(saleInfo);
+      // console.log("Boletainfo", boletainfo);
+
+      const dteProcess = await dte.documentProcess(saleInfo);
+
+      const updateSaleDocumentId = await sales.updateDocumentId(dteProcess.saleId, dteProcess.documentId);
+      console.log("Update Sale Document Id", updateSaleDocumentId);
+
+      console.log("DTE Process", dteProcess);
+      console.log("SaleId", dteProcess.saleId);
+      //return dte.ticketProcess(saleInfo);
+      return dteProcess;
     } catch (error) {
       // Manejo de errores
       console.error("Error en globalSaleProcess:", error);
@@ -683,64 +731,69 @@ export default function useSalePoint() {
     }
   };
 
-  // const saleProcess = (payments, change) => {
-  //   // Obtiene el carrito activo
-  //   const cart = getActiveCart();
-  //   // Obtiene los artículos del carrito
-  //   const items = cart.items;
+  const processPayments = async (newSale, saleInfo_) => {
+    for (const payment of saleInfo_.pays) {
+      const amount = payment.amount - payment.change;
+      const isCash = payment.id == 1001 ? true : false;
+      const isCreditCustomer = payment.id == 1002 ? true : false;
+  
+      // SALE CASH REGISTER MOVEMENT
+      const newSaleMovement = await cashRegisterMovements.createSaleMovement(
+        info.cashRegisterId,
+        amount,
+        newSale.id,
+        isCash,
+        payment.id
+      );
+      console.log("Sale Cash Register Movement: " + newSaleMovement.id);
+  
+      // SALE PAYMENTS
+      const newPayment = await payments.create(
+        saleInfo_.description,
+        1,
+        amount,
+        payment.credit ? amount : 0,
+        newSale.id,
+        user.id,
+        payment.payDate,
+        payment.id,
+        saleInfo_.customerId,
+        newSaleMovement.id
+      );
+      console.log("Sale Payment: " + newPayment.id);
+  
+      // EXCLUDE PAYMENT METHOD 1001 (CASH)
+      if (saleInfo_.customerId !== 1001) {
+        // SALE CUSTOMER ACCOUNT MOVEMENT PAYMENT
+        if (payment.credit == false) {
+          if (payment.id !== 1002) {
+            const newCustomerPayAccountMovement = await customerAccountMovements.createPayMovement(
+              saleInfo_.description,
+              amount,
+              newSale.id,
+              saleInfo_.customerId
+            );
+            console.log(
+              "Pay no credit Customer Account Movement: " +
+                newCustomerPayAccountMovement.id
+            );
+          }
+        }
+      }
+    }
+  };
+  
 
-  //   // Obtiene el total del carrito
-  //   const total = cart.total;
-  //   // Obtiene el total neto del carrito
-  //   const net = cart.net;
-  //   // Obtiene el impuesto total del carrito
-  //   const tax = cart.tax;
-  //   // Obtiene los descuentos aplicados al carrito
-  //   const discounts = cart.discounts;
+  
+  // Llamar a la función para procesar los pagos
+  // processPayments().then(() => {
+  //   console.log("Todos los pagos han sido procesados.");
+  // }).catch(error => {
+  //   console.error("Hubo un error al procesar los pagos:", error);
+  // });
+  
 
-  //   // Procesa cada pago en paralelo utilizando la función map con async/await
-  //   const pay = payments.map(async (payment) => {
-  //     const amount = parseInt(removeThousandsSeparator(payment.amount));
-  //     const toPay = amount - change;
-  //     console.log("Payment", payment);
-  //     +console.log("amount", amount);
-
-  //     const newSaleMovement = await cashRegisterMovements.createSaleMovement(
-  //       info.cashRegisterId,
-  //       toPay,
-  //       cart.id,
-  //       payment.credit,
-  //       payment.paymentMethodId
-  //     );
-
-  //     // return newSaleMovement;
-  //   });
-
-  //   items.map(async (item) => {
-  //     console.log(item.stockControl);
-  //     if (item.stockControl === true) {
-  //       const stockProduct = await stocks.findOneByStorageAndProduct(
-  //         info.storage.id,
-  //         item.id
-  //       );
-  //       const quanty = item.quanty;
-  //       const newStocDecrement = await stocks.decrementStock(
-  //         stockProduct.id,
-  //         quanty
-  //       );
-  //       const newStockMovement = await stocks.createDecrementMovement(
-  //         stockProduct.id,
-  //         quanty,
-  //         null,
-  //         1
-  //       );
-  //     }
-  //     // return newSaleDetail;
-  //   });
-  //   console.log("Cart", cart);
-  //   console.log("Items", items);
-  //   clearCart();
-  // };
+  const saleDetail = async (item, saleId) => {};
 
   const preProcessCart = () => {
     const cart = getActiveCart();
@@ -857,17 +910,15 @@ export default function useSalePoint() {
     console.log("Find Sale", findSale);
     console.log("Items", items);
 
-    const voidMovement = await cashRegisterMovements.voidById(movementId)
+    const voidMovement = await cashRegisterMovements.voidById(movementId);
 
-
-    if (findSale.customer_id === 1001) {  
-
+    if (findSale.customer_id === 1001) {
       // Crear una lista de promesas para procesar cada item
       const itemPromises = items.map(async (item) => {
         // Si el producto tiene control de stock
         if (item.Product.stock_control === true) {
           const stockProduct = await stocks.findOneByStorageAndProduct(
-            info.storage.id,  
+            info.storage.id,
             item.ProductId
           );
           console.log("Stock Product", stockProduct);
@@ -877,25 +928,19 @@ export default function useSalePoint() {
             item.quanty,
             saleId,
             7
-          )
+          );
 
           return stockProduct;
         } else {
           console.log("No stock control");
           return null;
         }
-
-
       });
-
-
 
       // Esperar a que todas las promesas se resuelvan
       const stockResults = await Promise.all(itemPromises);
       console.log("Stock Results", stockResults);
     }
-
-  
   };
 
   const voidSaleNoClient = async (saleId, description, items) => {};
@@ -918,3 +963,6 @@ export default function useSalePoint() {
     voidSaleProcess,
   };
 }
+
+
+

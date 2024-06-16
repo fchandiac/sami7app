@@ -192,7 +192,13 @@ export default function PayDialog(props) {
     } else if (getNoCashPayments(list) > cart.total) {
       auth = false;
       message = "El monto con medios no efectivo es mayor al monto total";
-    }
+    } else if ( list.find((pay) => pay.id === 1002) && getCreditCustomerPay(list) > customerBalance){
+   
+        auth = false;
+        message = "Saldo insuficiente en cuenta del cliente";
+   
+     
+    } 
 
     setAuthPayment(auth);
     setAlertMessage(message);
@@ -202,6 +208,11 @@ export default function PayDialog(props) {
     const noCash = list.filter((pay) => pay.id !== 1001);
     const sumNoCash = noCash.reduce((acc, pay) => acc + pay.amount, 0);
     return sumNoCash;
+  };
+
+  const getCreditCustomerPay = (list) => {
+    const credit = list.find((pay) => pay.id === 1002);
+    return credit ? credit.amount : 0;
   };
 
   const addChangeToCashPayment = (list) => {
@@ -249,6 +260,10 @@ export default function PayDialog(props) {
       //console.log("saleInfo",moment( saleInfo.pays[0].payDate).format("DD-MM-YYYY"));
 
       const dteData = await globalSaleProcess(saleInfo);
+      if (dteData.documentType !== saleInfo.documentTypeId) {
+        openSnack("no se pudo procesar el Documento Tributario y se genero un Ticket.", "error");
+   
+      }
       setDteData(dteData);
       setOpenDteDialog(true);
     } catch (err) {
@@ -276,7 +291,10 @@ export default function PayDialog(props) {
               Cliente: {cart.customer.name}
             </Typography>
             <Typography variant={"subtitle2"}>
-              Saldo cuenta cliente: {customerBalance}
+              Saldo cuenta cliente: {customerBalance.toLocaleString("es-CL", {
+                style: "currency",
+                currency: "CLP",
+              })}
             </Typography>
             <Typography variant={"subtitle2"}>
               Documento: {cart.documentType.name}
@@ -430,8 +448,8 @@ export default function PayDialog(props) {
 
       <Dialog open={openDteDialog} onClose={() => {
         setOpenDteDialog(false)
-        clearCart()
-        setOpenPayDialog(false)
+        // clearCart()
+        // setOpenPayDialog(false)
 
       }}
       >

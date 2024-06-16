@@ -1,6 +1,7 @@
 import moment from "moment";
 import React from "react";
 import useLioren from "./useLioren";
+import xml2js from "xml2js";
 
 
 export default function useDte() {
@@ -52,11 +53,11 @@ export default function useDte() {
     }
   };
 
-  const boletaProcess = async (cart) => {
+  const boletaProcess = async (saleInfo) => {
 
-    let documentData = documenteDataDefault();
-
-    const data = {
+   // let documentData = documentDataDefault(); // No está definida en el código proporcionado
+  
+    let data = {
       emisor: {
         tipodoc: "39",
         servicio: 3,
@@ -64,27 +65,52 @@ export default function useDte() {
       detalles: [],
       expects: "xml",
     };
-
-    const details = cart.items.map((item) => {
-      return {
-        codigo: item.id.toString(),
-        nombre: item.name,
-        cantidad: item.quanty,
-        precio: item.gross,
-        exento: !item.ivaSubject,
-      };
-    });
-
+  
+    const details = saleInfo.items.map((item) => ({
+      codigo: item.id.toString(),
+      nombre: item.name,
+      cantidad: item.quanty, // Posiblemente debería ser item.quantity
+      precio: item.gross,
+      exento: !item.ivaSubject,
+    }));
+  
     data.detalles = details;
+
+    // Suponiendo que lioren.boleta() devuelve una promesa que resuelve en la boleta generada
     const boleta = await lioren.boleta(data);
 
-    documentData.documentType = 2;
-    documentData.total = cart.total;
-    documentData.subjectTotal = cart.net;
+    const xml = processXlm(boleta.xml);
+
+    const dteData = documenteDataDefault();
+    dteData.comerceInfo = {
+      fantasyName: saleInfo.comerceInfo.fantasyName,
+      name: saleInfo.comerceInfo.name,
+      address: saleInfo.comerceInfo.address,
+      phone: saleInfo.comerceInfo.phone,
+      rut: saleInfo.comerceInfo.rut,
+    }
+
+    dteData.documentType = 2;
+    dteData.total = saleInfo.total;
+    dteData.subTotal = saleInfo.subTotal;
+    dteData.subjectTotal = subjectTotal(saleInfo.items);
+    dteData.exemptTotal = boleta.montoexento;
+    dteData.discounts = saleInfo.discounts;
+    dteData.iva = boleta.montoiva;
+    dteData.change = saleInfo.change;
+    dteData.items = saleInfo.items;
+    dteData.payments = saleInfo.pays;
+    dteData.saleId = saleInfo.id;
+    dteData.stamp = xml;
+    dteData.referenceId = boleta.folio;
 
 
-    return data;
+
+
+   
+    return dteData;
   };
+  
 
   const facturaProcess = (cart) => {
     const data = {}
@@ -115,36 +141,118 @@ export default function useDte() {
     return data;
   }
 
+  const processXlm = (data) => {
 
+    let buff = Buffer.from(data, 'base64');
 
+    const parser = new xml2js.Parser();
 
+    let xml
 
-
-  const documentProcess = async (cart) => {
-    const type = cart.documentType.id;
-
-    try {
-      const data = (type) => {
-        switch (type) {
-          case 1: 
-            return ticketProcess(cart);
-          case 2:
-            return boletaProcess(cart);
-          case 3:
-            return facturaProcess(cart);
-        }
+    parser.parseString(buff, (err, result) => {
+      if (err) {
+        console.log("Error al procesar xml", err);
+      } else {
+        xml = result;
       }
+    });
 
-      return data;
+    //--------- RUT EMISOR -----------//
+    let RE = xml.DTE.Documento[0].TED[0].DD[0].RE[0]
+    //--------- TIPO DOCUMENTO -----------//
+    let TD = xml.DTE.Documento[0].TED[0].DD[0].TD[0]
+    //--------- FOLIO -----------//
+    let F = xml.DTE.Documento[0].TED[0].DD[0].F[0]
+    //--------- FECHA -----------//
+    let FE = xml.DTE.Documento[0].TED[0].DD[0].FE[0]
+    //--------- RR -----------//
+    let RR = xml.DTE.Documento[0].TED[0].DD[0].RR[0]
+    //--------- RSR -----------//
+    let RSR = xml.DTE.Documento[0].TED[0].DD[0].RSR[0]
+    //--------- MONTO -----------//
+    let MNT = xml.DTE.Documento[0].TED[0].DD[0].MNT[0]
+    //--------- ITEM1 -----------//
+    let IT1 = xml.DTE.Documento[0].TED[0].DD[0].IT1[0]
+    //--------- TSTED -----------//
+    let TSTED = xml.DTE.Documento[0].TED[0].DD[0].TSTED[0]
+    //--------- CAF -----------//
+    let CAF = xml.DTE.Documento[0].TED[0].DD[0].CAF[0]
+    //--------- FRMT -----------//
+    let FRMT = xml.DTE.Documento[0].TED[0].FRMT[0]._
 
-    } catch (err) {
-      console.log("Error al procesar documento", err);
-    }
+    let timbre_str = '<TED version="1.0"><DD>' +
+        '<RE>' + RE + '</RE>' +
+        '<TD>' + TD + '</TD>' +
+        '<F>' + F + '</F>' +
+        '<FE>' + FE + '</FE>' +
+        '<RR>' + RR + '</RR>' +
+        '<RSR>' + RSR + '</RSR>' +
+        '<MNT>' + MNT + '</MNT>' +
+        '<IT1>' + IT1 + '</IT1>' +
+        '<CAF version="1.0"><DA>' +
+        '<RE>' + CAF.DA[0].RE[0] + '</RE>' +
+        '<RS>' + CAF.DA[0].RS[0] + '</RS>' +
+        '<TD>' + CAF.DA[0].TD[0] + '</TD>' +
+        '<RNG><D>' + CAF.DA[0].RNG[0].D[0] + '</D>' +
+        '<H>' + CAF.DA[0].RNG[0].H[0] + '</H></RNG>' +
+        '<FA>' + CAF.DA[0].FA[0] + '</FA>' +
+        '<RSAPK><M>' + CAF.DA[0].RSAPK[0].M[0] + '</M>' +
+        '<E>' + CAF.DA[0].RSAPK[0].E[0] + '</E></RSAPK>' +
+        '<IDK>' + CAF.DA[0].IDK[0] + '</IDK></DA>' +
+        '<FRMA algoritmo="SHA1withRSA">' + CAF.FRMA[0]._ + '</FRMA></CAF>' +
+        '<TSTED>' + TSTED + '</TSTED></DD>' +
+        '<FRMT algoritmo="SHA1withRSA">' + FRMT + '</FRMT></TED>'
+    // console.log(timbre_str)
 
-    
+
+
+    return timbre_str;
+
 
   }
 
+
+  const subjectTotal = (items) => {
+    let total = 0;
+    items.forEach((item) => {
+      if (item.ivaSubject) {
+        total += item.gross * item.quanty;
+      }
+    });
+    return total;
+  }
+
+
+
+
+
+
+  const documentProcess = async (saleInfo) => {
+    const type = saleInfo.documentTypeId;
+    console.log('typeDocument', type);
+  
+    try {
+      const data = async (type) => {
+        switch (type) {
+          case 1: 
+            return await ticketProcess(saleInfo);
+          case 2:
+            return await boletaProcess(saleInfo);
+          case 3:
+            return await facturaProcess(saleInfo);
+          default:
+            throw new Error('Tipo de documento no soportado');
+        }
+      }
+  
+      return await data(type);
+  
+    } catch (err) {
+      console.log("Error al procesar documento", err);
+      return await ticketProcess(saleInfo);
+    }
+  }
+  
   // { id: 1, key: 1, name: "Ticket" },
   // { id: 2, key: 2, name: "Boleta" },
   // { id: 3, key: 3, name: "Factura" },

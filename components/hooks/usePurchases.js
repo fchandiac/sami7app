@@ -26,12 +26,31 @@ export default function usePurchases() {
         const purchaseDetail = await purchasesDetails.findByPurchase(purchase_id)
         return purchaseDetail
     }
+
+    //function findById(id)
+
+    const findById = async (id) => {
+        const purchase = await purchases.findById(id)
+        return purchase
+    }
+
+
+
+
+//function findAllBetweenDates(start, end)
+
+    const findAllBetweenDates = async (start, end) => {
+        const purchase = await purchases.findAllBetweenDates(start, end)
+        return purchase
+    }
         
   return {
     create,
     findAll,
     createDetail,
-    findDetailByPurchase
+    findDetailByPurchase,
+    findById,
+    findAllBetweenDates
 
   }
    

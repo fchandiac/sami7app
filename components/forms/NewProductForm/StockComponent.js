@@ -57,7 +57,7 @@ export default function StockComponent() {
         }}
       >
         <Grid container spacing={1} direction={"column"}>
-          <Grid item display={"flex"}>
+          {/* <Grid item display={"flex"}>
             <Autocomplete
               sx={{ flexGrow: 1 }}
               name="storage"
@@ -129,7 +129,7 @@ export default function StockComponent() {
               }}
               required
             />
-          </Grid>
+          </Grid> */}
           <Grid
             item
             textAlign={"right"}
@@ -152,7 +152,7 @@ export default function StockComponent() {
               color="primary"
               type="submit"
             >
-              Finaliar
+              resumen
             </Button>
           </Grid>
         </Grid>

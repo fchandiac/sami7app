@@ -73,7 +73,58 @@ function findAll() {
     return purchase
 }
 
+
+//function findById(id)
+//function findAllBetweenDates(start, end)
+
+function findById(id){
+    const purchase = new Promise((resolve, reject) => {
+        fetch(server_url + 'purchases/findById', {
+            method: 'POST',
+            body: JSON.stringify({ id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return purchase
+
+}
+//function findAllBetweenDates(start, end)
+
+function findAllBetweenDates(start, end){
+    const purchase = new Promise((resolve, reject) => {
+        fetch(server_url + 'purchases/findAllBetweenDates', {
+            method: 'POST',
+            body: JSON.stringify({ start, end }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return purchase
+
+}
+
 export {
     create,
-    findAll
+    findAll,
+    findById,
+    findAllBetweenDates
 }

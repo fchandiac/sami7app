@@ -1,5 +1,4 @@
-const { default: SalePoint } = require("./components/salePoint/SalePoint");
-const { default: purchases } = require("./pages/purchases");
+
 
 const sale_point = {
   id: 0,
@@ -183,6 +182,21 @@ const payments = {
   cash_register_movement_id: null,
   nulled: false,
 };
+
+const paymentsProviders = {
+  id: null,
+  description: "",
+  type: null,
+  amount: 0,
+  balance: 0,
+  purchase_id: null,
+  user_id: null,
+  pay_date: null,
+  payment_method_id: null,
+  provider_id: null,
+  cash_register_movement_id: null,
+  nulled: false,
+}
 
 const customer_account_movements = {
   id: null,

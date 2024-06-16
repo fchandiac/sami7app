@@ -92,6 +92,7 @@ export default function ShoppingCart(props) {
                   }}
                   disablePortal
                   defaultValue={null}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField
@@ -124,6 +125,7 @@ export default function ShoppingCart(props) {
                   }
                 }}
                 defaultValue={null}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 disablePortal
                 getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
