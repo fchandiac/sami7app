@@ -69,8 +69,8 @@ function boleta(data){
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Authorization': 'Bearer ' + lirorenToken,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + lirorenToken
             },
             body: JSON.stringify(data)
         }).then(res => {
@@ -84,11 +84,33 @@ function boleta(data){
     return boleta
 }
 
+function factura(data) {
+    const dte = new Promise((resolve, reject) => {
+        fetch('/lioren/facturas', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + lirorenToken
+            }
+        }).then(res => {
+            res.json().then(res => {
+                resolve(res)
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    })
+    return dte
+}
+
 
 export {
     states,
     district,
     cities,
-    boleta
+    boleta,
+    factura
 
 }

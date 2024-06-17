@@ -5,6 +5,8 @@ import usePurchases from '../hooks/usePurchases'
 
 
 
+
+
 export default function PurchaseDetailCard(props) {
     const {id} = props
     const purchases = usePurchases()

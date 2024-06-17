@@ -15,10 +15,10 @@ export default function usePurchases() {
         return purchase
     }
 
-    //purchasesDetails.create(description, quantity, price, purchase_id, product_id, nulled)
+  
 
-    const createDetail = async (description, quantity, price, purchase_id, product_id, nulled) => {
-        const purchaseDetail = await purchasesDetails.create(description, quantity, price, purchase_id, product_id, nulled)
+    const createDetail = async (quanty, price, utility, net, tax, total, purchase_id, product_id) => {
+        const purchaseDetail = await purchasesDetails.create(quanty, price, utility, net, tax, total, purchase_id, product_id)
         return purchaseDetail
     }
 

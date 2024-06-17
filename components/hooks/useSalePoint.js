@@ -522,10 +522,10 @@ export default function useSalePoint() {
         saleTax,
         saleGross,
         priceListId
-      );
+      ); // actualiza valores de venta
       console.log("Product Card", productCard);
-      // console.log("Update Status Card", updateStatusCard);
-      // console.log("Update Sale Id Card", updateSaleIdCard);
+      console.log("Update Status Card", updateStatusCard);
+      console.log("Update SaleinfoCard", updateSaleInfoCard);
       product_cards.push(productCard);
     }
 
@@ -687,26 +687,32 @@ export default function useSalePoint() {
       //     }
       //   })
       // );
+
+
       processPayments(newSale, saleInfo);
 
       // SALE DETAILS
 
       const productCardsList = await productCards.findAllBySale(newSale.id);
       console.log("Product Cards List", productCardsList);
+      let newSaleId = newSale.id;
+
       const saleDetails = await Promise.all(
         items.map(async (item) => {
-          console.log("Item", item);
-          return await sales.createSaleDetail(
-            item.quanty,
-            item.gross,
-            item.discount,
-            item.utility,
-            item.net,
-            item.tax,
-            item.total,
-            newSale.id,
-            item.id
-          );
+         // console.log("Item", item);
+          // return await sales.createSaleDetail(
+          //   item.quanty,
+          //   item.gross,
+          //   item.discount,
+          //   item.utility,
+          //   item.net,
+          //   item.tax,
+          //   item.total,
+          //   newSale.id,
+          //   item.id
+          // );
+          const saleDetail_ = await saleDetail(item, newSaleId);
+          console.log("Sale Detail", saleDetail_);
         })
       );
 
@@ -715,8 +721,19 @@ export default function useSalePoint() {
       // const boletainfo = await dte.boletaProcess(saleInfo);
       // console.log("Boletainfo", boletainfo);
 
-      const dteProcess = await dte.documentProcess(saleInfo);
+      
+      
+      const salesDetailList = await sales.findAllSaleDetailBySaleId(newSale.id);
 
+      let utilitySale = 0;
+      salesDetailList.map((saleDetail) => {
+        utilitySale += saleDetail.utility;
+      });
+
+      const updateSaleUtility = await sales.updateUtility(newSale.id, utilitySale);
+      
+
+      const dteProcess = await dte.documentProcess(saleInfo);
       const updateSaleDocumentId = await sales.updateDocumentId(dteProcess.saleId, dteProcess.documentId);
       console.log("Update Sale Document Id", updateSaleDocumentId);
 
@@ -793,7 +810,56 @@ export default function useSalePoint() {
   // });
   
 
-  const saleDetail = async (item, saleId) => {};
+  const saleDetail = async (product, saleId) => {
+    console.log('saleDetailProduct',product );
+
+    if (product.stockControl == true){
+      const productCardsList = await productCards.findAllBySaleAndProduct(saleId, product.id);
+      console.log("Product Cards List", productCardsList);
+
+      let purchaseNet = 0
+
+      for (let i = 0; i < product.quanty; i++) {
+        purchaseNet += productCardsList[i].puchase_net
+      }
+
+      let utility = product.net - purchaseNet
+
+
+      const newSaleDetail = await sales.createSaleDetail(
+        product.quanty,
+        product.gross,
+        product.discount,
+        utility,
+        product.net,
+        product.tax,
+        product.total,
+        saleId,
+        product.id
+      )
+
+
+     
+      //item.quanty
+      for (let i = 0; i < product.quanty; i++) {
+        const productCard = productCardsList[i];
+        const updateProductCardDetail = await productCards.updateSaleDetail(productCard.id, newSaleDetail.id);
+      }
+
+      return newSaleDetail
+
+
+  
+    }
+    
+
+
+
+
+
+    
+  }
+  ;
 
   const preProcessCart = () => {
     const cart = getActiveCart();

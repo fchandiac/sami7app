@@ -131,6 +131,20 @@ export default function useProductCards() {
         return productCard
     }
 
+    // findAllBySaleAndProduct(sale_id, product_id)
+
+    const findAllBySaleAndProduct = async (sale_id, product_id) => {
+        const productCard = await products.findAllBySaleAndProduct(sale_id, product_id)
+        return productCard
+    }
+
+// updateSaleDetail(id, sale_detail_id)
+
+    const updateSaleDetail = async (id, sale_detail_id) => {
+        const productCard = await products.updateSaleDetail(id, sale_detail_id)
+        return productCard
+    }
+
 
     return {
         create,
@@ -145,7 +159,9 @@ export default function useProductCards() {
         findAllGroupByProductAvailable,
         updateSaleId,
         findAllBySale,
-        updateSaleValues
+        updateSaleValues,
+        findAllBySaleAndProduct,
+        updateSaleDetail,
     }
 
 }

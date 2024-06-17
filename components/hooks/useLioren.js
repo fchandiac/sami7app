@@ -30,13 +30,19 @@ export default function useLioren() {
     return boleta_data;
   }
 
+  const factura = async (data) => {
+    const factura_data = await lioren.factura(data);
+    return factura_data;
+  }
+
 
   return {
     states,
     district,
     cities,
     citiesByDistrict,
-    boleta
+    boleta,
+    factura,
 
   };
 }

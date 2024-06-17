@@ -260,11 +260,15 @@ export default function PayDialog(props) {
       //console.log("saleInfo",moment( saleInfo.pays[0].payDate).format("DD-MM-YYYY"));
 
       const dteData = await globalSaleProcess(saleInfo);
+
+      console.log('DteDataPostProcess', dteData)
+
       if (dteData.documentType !== saleInfo.documentTypeId) {
         openSnack("no se pudo procesar el Documento Tributario y se genero un Ticket.", "error");
    
       }
       setDteData(dteData);
+      
       setOpenDteDialog(true);
     } catch (err) {
       console.log("Error", err);
@@ -448,14 +452,14 @@ export default function PayDialog(props) {
 
       <Dialog open={openDteDialog} onClose={() => {
         setOpenDteDialog(false)
-        // clearCart()
-        // setOpenPayDialog(false)
+        clearCart()
+        setOpenPayDialog(false)
 
       }}
       >
         <Box sx={{ p: 2 }}>
           <Typography variant="subtitle1" sx={{mb:2}}>Documento</Typography>
-        <PrintContainer title="Documento Tributario">
+        <PrintContainer title="Documento Tributario" automaticPrint={true}>
           <Document documentData={dteData} />
         </PrintContainer>
         </Box>

@@ -325,6 +325,54 @@ function updateSaleValues(id, sale_id, sale_net, sale_tax, sale_gross, sale_pric
 
 }
 
+// findAllBySaleAndProduct(sale_id, product_id)
+
+function findAllBySaleAndProduct(sale_id, product_id){
+    const productCard = new Promise((resolve, reject) => {
+        fetch(server_url + 'productCards/findAllBySaleAndProduct', {
+            method: 'POST',
+            body: JSON.stringify({ sale_id, product_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return productCard
+}
+
+
+// updateSaleDetail(id, sale_detail_id)
+
+function updateSaleDetail(id, sale_detail_id){
+    const productCard = new Promise((resolve, reject) => {
+        fetch(server_url + 'productCards/updateSaleDetail', {
+            method: 'POST',
+            body: JSON.stringify({ id, sale_detail_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return productCard
+
+}
+
 export {
     create,
     findAllByProduct,
@@ -338,5 +386,7 @@ export {
     findAllGroupByProductAvailable,
     updateSaleId,
     findAllBySale,
-    updateSaleValues
+    updateSaleValues,
+    findAllBySaleAndProduct,
+    updateSaleDetail
 }

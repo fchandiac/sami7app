@@ -266,15 +266,21 @@ export default function NewPurchaseForm(props) {
       console.log("New Purchase", newPurchase);
 
       cart.items.forEach(async (item) => {
+        console.log("Item", item);
+        console.log("New Purchase", newPurchase.id);
+        console.log('Storage', item.storage.id) 
         const detail = await purchases.createDetail(
           item.quanty,
+          item.gross,
+          0,
           item.net,
           item.tax,
-          item.gross,
+          item.gross * item.quanty,
           newPurchase.id,
-          item.id,
-          false
-        );
+          item.id
+
+        )
+          
         console.log("Detail", detail);
 
         if (item.stockControl) {
@@ -296,7 +302,7 @@ export default function NewPurchaseForm(props) {
               item.storage.id,
               null,
               0
-            );
+            )
             console.log("New Card", newCard);
           }
         }

@@ -265,6 +265,7 @@ function findAllBetweenDatesByUser(start_date, end_date, user_id) {
     return sale
 }
 
+
 //findAllSaleDetailBySaleId(sale_id)
 
 function findAllSaleDetailBySaleId(sale_id) {
@@ -335,6 +336,29 @@ function updateDocumentId(id, document_id) {
     return sale
 }
 
+//function updateutility(id, utility)
+
+function updateutility(id, utility) {
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/updateutility', {
+            method: 'POST',
+            body: JSON.stringify({ id, utility }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return sale
+}
+
 
 export {
     create,
@@ -351,7 +375,8 @@ export {
     findAllBetweenDatesByCustomer,
     findAllBetweenDatesByUser,
     voidById,
-    updateDocumentId
+    updateDocumentId,
+    updateutility
 }
 
 

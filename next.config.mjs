@@ -23,6 +23,11 @@ const nextConfig = {
         source: "/lioren/boletas",
         destination: "https://www.lioren.cl/api/boletas",
       },
+      {
+        source: "/lioren/facturas",
+        destination: "https://www.lioren.cl/api/dtes",
+
+      }
     ];
   },
 };

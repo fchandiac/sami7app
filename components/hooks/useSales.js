@@ -177,6 +177,13 @@ export default function useSales() {
     return sale;
   }
 
+  //function updateutility(id, utility)
+
+  const updateUtility = async (id, utility) => {
+    const sale = await sales.updateutility(id, utility);
+    return sale;
+  }
+
 
   return {
     create,
@@ -195,5 +202,6 @@ export default function useSales() {
     findAllBetweenDatesByCustomer,
     voidById,
     updateDocumentId,
+    updateUtility,
   };
 }

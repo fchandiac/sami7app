@@ -120,6 +120,41 @@ export default function Document(props) {
           </Typography>
         </Grid>
 
+        <Grid item display={documentData.documentType == 3? 'block': 'none'}>
+        <Typography
+            fontSize={11}
+            sx={{ p: 0, m: 0, lineHeight: 0.9, fontWeight: "bold" }}
+          >
+             Receptor:
+          </Typography>
+          <Typography
+            fontSize={11}
+            sx={{ p: 0, m: 0, lineHeight: 0.9}}
+          >
+            {documentData.customer.name}
+          </Typography>
+          <Typography
+            fontSize={11}
+            sx={{ p: 0, m: 0, lineHeight: 0.9}}
+          >
+            {documentData.customer.rut}
+          </Typography>
+          <Typography
+            fontSize={11}
+            sx={{ p: 0, m: 0, lineHeight: 0.9}}
+          >
+            {documentData.customer.address}
+          </Typography>
+          <Typography
+            fontSize={11}
+            sx={{ p: 0, m: 0, lineHeight: 0.9}}
+          >
+            {documentData.customer.name}
+          </Typography>
+
+
+        </Grid>
+
         <Grid item>{ItemList(documentData.items)}</Grid>
 
         <Grid item display={"flex"}>
@@ -146,18 +181,7 @@ export default function Document(props) {
             ))}
           </Box>
           <Box flexGrow={1}>
-            <Typography
-              fontSize={12}
-              sx={{ fontWeight: "bold", pl: 1, pr: 1 }}
-              textAlign={"right"}
-            >
-              Total a pagar:{" "}
-              {documentData.total.toLocaleString("es-CL", {
-                style: "currency",
-                currency: "CLP",
-              })}
-            </Typography>
-            <Typography
+          <Typography
               fontSize={12}
               sx={{ pl: 1, pr: 1, lineHeight: 1 }}
               textAlign={"right"}
@@ -179,6 +203,18 @@ export default function Document(props) {
                 currency: "CLP",
               })}
             </Typography>
+            <Typography
+              fontSize={14}
+              sx={{ fontWeight: "bold", pl: 1, pr: 1 }}
+              textAlign={"right"}
+            >
+              Total a pagar:{" "}
+              {documentData.total.toLocaleString("es-CL", {
+                style: "currency",
+                currency: "CLP",
+              })}
+            </Typography>
+           
             <Typography
               display={documentData.documentType == 1 ? "none" : "block"}
               fontSize={12}
