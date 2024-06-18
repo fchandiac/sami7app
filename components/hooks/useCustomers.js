@@ -1,6 +1,6 @@
 
 const customers = require("@/services/customers.js");
-const https = require("https");
+// const https = require("https");
 
 
 import React from 'react'
@@ -91,7 +91,7 @@ export default function useCustomers() {
     findByRut,
     update,
     destroy,
-    findFromSII,
+    // findFromSII,
     findOneByName,
   };
 }
