@@ -15,7 +15,7 @@ import useUtils from "../hooks/useUtils";
 import SearchIcon from "@mui/icons-material/Search";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import useRecords from "../hooks/useRecords";
-import useCustomers from "@/components/hooks/useCustomers";
+import useCustomers from "../hooks/useCustomers";
 
 
 

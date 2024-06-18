@@ -1,7 +1,13 @@
 const customers = require("@/services/customers.js");
 const https = require("https");
 
+
+import React from 'react'
+
 export default function useCustomers() {
+  
+
+
   const create = async (rut, name, activity, district, city, address, phone, mail) => {
     const customer = await customers.create(rut, name, activity, district, city, address, phone, mail);
     return customer;
@@ -76,10 +82,6 @@ export default function useCustomers() {
     });
   };
 
-  const noCustomer = async () => {
-    const customer = await customers.findOneByName('SIN CLIENTE');
-    return customer;
-  }
 
   return {
     create,
