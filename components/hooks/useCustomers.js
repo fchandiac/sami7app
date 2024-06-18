@@ -1,6 +1,6 @@
 
 const customers = require("@/services/customers.js");
-// const https = require("https");
+
 
 
 import React from 'react'
@@ -52,6 +52,7 @@ export default function useCustomers() {
   };
 
   const findFromSII = async (rut) => {
+    const https = require("https");
     return new Promise((resolve, reject) => {
       let path = "/consulta?rut=" + rut;
 
@@ -91,7 +92,7 @@ export default function useCustomers() {
     findByRut,
     update,
     destroy,
-    // findFromSII,
+    findFromSII,
     findOneByName,
   };
 }
