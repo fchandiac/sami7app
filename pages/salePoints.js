@@ -1,4 +1,4 @@
-import SalespointCard from "@/components/cards/SalePointCard";
+import SalespointCard from "@/components/cards/SalespointCard";
 import SalePointForm from '@/components/forms/SalePointForm';
 import useSalePoints from '@/components/hooks/useSalePoints';
 import SalePointsTabs from '@/components/tabs/SalePointsTabs';
