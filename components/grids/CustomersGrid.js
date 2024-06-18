@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import useCustomers from "@/components/hooks/useCustomers";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import InfoDataGrid from "../custom/InfoDataGrid";
+import useCustomers from "../hooks/useCustomers";
+
 
 export default function CustomersGrid(props) {
   const { update } = props;

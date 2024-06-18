@@ -2,7 +2,8 @@ import moment from "moment";
 import React from "react";
 import useLioren from "./useLioren";
 import xml2js from "xml2js";
-import useCustomers from "@/components/hooks/useCustomers";
+import useCustomers from "./useCustomers";
+
 
 export default function useDte() {
   const lioren = useLioren();
