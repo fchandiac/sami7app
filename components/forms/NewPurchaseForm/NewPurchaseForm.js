@@ -24,12 +24,13 @@ import useProductCards from "@/components/hooks/useProductCards";
 import useStocks from "@/components/hooks/useStocks";
 import usePaymentMethods from "@/components/hooks/usePaymentMethods";
 
-
 export default function NewPurchaseForm(props) {
   // prop para definir uso cambiar luego cuando se cree OrdendeCompra
   const [cart, setCart] = useState({
     items: [],
     total: 0,
+    tax: 0,
+    net: 0,
   });
   const products = useProducts();
   const providers = useProviders();
@@ -80,7 +81,7 @@ export default function NewPurchaseForm(props) {
       const data = await paymentMethods.findAll();
       const filterData = data.filter((item) => item.id !== 1001);
       setPaymentMethodsOptions(filterData);
-    }
+    };
 
     fetchProviders();
     fetchProducts();
@@ -235,6 +236,7 @@ export default function NewPurchaseForm(props) {
     const tax = calcTotalTax();
     const net = calcTotalNet();
     const gross = calclTotalGross();
+
     const data = {
       user_id: user.id,
       provider_id: selectedProvider.id,
@@ -268,7 +270,7 @@ export default function NewPurchaseForm(props) {
       cart.items.forEach(async (item) => {
         console.log("Item", item);
         console.log("New Purchase", newPurchase.id);
-        console.log('Storage', item.storage.id) 
+        console.log("Storage", item.storage.id);
         const detail = await purchases.createDetail(
           item.quanty,
           item.gross,
@@ -278,9 +280,8 @@ export default function NewPurchaseForm(props) {
           item.gross * item.quanty,
           newPurchase.id,
           item.id
+        );
 
-        )
-          
         console.log("Detail", detail);
 
         if (item.stockControl) {
@@ -302,7 +303,7 @@ export default function NewPurchaseForm(props) {
               item.storage.id,
               null,
               0
-            )
+            );
             console.log("New Card", newCard);
           }
         }
@@ -327,7 +328,7 @@ export default function NewPurchaseForm(props) {
   const calcTotalTax = () => {
     let totalTax = 0;
     cart.items.forEach((item) => {
-      totalTax += item.tax;
+      totalTax += item.tax * item.quanty;
     });
 
     return totalTax;
@@ -336,7 +337,7 @@ export default function NewPurchaseForm(props) {
   const calcTotalNet = () => {
     let totalNet = 0;
     cart.items.forEach((item) => {
-      totalNet += item.net;
+      totalNet += item.net * item.quanty;
     });
 
     return totalNet;
@@ -497,23 +498,56 @@ export default function NewPurchaseForm(props) {
                   />
                 </Grid>
               ))}
-              <Divider sx={{mt:1}}/>
+              <Divider sx={{ mt: 1 }} />
+              <Grid item xs={12}>
+                <Grid container spacing={1}>
+                  <Grid item xs={6}>
+                    <Grid container spacing={1} direction={"column"}>
+                      <Grid item>
+                        <Typography variant="subtitle1">Pago</Typography>
+                      </Grid>
+                      <Grid item>
+                    
+
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={6} textAlign={"right"}>
+                    <Typography fontSize={14}>
+                      Neto:{" "}
+                      {cart.net.toLocaleString("es-CL", {
+                        style: "currency",
+                        currency: "CLP",
+                      })}
+                    </Typography>
+                    <Typography fontSize={14}>
+                      Impuestos:{" "}
+                      {cart.tax.toLocaleString("es-CL", {
+                        style: "currency",
+                        currency: "CLP",
+                      })}
+                    </Typography>
+                    <Typography fontSize={20} fontWeight={"bold"}>
+                      Total:{" "}
+                      {cart.total.toLocaleString("es-CL", {
+                        style: "currency",
+                        currency: "CLP",
+                      })}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+
               <Grid item xs={12} textAlign={"right"}>
-                <Typography fontSize={20} fontWeight={"bold"}>
-                  Total:{" "}
-                  {cart.total.toLocaleString("es-CL", {
-                    style: "currency",
-                    currency: "CLP",
-                  })}
-                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => save()}
+                >
+                  Guardar
+                </Button>
               </Grid>
             </Paper>
-          </Grid>
-
-          <Grid item xs={12} textAlign={"right"}>
-            <Button variant="contained" color="primary" onClick={() => save()}>
-              Guardar
-            </Button>
           </Grid>
         </Grid>
       </Paper>

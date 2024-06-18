@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useCustomers from "../hooks/useCustomers";
+import useCustomers from "@/components/hooks/useCustomers";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import InfoDataGrid from "../custom/InfoDataGrid";
 

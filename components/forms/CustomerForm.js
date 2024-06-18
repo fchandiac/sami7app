@@ -11,7 +11,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useAppContext } from "@/appProvider";
-import useCustomers from "../hooks/useCustomers";
+import useCustomers from "@/components/hooks/useCustomers";
 import useUtils from "../hooks/useUtils";
 import SearchIcon from "@mui/icons-material/Search";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";

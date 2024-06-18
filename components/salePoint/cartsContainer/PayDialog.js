@@ -260,6 +260,7 @@ export default function PayDialog(props) {
       //console.log("saleInfo",moment( saleInfo.pays[0].payDate).format("DD-MM-YYYY"));
 
       const dteData = await globalSaleProcess(saleInfo);
+      setAuthPayment(false);
 
       console.log('DteDataPostProcess', dteData)
 

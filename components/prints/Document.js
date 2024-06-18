@@ -131,25 +131,25 @@ export default function Document(props) {
             fontSize={11}
             sx={{ p: 0, m: 0, lineHeight: 0.9}}
           >
-            {documentData.customer.name}
+            {documentData.customer? documentData.customer.name: '' }
           </Typography>
           <Typography
             fontSize={11}
             sx={{ p: 0, m: 0, lineHeight: 0.9}}
           >
-            {documentData.customer.rut}
+            {documentData.customer? documentData.customer.rut: ''}
           </Typography>
           <Typography
             fontSize={11}
             sx={{ p: 0, m: 0, lineHeight: 0.9}}
           >
-            {documentData.customer.address}
+            {documentData.customer? documentData.customer.address: ''}
           </Typography>
           <Typography
             fontSize={11}
             sx={{ p: 0, m: 0, lineHeight: 0.9}}
           >
-            {documentData.customer.name}
+            {documentData.customer? documentData.customer.phone: ''}
           </Typography>
 
 
