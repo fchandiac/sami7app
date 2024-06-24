@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SidePanel from "./sidePanel/SidePanel";
-import CodeFinder from "./condeFinder/CodeFinder";
+import CodeFinder from "./codeFinder/CodeFinder";
 import Finder from "./finder/Finder";
 import CartsContainer from "./cartsContainer/CartsContainer";
 import usePriceLists from "../hooks/usePriceLists";

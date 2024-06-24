@@ -141,6 +141,22 @@ export default function ProductForm(props) {
               size="small"
             />
           </Grid>
+          <Grid item>
+            <TextField
+              label="Código"
+              name="product-code"
+              variant="outlined"
+              fullWidth
+              value={productData.code}
+              onChange={(e) => {
+                setProductData({ ...productData, code: e.target.value });
+              }}
+              size="small"
+              required
+            />
+          </Grid>
+
+
           <Grid item display={"flex"}>
             <Autocomplete
               sx={{ flexGrow: 1 }}

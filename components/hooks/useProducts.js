@@ -188,6 +188,12 @@ export default function useProducts() {
     return product;
   }
 
+  //function findAllByCode(code) 
+  const findAllByCode = async (code) => {
+    const product = await products.findAllByCode(code);
+    return product;
+  }
+
   return {
     create,
     findAll,
@@ -201,5 +207,6 @@ export default function useProducts() {
     findAllToAutocomplete,
     finalAllToSellingPrice,
     updateStockControlById,
+    findAllByCode,
   };
 }

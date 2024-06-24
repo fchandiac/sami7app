@@ -254,6 +254,33 @@ function updateStockControlById(id, stock_control) {
   return product;
 }
 
+//function findAllByCode(code) 
+
+function findAllByCode(code) {
+  let data = { code };
+  const product = new Promise((resolve, reject) => {
+    fetch(server_url + "products/findAllByCode", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        console.log("res", res);
+        res.json().then((res) => {
+          if (res.code === 0) {
+            reject(res.data);
+          } else {
+            resolve(res.data);
+          }
+        });
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+  return product;
+}
+
 export {
   create,
   findAll,
@@ -263,5 +290,6 @@ export {
   findAllToSalePoint,
   findOneByIdToCart,
   findOneByIAndStorageAndPriceList,
-  updateStockControlById
+  updateStockControlById,
+  findAllByCode,
 };

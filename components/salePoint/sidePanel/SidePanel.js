@@ -57,8 +57,20 @@ export default function SidePanel(props) {
 
   return (
     <>
+    
       <Paper variant="outlined" sx={{ p: 1 }}>
+      <Box textAlign={"right"} width={"100%"} pb={2}>
+              <IconButton
+                onClick={() => {
+                  toogleSideBar();
+                  setSelected(0);
+                }}
+              >
+                <NavigateBeforeIcon />
+              </IconButton>
+            </Box>
         <Box display={"flex"}>
+     
           <Grid container direction={"column"} alignContent={"center"}>
             {/* <Grid item>
               <IconButton onClick={() => openContent(1)}>
@@ -109,16 +121,7 @@ export default function SidePanel(props) {
             <Box width={"100%"} flexGrow={1}>
               {content()}
             </Box>
-            <Box textAlign={"right"} width={"100%"}>
-              <IconButton
-                onClick={() => {
-                  toogleSideBar();
-                  setSelected(0);
-                }}
-              >
-                <NavigateBeforeIcon />
-              </IconButton>
-            </Box>
+          
           </Box>
         </Box>
       </Paper>

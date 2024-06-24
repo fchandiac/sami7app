@@ -9,6 +9,8 @@ import {
   Divider,
   Box,
   Button,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import React, { useState, useEffect, use } from "react";
 import Finder from "./Finder";
@@ -23,6 +25,8 @@ import useReceptions from "@/components/hooks/useReceptions";
 import useProductCards from "@/components/hooks/useProductCards";
 import useStocks from "@/components/hooks/useStocks";
 import usePaymentMethods from "@/components/hooks/usePaymentMethods";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import moment from "moment";
 
 export default function NewPurchaseForm(props) {
   // prop para definir uso cambiar luego cuando se cree OrdendeCompra
@@ -59,6 +63,9 @@ export default function NewPurchaseForm(props) {
   const [productList, setProductList] = useState([]);
   const { grossPrice, taxesAmount } = useUtils();
 
+  const [paymentStatus, setPaymentStatus] = useState(false);
+  const [payDate, setPayDate] = useState(moment(new Date()).format("YYYY-MM-DD"));
+
   const { user, openSnack } = useAppContext();
 
   useEffect(() => {
@@ -83,7 +90,6 @@ export default function NewPurchaseForm(props) {
 
       const filterData = data.filter((item) => item.id !== 1001);
       const filterData2 = filterData.filter((item) => item.id !== 1002);
-      
 
       setPaymentMethodsOptions(filterData2);
     };
@@ -100,7 +106,7 @@ export default function NewPurchaseForm(props) {
       total: calcTotalCart(),
       tax: calcTotalTax(),
       net: calcTotalNet(),
-    })
+    });
   }, [updateTotalValues]);
 
   const addProduct = async (productId) => {
@@ -123,13 +129,11 @@ export default function NewPurchaseForm(props) {
       subtotal: gross,
     };
 
-
     setCart({
       ...cart,
       items: [...cart.items, item],
     });
     setUpdateTotalValues(!updateTotalValues);
-
   };
 
   const updateStockControl = async (id, stockControl, index) => {
@@ -170,10 +174,9 @@ export default function NewPurchaseForm(props) {
           return item;
         }
         return product;
-      })
+      }),
     });
     setUpdateTotalValues(!updateTotalValues);
-
   };
 
   const decrementQuanty = (index) => {
@@ -188,7 +191,7 @@ export default function NewPurchaseForm(props) {
             return item;
           }
           return product;
-        })
+        }),
       });
       setUpdateTotalValues(!updateTotalValues);
     }
@@ -198,8 +201,7 @@ export default function NewPurchaseForm(props) {
     const item = cart.items[index];
     setCart({
       ...cart,
-      items: cart.items.filter((product, i) => i !== index)
-
+      items: cart.items.filter((product, i) => i !== index),
     });
     setUpdateTotalValues(!updateTotalValues);
   };
@@ -533,7 +535,9 @@ export default function NewPurchaseForm(props) {
                         <Autocomplete
                           options={paymentMethodsOptions}
                           getOptionLabel={(option) => option.name}
-                          onChange={(e, value) => setSelectedPaymentMethod(value)}
+                          onChange={(e, value) =>
+                            setSelectedPaymentMethod(value)
+                          }
                           renderInput={(params) => (
                             <TextField
                               {...params}
@@ -542,18 +546,48 @@ export default function NewPurchaseForm(props) {
                             />
                           )}
                         />
-                    
-
                       </Grid>
+                      <Grid item>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={paymentStatus}
+                              onChange={(e) => {
+                                setPaymentStatus(e.target.checked);
+                              }}
+                              color="primary"
+                            />
+                          }
+                          label={
+                            paymentStatus ? "Pago realizado" : "Pago pendiente"
+                          }
+                        />
+                      </Grid>
+                      <Grid item>
+                        <DesktopDatePicker
+                          label="Fecha de pago"
+                          inputFormat="DD-MM-YYYY"
+                          value={payDate}
+                          onChange={(newValue) => {
+                            setPayDate(moment(newValue).format("YYYY-MM-DD"));
+                          }}
+                          renderInput={(params) => (
+                            <TextField {...params} size="small" fullWidth />
+                          )}
+                        />
+                        </Grid>
+
+
                     </Grid>
                   </Grid>
+
                   <Grid item xs={6} textAlign={"right"}>
                     <Typography fontSize={14}>
                       Neto:{" "}
-                      {/* {cart.net.toLocaleString("es-CL", {
+                      {cart.net.toLocaleString("es-CL", {
                         style: "currency",
                         currency: "CLP",
-                      })} */}
+                      })}
                     </Typography>
                     <Typography fontSize={14}>
                       Impuestos:{" "}

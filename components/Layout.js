@@ -168,6 +168,15 @@ export default function Layout(props) {
                         }}
                         />
                     </ListItem>
+                     <ListItem button>
+                        <ListItemText primary="Versión" 
+                        onClick={() => { 
+                            router.push('/version')
+                            setPageTitle('') 
+                            setOpenDrawer(false)
+                        }}
+                        />
+                    </ListItem>
           
                 </List>
             </Drawer>
