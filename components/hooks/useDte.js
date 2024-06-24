@@ -132,7 +132,7 @@ export default function useDte() {
       codigo: item.id.toString(),
       nombre: item.name,
       cantidad: item.quanty, // Posiblemente debería ser item.quantity
-      precio: item.gross,
+      precio: item.net,
       exento: !item.ivaSubject,
     }));
 

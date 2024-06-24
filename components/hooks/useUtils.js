@@ -31,6 +31,9 @@ export default function useUtils() {
   const taxesAmount = (net, taxes) => {
     let netPrice = net || 0;
     let taxesAmount = 0;
+    if (taxes.length === 0) {
+      return taxesAmount;
+    }
     taxes.map((tax) => {
       taxesAmount += (tax.percentage * netPrice) / 100;
     });

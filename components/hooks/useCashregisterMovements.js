@@ -146,7 +146,7 @@ export default function useCashregisterMovements() {
         const balance = lastMovement.balance + amount
         const newMovement = await create(
             cash,
-            'Venta directa: ' + reference_id,
+            '',
             7,
             lastMovement.balance,
             amount,

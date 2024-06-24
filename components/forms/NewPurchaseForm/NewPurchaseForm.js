@@ -10,7 +10,7 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import Finder from "./Finder";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import HomeIcon from "@mui/icons-material/Home";
@@ -40,6 +40,7 @@ export default function NewPurchaseForm(props) {
   const productCards = useProductCards();
   const stocks = useStocks();
   const paymentMethods = usePaymentMethods();
+  const [updateTotalValues, setUpdateTotalValues] = useState(false);
 
   const [description, setDescription] = useState("");
 
@@ -79,8 +80,12 @@ export default function NewPurchaseForm(props) {
 
     const fetchPaymentMethods = async () => {
       const data = await paymentMethods.findAll();
+
       const filterData = data.filter((item) => item.id !== 1001);
-      setPaymentMethodsOptions(filterData);
+      const filterData2 = filterData.filter((item) => item.id !== 1002);
+      
+
+      setPaymentMethodsOptions(filterData2);
     };
 
     fetchProviders();
@@ -88,6 +93,15 @@ export default function NewPurchaseForm(props) {
     fetchStorages();
     fetchPaymentMethods();
   }, []);
+
+  useEffect(() => {
+    setCart({
+      ...cart,
+      total: calcTotalCart(),
+      tax: calcTotalTax(),
+      net: calcTotalNet(),
+    })
+  }, [updateTotalValues]);
 
   const addProduct = async (productId) => {
     const findProfuct = await products.findOneById(productId);
@@ -109,10 +123,13 @@ export default function NewPurchaseForm(props) {
       subtotal: gross,
     };
 
+
     setCart({
+      ...cart,
       items: [...cart.items, item],
-      total: cart.total + item.gross,
     });
+    setUpdateTotalValues(!updateTotalValues);
+
   };
 
   const updateStockControl = async (id, stockControl, index) => {
@@ -124,14 +141,15 @@ export default function NewPurchaseForm(props) {
       // setCart({
 
       setCart({
+        ...cart,
         items: cart.items.map((product, i) => {
           if (i === index) {
             return item;
           }
           return product;
         }),
-        total: cart.total,
       });
+      setUpdateTotalValues(!updateTotalValues);
 
       openSnack("Control de stock actualizado", "success");
       return response;
@@ -146,14 +164,16 @@ export default function NewPurchaseForm(props) {
     item.quanty = item.quanty + 1;
     item.subtotal = item.gross * item.quanty;
     setCart({
+      ...cart,
       items: cart.items.map((product, i) => {
         if (i === index) {
           return item;
         }
         return product;
-      }),
-      total: calcTotalCart(),
+      })
     });
+    setUpdateTotalValues(!updateTotalValues);
+
   };
 
   const decrementQuanty = (index) => {
@@ -162,24 +182,26 @@ export default function NewPurchaseForm(props) {
       item.quanty = item.quanty - 1;
       item.subtotal = item.gross * item.quanty;
       setCart({
+        ...cart,
         items: cart.items.map((product, i) => {
           if (i === index) {
             return item;
           }
           return product;
-        }),
-        total: calcTotalCart(),
+        })
       });
+      setUpdateTotalValues(!updateTotalValues);
     }
   };
 
   const removeProduct = (index) => {
     const item = cart.items[index];
     setCart({
-      items: cart.items.filter((product, i) => i !== index),
-      total: cart.total - item.subtotal,
+      ...cart,
+      items: cart.items.filter((product, i) => i !== index)
+
     });
-    calcTotalCart();
+    setUpdateTotalValues(!updateTotalValues);
   };
 
   const updateItem = (index, quanty, net, tax, taxes, gross, storage) => {
@@ -193,14 +215,15 @@ export default function NewPurchaseForm(props) {
     item.storage = storage;
 
     setCart({
+      ...cart,
       items: cart.items.map((product, i) => {
         if (i === index) {
           return item;
         }
         return product;
       }),
-      total: calcTotalCart(),
     });
+    setUpdateTotalValues(!updateTotalValues);
   };
 
   const calcTotalCart = () => {
@@ -507,6 +530,18 @@ export default function NewPurchaseForm(props) {
                         <Typography variant="subtitle1">Pago</Typography>
                       </Grid>
                       <Grid item>
+                        <Autocomplete
+                          options={paymentMethodsOptions}
+                          getOptionLabel={(option) => option.name}
+                          onChange={(e, value) => setSelectedPaymentMethod(value)}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Medio de pago"
+                              size="small"
+                            />
+                          )}
+                        />
                     
 
                       </Grid>
@@ -515,10 +550,10 @@ export default function NewPurchaseForm(props) {
                   <Grid item xs={6} textAlign={"right"}>
                     <Typography fontSize={14}>
                       Neto:{" "}
-                      {cart.net.toLocaleString("es-CL", {
+                      {/* {cart.net.toLocaleString("es-CL", {
                         style: "currency",
                         currency: "CLP",
-                      })}
+                      })} */}
                     </Typography>
                     <Typography fontSize={14}>
                       Impuestos:{" "}

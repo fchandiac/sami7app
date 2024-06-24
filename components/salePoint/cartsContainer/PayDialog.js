@@ -453,8 +453,8 @@ export default function PayDialog(props) {
 
       <Dialog open={openDteDialog} onClose={() => {
         setOpenDteDialog(false)
-        clearCart()
-        setOpenPayDialog(false)
+        // clearCart()
+        // setOpenPayDialog(false)
 
       }}
       >

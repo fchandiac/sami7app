@@ -45,6 +45,7 @@ export default function NewProductComponent() {
 
   const saveProduct = async () => {
     try {
+      console.log(general);
       const newProduct = await products.newProduct(
         general,
         purchasePrice,

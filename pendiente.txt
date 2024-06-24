@@ -50,6 +50,7 @@ tipos de venta:
 - en lioren services, states, cities y districs destrabaar el token en las funciones y utilizar la variable de entorno. 
 
 - ELIMINAR UTILITY EN PURCHASE NEW
+- agregar Descripcio´ón al salecashregisterMovement
 
 
 

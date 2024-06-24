@@ -184,6 +184,14 @@ export default function useSales() {
     return sale;
   }
 
+  //totalSalesBetweenDates(start_date, end_date)
+
+  const totalSalesBetweenDates = async (start_date, end_date) => {
+    console.log("start_date", start_date);
+    const total = await sales.totalSalesBetweenDates(start_date, end_date);
+    return total;
+  }
+
 
   return {
     create,
@@ -203,5 +211,6 @@ export default function useSales() {
     voidById,
     updateDocumentId,
     updateUtility,
+    totalSalesBetweenDates,
   };
 }

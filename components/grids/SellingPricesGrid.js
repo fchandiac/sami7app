@@ -13,18 +13,33 @@ import {
   TextField,
   Button,
   InputAdornment,
+  Autocomplete,
+  IconButton
 } from "@mui/material";
 import useUtils from "../hooks/useUtils";
+import TitlePaper from "../custom/TitlePaper";
+import useTaxes from "../hooks/useTaxes";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import RedoIcon from "@mui/icons-material/Redo";
+import { set } from "autonumeric";
+
+
+
 
 
 export default function SellingPricesGrid(props) {
   const {update} = props;
   const records = useRecords();
-  const { addThousandsSeparator } = useUtils();
+  const taxes = useTaxes();
+  const { addThousandsSeparator, grossPrice, removeThousandsSeparator, taxesAmount } = useUtils();
   const sellingPrices = useSellingPrices();
   const [sellingPricesList, setSellingPricesList] = useState([]);
   const [gridApiRef, setGridApiRef] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [taxesOptions, setTaxesOptions] = useState([]);
+  const [taxesList, setTaxesList] = useState([]);
+  const [selectedTax, setSelectedTax] = useState(null);
   const [rowData, setRowData] = useState({
     id: 0,
     productCode: "",
@@ -33,15 +48,33 @@ export default function SellingPricesGrid(props) {
     priceListName: "",
     gross: 0,
     net: 0,
+    tax: 0,
     purchase_net: 0,
     utility: 0,
     taxes: [],
   });
 
+useEffect(() => {
+    const fetch = async () => {
+      const data = await taxes.findAll();
+      const dataFormatted = data.map((item) => {
+        return {
+          id: item.id,
+          key: item.id,
+          name: item.name,
+          value: item.value,
+        };
+      }
+      );
+      setTaxesOptions(dataFormatted);
+    };
+    fetch();
+  }, []);
+
   useEffect(() => {
     const fecth = async () => {
       const data = await sellingPrices.findAll();
-      //console.log(data);
+      console.log(data);
       const dataFormatted = data.map((item) => {
         return {
           id: item.id,
@@ -108,13 +141,13 @@ export default function SellingPricesGrid(props) {
           currency: "CLP",
         }),
     },
-    {
-      field: "update_at",
-      headerName: "Actualizado",
-      flex: 1,
-      valueFormatter: (params) =>
-      params.value == null? '': moment(params.value).format("DD-MM-YYYY HH:mm"),
-    },
+    // {
+    //   field: "update_at",
+    //   headerName: "Actualizado",
+    //   flex: 1,
+    //   valueFormatter: (params) =>
+    //   params.value == null? '': moment(params.value).format("DD-MM-YYYY HH:mm"),
+    // },
     {
       field: "actions",
       headerName: "",
@@ -126,6 +159,7 @@ export default function SellingPricesGrid(props) {
           icon={<EditIcon />}
           label={"Editar"}
           onClick={() => {
+            console.log(params.row);
             setRowData({
               id: params.row.id,
               productCode: params.row.productCode,
@@ -138,6 +172,7 @@ export default function SellingPricesGrid(props) {
               utility: params.row.utility,
               taxes: params.row.taxes,
             });
+            setTaxesList(params.row.taxes);
             setOpenEditDialog(true);
           }}
         />,
@@ -145,13 +180,38 @@ export default function SellingPricesGrid(props) {
     },
   ];
 
+  // const addTax = () => {
+  //   const tax = selectedTax;
+  //   const findTax = taxesList.find((t) => t.id === tax.id);
+  //   if (findTax) {
+  //     return;
+  //   } else {
+  //     setTaxesList([...taxesList, tax]);
+  //   }
+  // };
+
+  // const removeTax = (index) => {
+  //   const taxes = taxesList;
+  //   taxes.splice(index, 1);
+  //   setTaxesList([...taxes]);
+  // };
+
+
+  const netToGross = () => {
+    const net_ = removeThousandsSeparator(rowData.net);
+    const gross = grossPrice(net_, rowData.taxes);
+    console.log(gross);
+    setRowData({ ...rowData, gross: addThousandsSeparator(gross), utility: addThousandsSeparator(rowData.purchase_net - net_)  });
+
+  };
+
   const updateSellingPrice = async (e) => {
     const update = await sellingPrices.update(
       rowData.id,
-      rowData.net,
-      rowData.gross,
-      rowData.utility,
-      rowData.priceListId
+      removeThousandsSeparator(rowData.net),
+      removeThousandsSeparator(rowData.gross),
+      removeThousandsSeparator(rowData.utility),
+      rowData.pricelistId
     )
   
       gridApiRef.current.updateRows([
@@ -159,7 +219,7 @@ export default function SellingPricesGrid(props) {
           id: rowData.id,
           productCode: rowData.productCode,
           productName: rowData.productName,
-          priceListId: rowData.priceListId,
+          priceListId: rowData.pricelistId,
           priceListName: rowData.priceListName,
           gross: rowData.gross,
           net: rowData.net,
@@ -203,6 +263,102 @@ export default function SellingPricesGrid(props) {
                   Código: {rowData.productCode}
                 </Typography>
               </Grid>
+              <Grid item >
+                <TextField
+               
+                  label="Precio Neto de compra"
+                  value={addThousandsSeparator(rowData.purchase_net)}
+                  onChange={(e) =>
+                    setRowData({ ...rowData, purchase_net: e.target.value })
+                  }
+                  fullWidth
+                  disabled
+   
+                
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                />
+              
+              </Grid>
+              <Grid item display={'flex'}>
+                <TextField
+                 sx={{ flexGrow: 1 }}
+                  label="Precio Neto venta"
+                  value={addThousandsSeparator(rowData.net)}
+                  onChange={(e) =>
+                    setRowData({ ...rowData, net: e.target.value })
+                  }
+                  fullWidth
+                  required
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                />
+                  <IconButton onClick={() => netToGross()}>  <RedoIcon /></IconButton>
+              </Grid>
+
+              <Grid item>
+
+                <TitlePaper title={"Impuestos"}>
+                  <Grid container spacing={1}>
+                    {/* <Grid item display={"flex"} xs={12}>
+                      <Autocomplete
+                        sx={{ flexGrow: 1 }}
+                        options={taxesOptions}
+                        getOptionLabel={(option) => option.name}
+                        onChange={(e, value) => setSelectedTax(value)}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Añadir impuesto"
+                            fullWidth
+                            size="small"
+                          />
+                        )}
+                      />
+                      <IconButton onClick={() => addTax()}>
+                        <AddCircleIcon />
+                      </IconButton>
+                    </Grid> */}
+                    {taxesList.map((tax, index) => (
+                      <Grid item key={index}>
+                        <Paper
+                          variant={"outlined"}
+                          sx={{
+                            display: "flex",
+                            padding: 1,
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography sx={{ flexGrow: 1 }}>
+                            {tax.name}
+                          </Typography>
+                          {/* <IconButton onClick={() => removeTax(index)}>
+                            <RemoveCircleIcon />
+                          </IconButton> */}
+                        </Paper>
+                      </Grid>
+                    ))}
+                    {/* <Grid item>
+                      <Typography fontSize={14}>
+                        {" "}
+                        Total impuestos:{" $"}
+                        {(rowData.gross - rowData.net).toLocaleString("es-CL", {
+                          style: "currency",
+                          currency: "CLP",
+                        })}
+                      </Typography>
+                    </Grid> */}
+                  </Grid>
+                </TitlePaper>
+              </Grid>
 
               <Grid item>
                 <TextField
@@ -222,23 +378,9 @@ export default function SellingPricesGrid(props) {
                 />
               </Grid>
 
-              <Grid item>
-                <TextField
-                  label="Precio Neto"
-                  value={addThousandsSeparator(rowData.net)}
-                  onChange={(e) =>
-                    setRowData({ ...rowData, net: e.target.value })
-                  }
-                  fullWidth
-                  required
-                  size="small"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">$</InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
+        
+
+        
 
               <Grid item>
                 <TextField

@@ -83,7 +83,7 @@ export default function useProducts() {
       general.name,
       general.code,
       general.description,
-      general.stock_control,
+      general.stockControl,
       general.ivaSubject,
       general.favorite,
       newPurchase.id,

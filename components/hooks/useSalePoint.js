@@ -691,37 +691,21 @@ export default function useSalePoint() {
 
       processPayments(newSale, saleInfo);
 
-      // SALE DETAILS
+     
 
       const productCardsList = await productCards.findAllBySale(newSale.id);
       console.log("Product Cards List", productCardsList);
       let newSaleId = newSale.id;
 
+       // SALE DETAILS
+
       const saleDetails = await Promise.all(
         items.map(async (item) => {
-         // console.log("Item", item);
-          // return await sales.createSaleDetail(
-          //   item.quanty,
-          //   item.gross,
-          //   item.discount,
-          //   item.utility,
-          //   item.net,
-          //   item.tax,
-          //   item.total,
-          //   newSale.id,
-          //   item.id
-          // );
           const saleDetail_ = await saleDetail(item, newSaleId);
           console.log("Sale Detail", saleDetail_);
         })
       );
 
-      // console.log("New Sale", newSale);
-      // console.log("TiketInfo", dte.ticketProcess(saleInfo));
-      // const boletainfo = await dte.boletaProcess(saleInfo);
-      // console.log("Boletainfo", boletainfo);
-
-      
       
       const salesDetailList = await sales.findAllSaleDetailBySaleId(newSale.id);
 
@@ -850,6 +834,20 @@ export default function useSalePoint() {
 
 
   
+    } else {
+      const newSaleDetail = await sales.createSaleDetail(
+        product.quanty,
+        product.gross,
+        product.discount,
+        product.utility,
+        product.net,
+        product.tax,
+        product.total,
+        saleId,
+        product.id
+      )
+
+      return newSaleDetail
     }
     
 

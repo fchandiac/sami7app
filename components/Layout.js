@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Box, AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -12,10 +12,26 @@ export default function Layout(props) {
     const { children } = props
     const { user, pageTitle, setPageTitle, openSnack } = useAppContext()
     const router = useRouter()
+    const [showAppBar, setShowAppBar] = useState(false)
     const [openDrawer, setOpenDrawer] = useState(false)
+    const [useAuth, setUseAuth] = useState(false)
+
+    useEffect(() => {
+        if (user.id !== 0) {
+            setShowAppBar(true)
+        } else {
+            setShowAppBar(false)
+        }
+    }, [user])
+
+
+
+
     return (
         <>
-            <AppBar position="static">
+            <AppBar position="static"
+                sx={{ display: showAppBar ? 'block' : 'none' }}
+            >
                 <Toolbar>
                     <IconButton
                         size={'large'}
@@ -49,7 +65,7 @@ export default function Layout(props) {
                 onClose={() => { setOpenDrawer(false) }}
             >
                  <List>
-                 <ListItem button>
+                 {/* <ListItem button>
                         <ListItemText primary="Dashboard" 
                         onClick={() => { 
                             router.push('/')
@@ -57,7 +73,7 @@ export default function Layout(props) {
                             setOpenDrawer(false)
                         }}
                         />
-                    </ListItem>
+                    </ListItem> */}
                     <ListItem button>
                         <ListItemText primary="Productos" 
                         onClick={() => { 
