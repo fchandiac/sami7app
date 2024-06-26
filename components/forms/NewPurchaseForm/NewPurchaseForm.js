@@ -27,6 +27,8 @@ import useStocks from "@/components/hooks/useStocks";
 import usePaymentMethods from "@/components/hooks/usePaymentMethods";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import moment from "moment";
+import usePaymentsProviders from "@/components/hooks/usePaymentsProviders";
+import useProviderAccountMovements from "@/components/hooks/useProviderAccountMovements";
 
 export default function NewPurchaseForm(props) {
   // prop para definir uso cambiar luego cuando se cree OrdendeCompra
@@ -44,6 +46,8 @@ export default function NewPurchaseForm(props) {
   const productCards = useProductCards();
   const stocks = useStocks();
   const paymentMethods = usePaymentMethods();
+  const paymentsProviders = usePaymentsProviders();
+  const providerAccountMovements = useProviderAccountMovements();
   const [updateTotalValues, setUpdateTotalValues] = useState(false);
 
   const [description, setDescription] = useState("");
@@ -64,7 +68,9 @@ export default function NewPurchaseForm(props) {
   const { grossPrice, taxesAmount } = useUtils();
 
   const [paymentStatus, setPaymentStatus] = useState(false);
-  const [payDate, setPayDate] = useState(moment(new Date()).format("YYYY-MM-DD"));
+  const [payDate, setPayDate] = useState(
+    moment(new Date()).format("YYYY-MM-DD")
+  );
 
   const { user, openSnack } = useAppContext();
 
@@ -258,6 +264,22 @@ export default function NewPurchaseForm(props) {
       }
     }
 
+    let nullStorage = false;
+
+    cart.items.forEach((item) => {
+      if (!item.storage) {
+        nullStorage = true;
+      }
+    });
+
+    if (nullStorage) {
+      openSnack(
+        "Debe seleccionar un almacen para todos los productos",
+        "error"
+      );
+      return;
+    }
+
     const tax = calcTotalTax();
     const net = calcTotalNet();
     const gross = calclTotalGross();
@@ -342,6 +364,25 @@ export default function NewPurchaseForm(props) {
           );
         }
       });
+
+      let balancePayment = 0;
+      if (!paymentStatus) {
+        balancePayment = cart.total;
+      }
+
+      const newPayment = await paymentsProviders.create(
+        description,
+        0,
+        cart.total,
+        balancePayment,
+        newPurchase.id,
+        user.id,
+        payDate,
+        selectedPaymentMethod.id,
+        selectedProvider.id
+      );
+
+      console.log("New Provider Payment", newPayment);
 
       openSnack("Compra guardada", "success");
     } catch (error) {
@@ -575,9 +616,7 @@ export default function NewPurchaseForm(props) {
                             <TextField {...params} size="small" fullWidth />
                           )}
                         />
-                        </Grid>
-
-
+                      </Grid>
                     </Grid>
                   </Grid>
 

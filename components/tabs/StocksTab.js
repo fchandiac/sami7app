@@ -52,8 +52,8 @@ export default function StocksTab(props) {
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Stocks" {...a11yProps(0)} />
                     <Tab label="Movimientos" {...a11yProps(1)} />
-                    <Tab label="Alertas" {...a11yProps(2)} />
-                    <Tab label="Almacenes" {...a11yProps(3)} />
+                    {/* <Tab label="Alertas" {...a11yProps(2)} /> */}
+                    <Tab label="Almacenes" {...a11yProps(2)} />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
@@ -62,10 +62,10 @@ export default function StocksTab(props) {
             <TabPanel value={value} index={1}>
                 {Movements}
             </TabPanel>
-            <TabPanel value={value} index={2}>
+            {/* <TabPanel value={value} index={2}>
                 {Alerts}
-            </TabPanel>
-            <TabPanel value={value} index={3}>
+            </TabPanel> */}
+            <TabPanel value={value} index={2}>
                 {Storages}
             </TabPanel>
        

@@ -104,31 +104,58 @@ function destroy(id) {
     return purchasePrice
 }
 
-// function createTaxPurchasePrices(tax_id, purchase_price_id) {
-//     const taxPurchasePrices = new Promise((resolve, reject) => {
-//         fetch(server_url + 'purchasePrices/createTaxPurchasePrices', {
-//             method: 'POST',
-//             body: JSON.stringify({ tax_id, purchase_price_id }),
-//             headers: { 'Content-Type': 'application/json' }
-//         }).then(res => {
-//             res.json().then(res => {
-//                 if (res.code === 0) {
-//                     reject(res.data)
-//                 } else {
-//                     resolve(res.data)
-//                 }
-//             })
-//         }).catch(err => {
-//             reject(err)
-//         })
-//     })
-//     return taxPurchasePrices
-// }
+//findByPk(id)
 
-module.exports = {
+function findByPk(id) {
+    const purchasePrice = new Promise((resolve, reject) => {
+        fetch(server_url + 'purchasePrices/findByPk', {
+            method: 'POST',
+            body: JSON.stringify({ id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return purchasePrice
+}
+
+// findOneByProduct(id)
+function findOneByProduct(id) {
+    const purchasePrice = new Promise((resolve, reject) => {
+        fetch(server_url + 'purchasePrices/findOneByProduct', {
+            method: 'POST',
+            body: JSON.stringify({ id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return purchasePrice
+}
+
+
+export  {
     create,
     findAll,
     findOneById,
     update,
     destroy,
+    findByPk,
+    findOneByProduct
 }

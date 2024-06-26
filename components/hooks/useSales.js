@@ -88,10 +88,10 @@ export default function useSales() {
     document_type,
     document_id
   ) => {
-    const descriptionStrg = "Venta directa: " + description;
+ 
     const type = 1;
     const newSale = await create(
-      descriptionStrg,
+      description,
       type,
       discount,
       utility,

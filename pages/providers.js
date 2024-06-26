@@ -3,7 +3,17 @@ import { Grid } from '@mui/material'
 import ProviderForm from '@/components/forms/ProviderForm'
 import ProvidersGrid from '@/components/grids/ProvidersGrid'
 
+
+import ProvidersTab from '@/components/tabs/ProvidersTab'
+
 export default function providers() {
+  return (
+    <ProvidersTab Providers={<Providers />} Accounts={<Accounts />} Purchases={<Purchases />} />
+  )
+}
+
+
+function Providers() {
     const [gridState, setGridState] = useState(false)
 
     const updateGrid = () => {
@@ -19,6 +29,20 @@ export default function providers() {
                     <ProvidersGrid update={gridState} />
                 </Grid>
             </Grid>
+        </>
+    )
+}
+
+function Accounts() {
+    return (
+        <>
+        </>
+    )
+}
+
+function Purchases() {
+    return (
+        <>
         </>
     )
 }

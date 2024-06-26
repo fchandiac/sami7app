@@ -5,12 +5,15 @@ import useProducts from "../hooks/useProducts";
 import EditIcon from "@mui/icons-material/Edit";
 import { Dialog } from "@mui/material";
 import ProductForm from "../forms/ProductForm";
+import PriceChangeIcon from '@mui/icons-material/PriceChange';
+import PurchasePriceForm from "../forms/PurchasePriceForm";
 
 export default function ProductsGrid() {
   const products = useProducts();
   const [productsList, setProductsList] = useState([]);
   const [gridApiRef, setGridApiRef] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openPriceChangeDialog, setOpenPriceChangeDialog] = useState(false);
   const [rowData, setRowData] = useState({
     id: 0,
     name: "",
@@ -19,7 +22,7 @@ export default function ProductsGrid() {
     stock_control: false,
     iva_subject: false,
     favorite: false,
-    purchase_price_id: 0,
+    purchase_price_id: null,
     selling_price_id: 0,
     subcategory: { id: 0, key: 0, name: "" },
   });
@@ -27,7 +30,7 @@ export default function ProductsGrid() {
   useEffect(() => {
     const fecth = async () => {
       const data = await products.findAll();
-      // console.log(data);
+      console.log(data);
       setProductsList(data);
     };
     fecth();
@@ -37,12 +40,12 @@ export default function ProductsGrid() {
     { field: "id", headerName: "Id", flex: 0.6 },
     { field: "code", headerName: "Código", flex: 1 },
     { field: "name", headerName: "Nombre", flex: 1 },
-    { field: "description", headerName: "Descripción", flex: 1 },
+    { field: "description", headerName: "Descripción", flex: 1, hide: true},
     { field: "subcategoryName", headerName: "Subcategoría", flex: 1 },
     {
       field: "stockControl",
       headerName: "Control de stock",
-      flex: 0.5,
+      flex: 0.8,
       type: "boolean",
     },
     {
@@ -57,7 +60,7 @@ export default function ProductsGrid() {
       headerName: "",
       headerClassName: "data-grid-last-column-header",
       type: "actions",
-      flex: 0.2,
+      flex: 0.5,
       getActions: (params) => [
         <GridActionsCellItem
           icon={<EditIcon />}
@@ -85,6 +88,33 @@ export default function ProductsGrid() {
             setOpenEditDialog(true);
           }}
         />,
+        <GridActionsCellItem
+          icon={<PriceChangeIcon />}
+          label={"Cambiar precio"}
+          onClick={() => {
+            setRowData({
+              id: params.row.id,
+              code: params.row.code,
+              name: params.row.name,
+              description: params.row.description,
+              stockControl: params.row.stockControl,
+              ivaSubject: params.row.ivaSubject,
+              favorite: params.row.favorite,
+              purchase_price_id: params.row.purchasePriceId,
+              subcategory: {
+                id: params.row.Subcategory.id,
+                key: params.row.Subcategory.id,
+                name: params.row.Subcategory.name,
+                category:{
+                  id: params.row.Subcategory.Category.id,
+                  key: params.row.Subcategory.Category.id,
+                  name: params.row.Subcategory.Category.name
+                }
+              },
+            });
+            setOpenPriceChangeDialog(true);
+          }}
+        />,
       ],
     },
   ];
@@ -105,6 +135,22 @@ export default function ProductsGrid() {
     setOpenEditDialog(false);
   }
 
+  const afterPriceChange = (data) => {
+    gridApiRef.current.updateRows([
+      {
+        id: data.id,
+        code: data.code,
+        name: data.name,
+        description: data.description,
+        stockControl: data.stockControl,
+        ivaSubject: data.ivaSubject,
+        favorite: data.favorite,
+        subcategoryName: data.subcategory.name,
+      },
+    ]);
+    setOpenPriceChangeDialog(false);
+  }
+
   return (
     <>
       <InfoDataGrid
@@ -122,6 +168,16 @@ export default function ProductsGrid() {
       >
         <ProductForm data={rowData} afterSubmit={afterUpdate}/>
       </Dialog>
+
+      <Dialog
+        open={openPriceChangeDialog}
+        onClose={() => setOpenPriceChangeDialog(false)}
+        fullWidth
+        maxWidth={"xs"}
+      >
+        <PurchasePriceForm purchasePriceId={rowData.purchase_price_id}/>
+      </Dialog>
+
     </>
   );
 }

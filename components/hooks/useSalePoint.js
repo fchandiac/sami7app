@@ -807,7 +807,7 @@ export default function useSalePoint() {
         purchaseNet += productCardsList[i].puchase_net
       }
 
-      let utility = product.net - purchaseNet
+      let utility = (product.net * product.quanty) - purchaseNet
 
 
       const newSaleDetail = await sales.createSaleDetail(

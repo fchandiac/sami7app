@@ -47,6 +47,19 @@ export default function usePurchasePrices() {
   //     "percentage": 19
   // }
 
+  //findByPk(id)
+
+  const findByPk = async (id) => {
+    const purchasePrice = await purchasePrices.findByPk(id);
+    return purchasePrice
+  }
+
+  // findOneByProduct(id)
+  const findOneByProduct = async (id) => {
+    const purchasePrice = await purchasePrices.findOneByProduct(id);
+    return purchasePrice;
+  };
+
  
   
 
@@ -57,6 +70,8 @@ export default function usePurchasePrices() {
     update,
     destroy,
     createTaxPurchasePrices,
+    findByPk,
+    findOneByProduct,
 
   };
 }

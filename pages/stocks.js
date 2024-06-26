@@ -27,9 +27,9 @@ export default function stocks() {
   return (
     <>
       <StocksTab
-        Stocks={Stocks()}
-        Movements={Movements()}
-        Storages={Storages()}
+        Stocks={<Stocks />}
+        Movements={<Movements />}
+        Storages={<Storages />}
       />
     </>
   );
@@ -44,6 +44,7 @@ function Stocks() {
   useEffect(() => {
     const fetchProductCards = async () => {
       const productCardsList = await productCards.findAllGroupByProductAvailable();
+      console.log(productCardsList);
       setStockList(productCardsList);
     };
     fetchProductCards();
@@ -197,8 +198,6 @@ function Movements() {
             <Grid item>
               <StockMovementForm product={selectedProduct} storage={selectedStorage} afterSubmit={()=>{
                 setUpdateMovementList(!updateMovementList);
-                setSelectedProduct(null);
-                setSelectedStorage(null);
                 }}/>
             </Grid>
           </Grid>

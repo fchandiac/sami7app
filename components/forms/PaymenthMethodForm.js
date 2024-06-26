@@ -24,7 +24,33 @@ export default function PaymenthMethodForm(props) {
 
   const save = async () => {
     if (edit) {
-      console.log("Actualizar");
+      const updatedPaymentMethod = await paymentMethods.update(
+        paymentMethodData.id,
+        paymentMethodData.name,
+        paymentMethodData.description,
+        paymentMethodData.credit,
+      );
+      if (updatedPaymentMethod) {
+        openSnack("Medio de pago actualizado correctamente", "success");
+        setPaymentMethodData({
+          id: null,
+          name: "",
+          description: "",
+          credit: false,
+        });
+        afterSubmit(paymentMethodData);
+        const newRecord = await records.create(
+          user.id,
+          'actualizar',
+          'medios de pago',
+          `Medio de pago ${paymentMethodData.id} actualizado`,
+        )
+      } else {
+        openSnack("Error al actualizar el medio de pago", "error");
+      }
+      
+
+
     } else {
       const newPaymentMethod =  await paymentMethods.create(
         paymentMethodData.name,
@@ -41,6 +67,12 @@ export default function PaymenthMethodForm(props) {
         
         });
         afterSubmit();
+        const newRecord = await records.create(
+          user.id,
+          'crear',
+          'medios de pago',
+          `Medio de pago ${newPaymentMethod.name} creado`,
+        )
       } else {
         openSnack("Error al crear el medio de pago", "error");
       }
