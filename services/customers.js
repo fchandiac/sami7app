@@ -83,11 +83,11 @@ function findByRut(rut) {
     return customer
 }
 
-function update(id, rut, name, address, phone, mail) {
+function update(id, name, address, phone, mail, activity, district, city) {
     const customer = new Promise((resolve, reject) => {
         fetch(server_url + 'customers/update', {
             method: 'POST',
-            body: JSON.stringify({ id, rut, name, address, phone, mail }),
+            body: JSON.stringify({id, name, address, phone, mail, activity, district, city }),
             headers: { 'Content-Type': 'application/json' }
         }).then(res => {
             res.json().then(res => {

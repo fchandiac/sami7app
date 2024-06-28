@@ -384,6 +384,77 @@ function totalSalesBetweenDates(start_date, end_date) {
 }
 
 
+// function updateSaleTax(id, tax) 
+
+function updateSaleTax(id, tax) {
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/updateSaleTax', {
+            method: 'POST',
+            body: JSON.stringify({ id, tax }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return sale
+}
+
+//function updateSaleNet(id, net)
+
+function updateSaleNet(id, net) {
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/updateSaleNet', {
+            method: 'POST',
+            body: JSON.stringify({ id, net }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return sale
+}
+
+//function updateSaleDocumentType(id, document_type)
+
+function updateSaleDocumentType(id, document_type) {
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/updateSaleDocumentType', {
+            method: 'POST',
+            body: JSON.stringify({ id, document_type }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return sale
+}
+
+
+
 export {
     create,
     findAll,
@@ -401,7 +472,10 @@ export {
     voidById,
     updateDocumentId,
     updateutility,
-    totalSalesBetweenDates
+    totalSalesBetweenDates,
+    updateSaleTax,
+    updateSaleNet,
+    updateSaleDocumentType
 }
 
 

@@ -118,7 +118,7 @@ export function Purchases_() {
         maxWidth={"md"}
         fullWidth
       >
-        <NewPurchaseForm />
+        <NewPurchaseForm closeDialog={()=>{setOpenNewPurchaseDialog(false)}}/>
       </Dialog>
     </>
   );

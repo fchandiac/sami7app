@@ -35,6 +35,7 @@ export default function ProductCardCart(props) {
     addDiscountToItem,
     changeGrossToItem,
     changeQuantityToItem,
+    updateItemName
     
   } = useSalePoint();
   const { item } = props;
@@ -63,9 +64,12 @@ export default function ProductCardCart(props) {
     <>
       <Paper variant="outlined" sx={{ p: 1, mb: 1 }}>
         <Box display={"flex"}>
-          <Box display="flex" alignItems="center">
+
+          <Box display="flex" alignItems="center" width={'3%'}>
             <Typography fontSize={14}>{item.quanty}</Typography>
           </Box>
+
+          <Box display="flex" alignItems="center" width={'3%'}>
 
           <IconButton
             size="small"
@@ -76,15 +80,31 @@ export default function ProductCardCart(props) {
           >
             <EditIcon sx={{ fontSize: 17 }} />
           </IconButton>
+          
+          </Box>
+
 
           <Box flexGrow={1} display="flex" alignItems="center">
-            <Typography fontSize={14}>{item.name}</Typography>
+           <TextField
+  
+              variant="standard"
+              value={item.name}
+              fullWidth
+              size="small"
+              onChange={(e) => {
+                updateItemName(item.id, e.target.value);
+
+              }}
+       
+            />
           </Box>
+
+         
 
           <Box width={"12%"}>
             <Box display="flex" alignItems="center">
               <Typography fontSize={14}>
-                {item.total.toLocaleString("es-CL", {
+                {item.subTotal.toLocaleString("es-CL", {
                   style: "currency",
                   currency: "CLP",
                 })}
@@ -92,7 +112,18 @@ export default function ProductCardCart(props) {
             </Box>
           </Box>
 
-          <Box display={"flex"}>
+          <Box width={"12%"}>
+            <Box display="flex" alignItems="center">
+              <Typography fontSize={14}>
+                {item.discount.toLocaleString("es-CL", {
+                  style: "currency",
+                  currency: "CLP",
+                })}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box display={"flex"} width={'15%'}>
             <IconButton
               size="small"
               sx={{ display: "block", margin: "auto", display: "flex" }}
@@ -144,6 +175,7 @@ export default function ProductCardCart(props) {
 
         <Box
           display={showMore ? "block" : "none"}
+          mt={1}
           pt={1}
           sx={{ borderTop: `1px solid ${theme.palette.MUIBorder.main}` }}
         >

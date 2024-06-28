@@ -41,7 +41,7 @@ export default function useDte() {
       items: [],
       payments: [],
       saleId: 0,
-      referenceId: 0,
+      referenceId: null,
       date: moment(new Date()).format("DD-MM-YYYY"),
       time: moment(new Date()).format("HH:mm:ss"),
       stamp: "",

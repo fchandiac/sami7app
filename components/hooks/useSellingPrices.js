@@ -127,6 +127,23 @@ export default function useSellingPrices() {
     return price;
   }
 
+  // findAllByProduct(product_id)
+
+  const findAllByProduct = async (product_id) => {
+    const price = await sellingPrices.findAllByProduct(product_id);
+    return price;
+  }
+
+
+
+
+// updatePurchaseNetByProduct(product_id, purchase_net)
+
+  const updatePurchaseNetByProduct = async (product_id, purchase_net) => {
+    const price = await sellingPrices.updatePurchaseNetByProduct(product_id, purchase_net);
+    return price;
+  }
+
   return {
     create,
     findAll,
@@ -140,6 +157,8 @@ export default function useSellingPrices() {
     inverseUtilityAmount,
     findAllByProductAndPriceList,
     findTaxesBySellingPrice,
-    findAllByPriceListGroupByProduct
+    findAllByPriceListGroupByProduct,
+    findAllByProduct,
+    updatePurchaseNetByProduct
   };
 }

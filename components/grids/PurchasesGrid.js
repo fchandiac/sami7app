@@ -5,6 +5,8 @@ import InfoDataGrid from "../custom/InfoDataGrid";
 import InfoIcon from "@mui/icons-material/Info";
 import { Dialog } from "@mui/material";
 import PurchaseDetailCard from "../cards/PurchaseDetailCard";
+import PurchaseDetails from "../details/PurchaseDetails";
+import PrintContainer from "../prints/PrintContainer";
 
 export default function PurchasesGrid(props) {
   const { purchasesList } = props;
@@ -106,7 +108,9 @@ export default function PurchasesGrid(props) {
         open={openDetailDialog}
         onClose={() => setOpenDetailDialog(false)}
       >
-        <PurchaseDetailCard id={rowData.id} />
+        <PrintContainer>
+          <PurchaseDetails purchaseId={rowData.id} />
+        </PrintContainer>
       </Dialog>
     </>
   );

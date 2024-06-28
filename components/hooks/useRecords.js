@@ -13,6 +13,7 @@ export default function useRecords() {
 
   const findAllToGrid = async () => {
     const record = await records.findAll();
+    console.log(record);
     return record.map((r) => ({
       id: r.id,
       userId: r.user_id,
@@ -20,7 +21,7 @@ export default function useRecords() {
       action: r.action,
       table: r.table,
       description: r.description,
-      createdAt: r.created_at,
+      createdAt: r.createdAt,
     }))
   }
 

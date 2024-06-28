@@ -1,10 +1,13 @@
-import React, {useState} from 'react'
-import { Grid } from '@mui/material'
+import React, {useState, useEffect} from 'react'
+import { Grid, Paper, Autocomplete, TextField, Typography } from '@mui/material'
 import ProviderForm from '@/components/forms/ProviderForm'
 import ProvidersGrid from '@/components/grids/ProvidersGrid'
-
-
 import ProvidersTab from '@/components/tabs/ProvidersTab'
+import useProviders from '@/components/hooks/useProviders'
+import useProviderAccountMovements from '@/components/hooks/useProviderAccountMovements'
+import ProviderAccountMovementsGrid from '@/components/grids/ProviderAccountMovementsGrid'
+
+
 
 export default function providers() {
   return (
@@ -34,8 +37,59 @@ function Providers() {
 }
 
 function Accounts() {
+    const providers = useProviders()
+    const providerAccountMovements = useProviderAccountMovements()
+    const [providerOptions, setProviderOptions] = useState([])
+    const [selectedProvider, setSelectedProvider] = useState(null)
+    const [movementsList, setMovementsList] = useState([])
+
+    useEffect(() => {
+        const fetchProviders = async () => {
+            const providersList = await providers.findAll()
+            setProviderOptions(providersList   )
+        }
+        fetchProviders()
+    }, [])
+
+    useEffect(() => {
+        if (selectedProvider) {
+            const fetchMovements = async () => {
+                const movements = await providerAccountMovements.findAllByProvider(selectedProvider.id)
+                setMovementsList(movements)
+                console.log('movements', movements)
+            }
+            fetchMovements()
+        }
+    }, [selectedProvider])
+
+    
+
     return (
         <>
+         <Grid container spacing={1}>
+      <Grid item xs={12} md={3}>
+        <Paper variant="outlined" sx={{ p: 1 }}>
+          <Grid container spacing={1} direction={"column"}>
+            <Grid item>
+              <Typography variant="subtitle1">Filtro</Typography>
+            </Grid>
+            <Grid item>
+              <Autocomplete
+                options={providerOptions}
+                getOptionLabel={(option) => option.name}
+                onChange={(event, newValue) => {
+                  setSelectedProvider(newValue)
+                }}
+                renderInput={(params) => <TextField {...params} label="Proveedor"  size='small'/>}
+              />
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+      <Grid item xs={12} md={9}>
+        <ProviderAccountMovementsGrid movementsList={movementsList} title={'Cuenta proveedor: ' + (selectedProvider? selectedProvider.name:'' )}/>
+      </Grid>
+    </Grid>
         </>
     )
 }

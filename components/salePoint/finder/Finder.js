@@ -40,13 +40,13 @@ export default function Finder() {
     const fetch = async () => {
       const productsList = await sellingPrices.findAllByPriceList(priceList.id);
 
-      console.log("ProductsList", productsList);
+      // console.log("ProductsList", productsList);
       
       const list = await products.findAllToSalePoint(
         priceList.id,
         info.storage.id
       );
-      console.log("List", list);
+      // console.log("List", list);
     setFinderProductsList(list);
     };
     fetch();

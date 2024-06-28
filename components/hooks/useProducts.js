@@ -194,6 +194,23 @@ export default function useProducts() {
     return product;
   }
 
+  const findAllToGrid = async () => {
+    const product = await products.findAll();
+    console.log(product)
+    return product.map((p) => ({
+      id: p.id,
+      name: p.name,
+      code: p.code,
+      description: p.description,
+      stock_control: p.stockControl,
+      iva_subject: p.ivaSubject,
+      favorite: p.favorite,
+      purchase_price_id: p.PurchasePrice.id,
+      subcategory: p.Subcategory,
+      purchaseGross: p.PurchasePrice.gross,
+    }));
+  }
+
   return {
     create,
     findAll,
@@ -208,5 +225,6 @@ export default function useProducts() {
     finalAllToSellingPrice,
     updateStockControlById,
     findAllByCode,
+    findAllToGrid,
   };
 }

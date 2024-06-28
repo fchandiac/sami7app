@@ -202,6 +202,55 @@ function findAllByPriceListGroupByProduct(price_list_id) {
     return price
 }
 
+// findAllByProduct(product_id)
+
+function findAllByProduct(product_id) {
+    let data = { product_id }
+    const price = new Promise((resolve, reject) => {
+        fetch(server_url + 'sellingPrices/findAllByProduct', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return price
+}
+
+
+// updatePurchaseNetByProduct(product_id, purchase_net)
+
+function updatePurchaseNetByProduct(product_id, purchase_net) {
+    let data = { product_id, purchase_net }
+    const price = new Promise((resolve, reject) => {
+        fetch(server_url + 'sellingPrices/updatePurchaseNetByProduct', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return price
+}
+
 
 export {
     create,
@@ -212,5 +261,7 @@ export {
     destroy,
     findAllByProductAndPriceList,
     findTaxesBySellingPrice,
-    findAllByPriceListGroupByProduct
+    findAllByPriceListGroupByProduct,
+    findAllByProduct,
+    updatePurchaseNetByProduct
 }

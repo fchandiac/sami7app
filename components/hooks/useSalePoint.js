@@ -89,7 +89,7 @@ export default function useSalePoint() {
         0
       );
 
-    console.log("Product", product);
+    // console.log("Product", product);
 
     if (product.stock_control == true) {
       const stocks = await calcStocks(product.id, 1);
@@ -154,7 +154,7 @@ export default function useSalePoint() {
       utility += item.utility;
     });
 
-    console.log("setTotalCart", total, net, tax, discounts, utility, subTotal);
+    // console.log("setTotalCart", total, net, tax, discounts, utility, subTotal);
 
     setTotalsCart(activeCart, total, net, tax, discounts, utility, subTotal);
   };
@@ -244,7 +244,7 @@ export default function useSalePoint() {
     if (itemInCart === undefined) {
       return;
     } else {
-      console.log("Item in cart", itemInCart);
+      // console.log("Item in cart", itemInCart);
 
       let totalTaxPercentage = 0;
 
@@ -252,7 +252,7 @@ export default function useSalePoint() {
         totalTaxPercentage += parseFloat(tax.percentage) / 100;
       });
 
-      console.log("Total tax percentage", totalTaxPercentage);
+      // console.log("Total tax percentage", totalTaxPercentage);
 
       const isSum = amount > itemInCart.gross ? true : false;
       const gross = amount;
@@ -284,7 +284,7 @@ export default function useSalePoint() {
   };
 
   const changeQuantityToItem = async (productId, quanty) => {
-    console.log("Change quantity to item", productId, quanty);
+    // console.log("Change quantity to item", productId, quanty);
     //CAMBIA CANTIDAD POR UNIDAD
     const cart = getActiveCart();
     const items = cart.items;
@@ -294,7 +294,7 @@ export default function useSalePoint() {
     if (itemInCart === undefined) {
       return;
     } else {
-      console.log("Item in cart", itemInCart);
+      // console.log("Item in cart", itemInCart);
 
       if (itemInCart.stockControl === true) {
         const stocks = await calcStocks(productId, quanty);
@@ -308,11 +308,11 @@ export default function useSalePoint() {
         totalTaxPercentage += parseFloat(tax.percentage) / 100;
       });
 
-      console.log("Total tax percentage", totalTaxPercentage);
+      // console.log("Total tax percentage", totalTaxPercentage);
       const gross = itemInCart.gross;
       const net = Math.ceil(gross / (1 + totalTaxPercentage));
 
-      console.log("Gross", gross);
+      // console.log("Gross", gross);
 
       itemInCart.gross = gross;
       itemInCart.net = net;
@@ -337,7 +337,7 @@ export default function useSalePoint() {
     if (itemInCart === undefined) {
       return;
     } else {
-      console.log("Item in cart", itemInCart);
+      // console.log("Item in cart", itemInCart);
 
       let totalTaxPercentage = 0;
 
@@ -345,7 +345,7 @@ export default function useSalePoint() {
         totalTaxPercentage += parseFloat(tax.percentage) / 100;
       });
 
-      console.log("Total tax percentage", totalTaxPercentage);
+      // console.log("Total tax percentage", totalTaxPercentage);
       const gross = itemInCart.originalGross - amount;
       const net = Math.ceil(gross / (1 + totalTaxPercentage));
 
@@ -375,8 +375,8 @@ export default function useSalePoint() {
     const newGross = itemInCart.originalGross - amount;
     const minNewGross = itemInCart.originalGross - itemInCart.maxDiscount;
 
-    console.log("New Gross", newGross);
-    console.log("Min New Gross", minNewGross);
+    // console.log("New Gross", newGross);
+    // console.log("Min New Gross", minNewGross);
 
     if (amount > itemInCart.maxDiscount) {
       return false;
@@ -401,8 +401,8 @@ export default function useSalePoint() {
 
     const itemInCart = items.find((item) => item.id === product.id);
 
-    console.log("Product", product);
-    console.log("ItemInCart", itemInCart);
+    // console.log("Product", product);
+    // console.log("ItemInCart", itemInCart);
 
     if (itemInCart === undefined) {
       const item = await formatProductToCart(product);
@@ -415,6 +415,19 @@ export default function useSalePoint() {
       setTotalCart();
     }
   };
+
+  const updateItemName = async (productId, name) => {
+    const cart = getActiveCart();
+    const items = cart.items;
+    const itemInCart = items.find((item) => item.id === productId);
+    if (itemInCart === undefined) {
+      return;
+    } else {
+      itemInCart.name = name;
+      setCartItems(activeCart, items);
+    }
+  };
+
 
   const calcStocks = async (productId, quanty) => {
     const stock = await productCards.countAllGroupByProductStorageAndStatus(
@@ -462,13 +475,13 @@ export default function useSalePoint() {
   const createSaleMovementByPayment = async (payment, saleId, change) => {
     const amount = parseInt(removeThousandsSeparator(payment.amount));
 
-    console.log("payment", payment);
+    // console.log("payment", payment);
     const cash = payment.paymentMethodId == 1001 ? true : false;
-    console.log("cash", cash);
+    // console.log("cash", cash);
 
-    console.log("amount", amount);
-    console.log("change", change);
-    console.log("cash", cash == true ? true : false);
+    // console.log("amount", amount);
+    // console.log("change", change);
+    // console.log("cash", cash == true ? true : false);
 
     let debit = 0;
 
@@ -694,15 +707,18 @@ export default function useSalePoint() {
      
 
       const productCardsList = await productCards.findAllBySale(newSale.id);
-      console.log("Product Cards List", productCardsList);
+      // console.log("Product Cards List", productCardsList);
       let newSaleId = newSale.id;
 
        // SALE DETAILS
 
+       const dteProcess = await dte.documentProcess(saleInfo);
+       console.log("DTE Process", dteProcess);
+
       const saleDetails = await Promise.all(
         items.map(async (item) => {
-          const saleDetail_ = await saleDetail(item, newSaleId);
-          console.log("Sale Detail", saleDetail_);
+          const saleDetail_ = await saleDetail(item, newSaleId, dteProcess.documentType);
+          // console.log("Sale Detail", saleDetail_);
         })
       );
 
@@ -714,15 +730,25 @@ export default function useSalePoint() {
         utilitySale += saleDetail.utility;
       });
 
+      let taxSale = 0;
+      salesDetailList.map((saleDetail) => {
+        taxSale += saleDetail.tax;
+      });
+
+      let netSale = 0;
+      salesDetailList.map((saleDetail) => {
+        netSale += (saleDetail.net * saleDetail.quanty);
+      });
+
       const updateSaleUtility = await sales.updateUtility(newSale.id, utilitySale);
-      
+      const updateSaleTax = await sales.updateSaleTax(newSale.id, taxSale);
+      const updateSaleDocumentId = await sales.updateDocumentId(dteProcess.saleId, dteProcess.referenceId);
+      const updateSaleNet = await sales.updateSaleNet(newSale.id, netSale);
+      const updateSaleDocumentType = await sales.updateSaleDocumentType(newSale.id, dteProcess.documentType);
+      // console.log("Update Sale Document Id", updateSaleDocumentId);
 
-      const dteProcess = await dte.documentProcess(saleInfo);
-      const updateSaleDocumentId = await sales.updateDocumentId(dteProcess.saleId, dteProcess.documentId);
-      console.log("Update Sale Document Id", updateSaleDocumentId);
-
-      console.log("DTE Process", dteProcess);
-      console.log("SaleId", dteProcess.saleId);
+      // console.log("DTE Process", dteProcess);
+      // console.log("SaleId", dteProcess.saleId);
       //return dte.ticketProcess(saleInfo);
       return dteProcess;
     } catch (error) {
@@ -786,41 +812,48 @@ export default function useSalePoint() {
   
 
   
-  // Llamar a la función para procesar los pagos
-  // processPayments().then(() => {
-  //   console.log("Todos los pagos han sido procesados.");
-  // }).catch(error => {
-  //   console.error("Hubo un error al procesar los pagos:", error);
-  // });
-  
 
-  const saleDetail = async (product, saleId) => {
-    console.log('saleDetailProduct',product );
+  const saleDetail = async (product, saleId, documentType) => {
+    // console.log('saleDetailProduct',product );
 
     if (product.stockControl == true){
       const productCardsList = await productCards.findAllBySaleAndProduct(saleId, product.id);
-      console.log("Product Cards List", productCardsList);
-
       let purchaseNet = 0
-
       for (let i = 0; i < product.quanty; i++) {
         purchaseNet += productCardsList[i].puchase_net
       }
 
-      let utility = (product.net * product.quanty) - purchaseNet
+      let tax = product.tax
+      let utility = product.net - purchaseNet
+      let net = product.net
+
+      if (documentType == 1) {
+          tax = 0
+          net = product.gross * product.quanty
+          utility = net - purchaseNet
+      }
+
+
+      // console.log("Net", net);
+      // console.log("Utility", utility);
+      // console.log("Tax", tax);
+      // console.log("Total", product.total);
+      // console.log('purchaseNet', purchaseNet);
 
 
       const newSaleDetail = await sales.createSaleDetail(
         product.quanty,
-        product.gross,
+        product.originalGross,
         product.discount,
         utility,
-        product.net,
-        product.tax,
+        net,
+        tax,
         product.total,
         saleId,
         product.id
       )
+
+      sales.createSaleDetail()
 
 
      
@@ -835,13 +868,23 @@ export default function useSalePoint() {
 
   
     } else {
+      let tax = product.tax
+      let utility = product.utility
+      let net = product.net
+
+      if (documentType == 1) {
+          tax = 0
+          net = product.gross
+          utility = product.utility 
+      }
+
       const newSaleDetail = await sales.createSaleDetail(
         product.quanty,
-        product.gross,
+        product.originalGross,
         product.discount,
-        product.utility,
-        product.net,
-        product.tax,
+        utility,
+        net,
+        tax,
         product.total,
         saleId,
         product.id
@@ -870,7 +913,7 @@ export default function useSalePoint() {
     let discounts = 0;
     let utility = 0;
 
-    console.log("Items", items);
+    // console.log("Items", items);
 
     items.forEach((item) => {
       total += item.total;
@@ -894,7 +937,7 @@ export default function useSalePoint() {
   const parseDteXML = (xmlBase64) => {
     // Decodificar el XML base64
     const xmlString = Buffer.from(xmlBase64, "base64").toString("utf-8");
-    console.log("XML", xmlString);
+    // console.log("XML", xmlString);
 
     let timbreStr = "";
     let iva = 0;
@@ -971,8 +1014,8 @@ export default function useSalePoint() {
   const voidSaleProcess = async (saleId, description, movementId) => {
     const findSale = await sales.findOneById(saleId);
     const items = await sales.findAllSaleDetailBySaleId(saleId);
-    console.log("Find Sale", findSale);
-    console.log("Items", items);
+    // console.log("Find Sale", findSale);
+    // console.log("Items", items);
 
     const voidMovement = await cashRegisterMovements.voidById(movementId);
 
@@ -985,7 +1028,7 @@ export default function useSalePoint() {
             info.storage.id,
             item.ProductId
           );
-          console.log("Stock Product", stockProduct);
+          // console.log("Stock Product", stockProduct);
           // Nuevo movimiento de stock
           const incrementStock = await stocks.createAddMovement(
             stockProduct.id,
@@ -1003,7 +1046,7 @@ export default function useSalePoint() {
 
       // Esperar a que todas las promesas se resuelvan
       const stockResults = await Promise.all(itemPromises);
-      console.log("Stock Results", stockResults);
+      // console.log("Stock Results", stockResults);
     }
   };
 
@@ -1025,6 +1068,7 @@ export default function useSalePoint() {
     preProcessCart,
     clearCart,
     voidSaleProcess,
+    updateItemName
   };
 }
 

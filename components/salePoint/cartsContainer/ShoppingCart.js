@@ -39,6 +39,7 @@ export default function ShoppingCart(props) {
     { id: 1, key: 1, name: "Ticket" },
     { id: 2, key: 2, name: "Boleta" },
     { id: 3, key: 3, name: "Factura" },
+    { id: 4, key: 4, name: "Cotización"}
   ]);
 
   useEffect(() => {
@@ -80,17 +81,9 @@ export default function ShoppingCart(props) {
                   options={customerOptions}
                   value={cart.customer}
                   onChange={(event, newValue) => {
-                    if (newValue) {
-                      setCustomer(cart.id, newValue);
-                    } else {
-                      setCustomer(cart.id, {
-                        id: 1001,
-                        key: 1001,
-                        name: "11.111.111-1 - SIN CLIENTE",
-                      });
-                    }
+                    setCustomer(cart.id, newValue);
                   }}
-                  disablePortal
+             
                   defaultValue={null}
                   isOptionEqualToValue={(option, value) => option.id === value.id}
                   getOptionLabel={(option) => option.name}
@@ -140,21 +133,21 @@ export default function ShoppingCart(props) {
             </Box>
           </Grid>
           <Grid item xs={5} textAlign={"right"}>
-            <Typography fontSize={25}>
-              Total {cart.total.toLocaleString("es-CL", {
-                style: "currency",
-                currency: "CLP",
-              })}
-            </Typography>
             <Typography variant={"subtitle2"}>
-              subtotal {cart.subTotal.toLocaleString("es-CL", {
+              Subtotal {cart.subTotal.toLocaleString("es-CL", {
                 style: "currency",
                 currency: "CLP",
               })}
             </Typography>
 
             <Typography variant={"subtitle2"}>
-              descuentos {cart.discounts.toLocaleString("es-CL", {
+              Descuentos {cart.discounts.toLocaleString("es-CL", {
+                style: "currency",
+                currency: "CLP",
+              })}
+            </Typography>
+            <Typography fontSize={25}>
+              Total {cart.total.toLocaleString("es-CL", {
                 style: "currency",
                 currency: "CLP",
               })}
@@ -184,14 +177,16 @@ export default function ShoppingCart(props) {
                 saleProcess();
               }}
             >
-              Procesar pago
+             {cart.documentType.id === 4 ? "Cotizar" : "Procesar pago"}
             </Button>
           </Grid>
           <Grid item xs={12} marginTop={2}>
             <Box display={"flex"} sx={{ p: 1 }}>
-              <Box width={"5%"}>{"#"}</Box>
+              <Box width={"6%"}>{"#"}</Box>
               <Box flexGrow={1}>{"Producto"}</Box>
-              <Box width={"30%"}>{"Subtotal"}</Box>
+              <Box width={"12%"}>{"Subtotal"}</Box>
+              <Box width={"12%"}>{"Descuento"}</Box>
+              <Box width={"15%"}>{""}</Box>
             </Box>
           </Grid>
 

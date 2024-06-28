@@ -13,11 +13,12 @@ import {
   TextField,
   Paper,
   Typography,
+  InputAdornment
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import useProductCards from "@/components/hooks/useProductCards";
 import StockCard from "@/components/cards/StockCard";
-import { Description } from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
 
 
 
@@ -39,16 +40,35 @@ function Stocks() {
   const [gridState, setGridState] = useState(false);
   const productCards = useProductCards();
   const [stockList, setStockList] = useState([]);
-
+  const [searchWord, setSearchWord] = useState("");
+  const [filteredList, setFilteredList] = useState([]);
 
   useEffect(() => {
     const fetchProductCards = async () => {
       const productCardsList = await productCards.findAllGroupByProductAvailable();
-      console.log(productCardsList);
       setStockList(productCardsList);
+      setFilteredList(productCardsList);
     };
     fetchProductCards();
   }, []);
+
+
+  useEffect(() => {
+    if (searchWord === "") {
+      setFilteredList([]);
+    } else {
+      const searchWords = searchWord.toLowerCase().split(" ");
+
+      const filtered = stockList.filter((stock) => {
+        const productName = stock.Product.name.toLowerCase();
+        return searchWords.every((word) => productName.includes(word));
+      })
+      setFilteredList(filtered);
+
+
+    }
+
+    }, [searchWord]);
 
 
 
@@ -62,10 +82,30 @@ function Stocks() {
   return (
     <>
     <Grid container spacing={1}>
+      <Grid item xs={12} md={12}>
+      <TextField
+            sx={{ marginBottom: 1, flexGrow: 1 }}
+            label="Nombre del Producto"
+            name="searchWord"
+            variant="outlined"
+            value={searchWord}
+            onChange={(e) => setSearchWord(e.target.value)}
+            size="small"
+            fullWidth
+            autoFocus
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+      </Grid>
     {
-      stockList.map((stock, index) => {
+      filteredList.map((stock, index) => {
         return (
-          <Grid item xs={12} md={6} key={index}>
+          <Grid item xs={12} key={index}>
 
          <StockCard productId={stock.product_id} />
           </Grid>

@@ -10,9 +10,12 @@ import {
   TableHead,
   TableContainer,
   TableRow,
+  IconButton,
+  Dialog,
 } from "@mui/material";
 import moment from "moment";
 import PrintContainer from "../prints/PrintContainer";
+import InfoIcon from '@mui/icons-material/Info';
 
 export default function SaleDetailCard(props) {
   const { saleId, minimal = true } = props;
@@ -20,6 +23,7 @@ export default function SaleDetailCard(props) {
 
   const [saleData, setSaleData] = useState({});
   const [saleDetailData, setSaleDetailData] = useState([]);
+  const [openInfoDialog, setOpenInfoDialog] = useState(false);
 
   console.log(saleId);
 
@@ -45,6 +49,8 @@ export default function SaleDetailCard(props) {
     const type = typeList.find((item) => item.id === documentType);
     return type ? type.name : "";
   };
+
+  
 
   const ItemList = (items) => {
     return (
@@ -74,6 +80,7 @@ export default function SaleDetailCard(props) {
               </TableCell>
               <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Subtotal</TableCell>
               <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Desc.</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>{'    '}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -107,7 +114,7 @@ export default function SaleDetailCard(props) {
                   })}
                 </TableCell>
                 <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
-                  {item.total.toLocaleString("es-CL", {
+                  {(item.total + item.discount).toLocaleString("es-CL", {
                     style: "currency",
                     currency: "CLP",
                   })}
@@ -117,6 +124,11 @@ export default function SaleDetailCard(props) {
                     style: "currency",
                     currency: "CLP",
                   })}
+                </TableCell>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                  <IconButton>
+                    <InfoIcon sx={{fontSize: 18}} />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -179,6 +191,15 @@ export default function SaleDetailCard(props) {
           </Grid>
         </Grid>
       </PrintContainer>
+
+      <Dialog 
+        open={openInfoDialog} 
+        onClose={() => setOpenInfoDialog(false)}
+        maxWidth={"lg"}
+        fullWidth
+      >
+        test
+      </Dialog>
     </>
   );
 }

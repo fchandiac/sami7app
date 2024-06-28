@@ -192,6 +192,27 @@ export default function useSales() {
     return total;
   }
 
+  // function updateSaleTax(id, tax) 
+
+  const updateSaleTax = async (id, tax) => {
+    const sale = await sales.updateSaleTax(id, tax);
+    return sale;
+  }
+
+  //function updateSaleNet(id, net)
+
+  const updateSaleNet = async (id, net) => {
+    const sale = await sales.updateSaleNet(id, net);
+    return sale;
+  }
+
+  //function updateSaleDocumentType(id, document_type)
+
+  const updateSaleDocumentType = async (id, document_type) => {
+    const sale = await sales.updateSaleDocumentType(id, document_type);
+    return sale;
+  }
+
 
   return {
     create,
@@ -212,5 +233,8 @@ export default function useSales() {
     updateDocumentId,
     updateUtility,
     totalSalesBetweenDates,
+    updateSaleTax,
+    updateSaleNet,
+    updateSaleDocumentType
   };
 }

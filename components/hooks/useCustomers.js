@@ -34,14 +34,9 @@ export default function useCustomers() {
     return customer;
   };
 
-  const update = async (id, rut, name, address, phone, mail) => {
+  const update = async (id, name, address, phone, mail, activity, district, city) => {
     const customer = await customers.update(
-      id,
-      rut,
-      name,
-      address,
-      phone,
-      mail
+      id, name, address, phone, mail, activity, district, city
     );
     return customer;
   };

@@ -32,6 +32,7 @@ import useProviderAccountMovements from "@/components/hooks/useProviderAccountMo
 
 export default function NewPurchaseForm(props) {
   // prop para definir uso cambiar luego cuando se cree OrdendeCompra
+  const {closeDialog} = props;
   const [cart, setCart] = useState({
     items: [],
     total: 0,
@@ -94,10 +95,10 @@ export default function NewPurchaseForm(props) {
     const fetchPaymentMethods = async () => {
       const data = await paymentMethods.findAll();
 
-      const filterData = data.filter((item) => item.id !== 1001);
-      const filterData2 = filterData.filter((item) => item.id !== 1002);
+       const filterData = data.filter((item) => item.id !== 1002);
+      // const filterData2 = filterData.filter((item) => item.id !== 1001);
 
-      setPaymentMethodsOptions(filterData2);
+      setPaymentMethodsOptions(filterData);
     };
 
     fetchProviders();
@@ -280,6 +281,11 @@ export default function NewPurchaseForm(props) {
       return;
     }
 
+    if (!selectedPaymentMethod) {
+      openSnack("Debe seleccionar un medio de pago", "error");
+      return;
+    }
+
     const tax = calcTotalTax();
     const net = calcTotalNet();
     const gross = calclTotalGross();
@@ -298,6 +304,7 @@ export default function NewPurchaseForm(props) {
 
     console.log("Data", data);
 
+  
     try {
       const newPurchase = await purchases.create(
         data.description,
@@ -370,6 +377,9 @@ export default function NewPurchaseForm(props) {
         balancePayment = cart.total;
       }
 
+      //Nuevo pago proveedor
+
+
       const newPayment = await paymentsProviders.create(
         description,
         0,
@@ -382,14 +392,54 @@ export default function NewPurchaseForm(props) {
         selectedProvider.id
       );
 
+      //Nuevo movimiento de cuenta proveedor
+      const newMovement = await providerAccountMovements.createPurchaseMovemente(
+        cart.total,
+        newPurchase.id,
+        selectedProvider.id,
+        user.id
+      )
+      console.log("New Movement", newMovement); 
+
       console.log("New Provider Payment", newPayment);
 
+      if(paymentStatus){
+        const newPaymentMovement = await providerAccountMovements.createPaymentMovemente(
+          cart.total,
+          newPurchase.id,
+          selectedProvider.id,
+          user.id
+        )
+        console.log("New Payment Movement", newPaymentMovement);
+      }
+        
+
       openSnack("Compra guardada", "success");
+      resetform();
+      closeDialog();
     } catch (error) {
       console.log("Error", error);
       openSnack("Error al guardar la compra", "error");
     }
   };
+
+  const resetform = () => {
+    setCart({
+      items: [],
+      total: 0,
+      tax: 0,
+      net: 0,
+    });
+    setDescription("");
+    setSelectedProvider(null);
+    setSelectedReference(null);
+    setReference_id("");
+    setSelectedStorage(null);
+    setSelectedPaymentMethod(null);
+    setPaymentStatus(false);
+    setPayDate(moment(new Date()).format("YYYY-MM-DD"));
+  }
+
 
   const calcTotalTax = () => {
     let totalTax = 0;

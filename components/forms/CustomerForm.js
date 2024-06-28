@@ -81,7 +81,27 @@ export default function CustomerForm(props) {
 
   const save = async () => {
     if (edit) {
-      console.log("edit");
+      try {
+        const updatedCustomer = await customers.update(
+          customerData.id,
+          customerData.name,
+          customerData.address,
+          customerData.phone,
+          customerData.mail,
+          customerData.activity,
+          customerData.district.id,
+          customerData.city.id
+        );
+        openSnack("Cliente actualizado correctamente", "success");
+        records.create(user.id, "actualizar", "clientes", "actualiza cliente: " + customerData.name);
+        afterSubmit(customerData);
+    
+       
+      } catch (err) {
+        console.log(err);
+        openSnack(err.errors[0].message, 'error')
+      }
+      
     } else {
 
       try{
@@ -168,6 +188,7 @@ export default function CustomerForm(props) {
                 size="small"
                 required
                 sx={{ flexGrow: 1 }}
+                disabled={edit}
               />
               <IconButton
                 onClick={(e) => {
@@ -211,6 +232,7 @@ export default function CustomerForm(props) {
               <Autocomplete
                 sx={{ flexGrow: 1 }}
                 id="districtField"
+                value={customerData.district}
                 options={districtsOptions}
                 onChange={(event, newValue) => {
                   if (newValue) {
@@ -237,6 +259,7 @@ export default function CustomerForm(props) {
               <Autocomplete
                 sx={{ flexGrow: 1 }}
                 id="cityField"
+                value={customerData.city}
                 options={citiesOptions}
                 onChange={(event, newValue) => {
                   if (newValue) {

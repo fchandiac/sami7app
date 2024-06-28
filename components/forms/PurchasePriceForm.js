@@ -7,18 +7,39 @@ import {
   Paper,
   Typography,
   TextField,
+  Button,
+  IconButton,
 } from "@mui/material";
 import providers from "@/pages/providers";
+import RedoIcon from '@mui/icons-material/Redo';
+import useUtils from "../hooks/useUtils";
+import TitlePaper from "../custom/TitlePaper";
+import useRecords from "../hooks/useRecords";
+import { useAppContext } from "@/appProvider";
+import useSellingPrices from "../hooks/useSellingPrices";
+
+
+
+
 
 export default function PurchasePriceForm(props) {
-  const { purchasePriceId } = props;
+  const { purchasePriceId, productName, afterSubmit, productId } = props;
   const providers = useProviders();
+  const records = useRecords();
+  const sellingPrices = useSellingPrices();
+  const {user} = useAppContext();
+  const {
+    addThousandsSeparator,
+    removeThousandsSeparator,
+    grossPrice,
+    taxesAmount,
+  } = useUtils();
   const purchasePrices = usePurchasePrices();
   const [proviedersOptions, setProvidersOptions] = useState([]);
   const [purchasePriceData, setPurchasePriceData] = useState({
     id: null,
-    net: 0,
-    gross: 0,
+    net: '',
+    gross: '',
     provider: null,
     taxes: [],
   });
@@ -38,8 +59,8 @@ export default function PurchasePriceForm(props) {
 
         setPurchasePriceData({
           id: price.id,
-          net: price.net,
-          gross: price.gross,
+          net: addThousandsSeparator(price.net),
+          gross: addThousandsSeparator(price.gross),
           provider: price.Provider,
           taxes: price.Taxes,
         });
@@ -48,9 +69,51 @@ export default function PurchasePriceForm(props) {
     }
   }, [purchasePriceId]);
 
+  const calcGross = () => {
+    const net = removeThousandsSeparator(purchasePriceData.net);
+    const taxes = purchasePriceData.taxes;
+    const gross = grossPrice(net, taxes);
+    setPurchasePriceData({
+      ...purchasePriceData,
+      gross: addThousandsSeparator(gross),
+    });
+  };
+
+  const save = async () => {
+    try {
+      const updatedPrice = await purchasePrices.update(
+        purchasePriceData.id,
+        removeThousandsSeparator(purchasePriceData.net),
+        removeThousandsSeparator(purchasePriceData.gross),
+        purchasePriceData.provider.id
+      );
+
+      //Update selling price
+
+      const sellingPrice = await sellingPrices.updatePurchaseNetByProduct(productId, removeThousandsSeparator(purchasePriceData.net));
+
+      const newRecord = await records.create(
+        user.id,
+        'actualizar',
+        'precios de compra',
+        'actualiza precio de compra producto ' + productName + ' a ' + purchasePriceData.gross,
+      )
+      console.log(updatedPrice)
+      afterSubmit(removeThousandsSeparator(purchasePriceData.gross), productId);
+
+    
+    } catch (error) {
+      console.log(error);
+    }
+    
+    
+  }
+
   return (
     <>
       <Paper variant="outlined" sx={{ p: 1 }}>
+        <form onSubmit={(e) => {e.preventDefault(); save()}}>
+
         <Grid container spacing={1} direction={"column"}>
           <Grid item>
             <Typography variant="subtitle1">
@@ -73,10 +136,11 @@ export default function PurchasePriceForm(props) {
               )}
             />
           </Grid>
-          <Grid item>
+          <Grid item display={'flex'}>
             <TextField
+            sx={{ flexGrow: 1 }}
               name="net"
-              value={purchasePriceData.net}
+              value={addThousandsSeparator(purchasePriceData.net) || ''}
               onChange={(e) =>
                 setPurchasePriceData({
                   ...purchasePriceData,
@@ -86,11 +150,49 @@ export default function PurchasePriceForm(props) {
               label="Precio neto"
               variant="outlined"
               size="small"
-              type="number"
               fullWidth
             />
+            <IconButton onClick={() => calcGross()}>
+              <RedoIcon />
+            </IconButton>
           </Grid>
+          <Grid item>
+            <TitlePaper title="Impuestos">
+            <Grid container spacing={1}>
+              {purchasePriceData.taxes.map((tax) => (
+                <Grid item key={tax.id}>
+                  <Typography variant="body2">
+                    {tax.name} ({tax.percentage}%)
+                  </Typography>
+                </Grid>
+              ))}
+            </Grid>
+            </TitlePaper>
+          </Grid>
+          <Grid item>
+            <TextField
+              name="gross"
+              value={addThousandsSeparator(purchasePriceData.gross) || ''}
+              onChange={(e) =>
+                setPurchasePriceData({
+                  ...purchasePriceData,
+                  gross: e.target.value,
+                })
+              }
+              label="Precio de compra"
+              variant="outlined"
+              size="small"
+              fullWidth
+            />
+            </Grid>
+          <Grid item textAlign={'right'}>
+            <Button type="submit" variant="contained" color="primary">
+              Guardar
+            </Button>
+          </Grid>
+            
         </Grid>
+        </form>
       </Paper>
     </>
   );

@@ -66,7 +66,7 @@ export default function StockCard(props) {
 
         data.storages = storageData;
 
-        console.log('Product data:', data);
+        // console.log('Product data:', data);
         setCardData(data);
       } catch (error) {
         console.error('Error fetching product data:', error);
@@ -81,17 +81,15 @@ export default function StockCard(props) {
    <>
    <Paper variant='outlined' sx={{padding: 1}}>
     <Grid container spacing={1}>
-      <Grid item xs={12}>
+      <Grid item xs={3}>
       <Typography fontSize={10}>{cardData.productId}</Typography>
       <Typography variant="subtitle1">{cardData.productName}</Typography>
       <Typography fontSize={10}>{cardData.productCode}</Typography>
       </Grid>
   
-      <Grid item xs={12}>
-        <Grid container spacing={1}>
           {cardData.storages.map((storage, index) => {
             return (
-              <Grid item xs={12} sm={6} key={index}>
+              <Grid item xs={12} md={2}  key={index}>
                 <Paper variant='outlined' sx={{padding: 1}}>
                   <Typography fontSize={10}>{storage.id}</Typography>
                   <Typography fontSize={12} fontWeight={'bold'}>{storage.name}</Typography>
@@ -111,8 +109,7 @@ export default function StockCard(props) {
               </Grid>
             )
           })}
-        </Grid>
-      </Grid>
+
     </Grid>
     </Paper>
    </>
