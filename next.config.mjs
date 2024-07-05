@@ -7,7 +7,7 @@ const nextConfig = {
    API_URL: "https://77.37.40.79/",
 
     //Test
-   API_URL: "http://localhost:3001/",
+   //API_URL: "http://localhost:3001/",
 
     //Real
     //API_URL: "https://192.168.1.100:3001/",
