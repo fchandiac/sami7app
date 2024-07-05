@@ -39,24 +39,24 @@ export default function useStocks() {
     }
   };
 
-  const create = async (
-    total,
-    available,
-    reserve,
-    critical,
-    storage_id,
-    product_id
-  ) => {
-    const stock = await stocks.create(
-      total,
-      available,
-      reserve,
-      critical,
-      storage_id,
-      product_id
-    );
-    return stock;
-  };
+  // const create = async (
+  //   total,
+  //   available,
+  //   reserve,
+  //   critical,
+  //   storage_id,
+  //   product_id
+  // ) => {
+  //   const stock = await stocks.create(
+  //     total,
+  //     available,
+  //     reserve,
+  //     critical,
+  //     storage_id,
+  //     product_id
+  //   );
+  //   return stock;
+  // };
 
   const findAll = async () => {
     const stock = await stocks.findAll();
@@ -196,6 +196,7 @@ export default function useStocks() {
   const createDecrementMovement = async (
     description, decrement, reference, type, productId, storageId,
   ) => {
+    console.log("createDecrementMovement", description, decrement, reference, type, productId, storageId);
     const lastMovement = await findLastStockMovementByProductAndStorage(productId, storageId);
     let balance = 0;
     if (lastMovement !== null) {
@@ -204,6 +205,8 @@ export default function useStocks() {
       const totalStock = await totalStockByProductAndStorage(productId, storageId);
       balance = totalStock - decrement;
     }
+
+    
 
     const newMovement = await stocksMovements.create(
       description,
@@ -417,11 +420,11 @@ export default function useStocks() {
   }
 
   return {
-    create,
-    findAll,
-    findOneById,
-    findAllByStorage,
-    findOneByStorageAndProduct,
+    // create,
+    // findAll,
+    // findOneById,
+    // findAllByStorage,
+    // findOneByStorageAndProduct,
     addStock,
     decrementStock,
     movementType,

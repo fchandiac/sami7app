@@ -213,6 +213,13 @@ export default function useSales() {
     return sale;
   }
 
+  // findAllNulledBetweenDates(start_date, end_date)
+
+  const findAllNulledBetweenDates = async (start_date, end_date) => {
+    const sales_ = await sales.findAllNulledBetweenDates(start_date, end_date);
+    return sales_;
+  }
+
 
   return {
     create,
@@ -235,6 +242,7 @@ export default function useSales() {
     totalSalesBetweenDates,
     updateSaleTax,
     updateSaleNet,
-    updateSaleDocumentType
+    updateSaleDocumentType,
+    findAllNulledBetweenDates
   };
 }

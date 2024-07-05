@@ -20,16 +20,22 @@ import TitlePaper from "@/components/custom/TitlePaper";
 import SaleDetailCard from "@/components/cards/SaleDetailCard";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useSalePoint from "@/components/hooks/useSalePoint";
+import useDte from "@/components/hooks/useDte";
+
+
 
 
 export default function MovementCard(props) {
   const { movement } = props;
   const cashregisterMovements = useCashregisterMovements();
+  const dte = useDte();
   const {voidSaleProcess} = useSalePoint();
   const [showDetail, setShowDetail] = useState(false);
   const [openSaleDetailDialog, setOpenSaleDetailDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [voidDescription, setVoidDescription] = useState("");
+
+
 
   const [movementData, setMovementData] = useState({
     id: 0,
@@ -54,6 +60,7 @@ export default function MovementCard(props) {
       id: movement.id,
       type: cashregisterMovements.types(movement.type),
       createdAtString: moment(movement.createdAt).format("DD-MM-YYYY HH:ss"),
+      paymentMethod: movement.paymentMethod,
       paymentMethodName:
         movement.paymentMethod == null ? "" : movement.paymentMethod.name,
       amount: debit - credit,
@@ -62,6 +69,7 @@ export default function MovementCard(props) {
       balance: movement.balance,
       referenceId: movement.reference_id || "sin referencia",
       nulled: movement.nulled,
+      documentType: movement.sale == null ? '' : dte.documentType(movement.sale.document_type)
     });
   }, []);
 
@@ -70,7 +78,7 @@ export default function MovementCard(props) {
     const voidSale = await voidSaleProcess(
       movementData.referenceId, 
       voidDescription,
-      movementData.id
+      movementData
     );
 
     console.log("voidSale");
@@ -96,6 +104,8 @@ export default function MovementCard(props) {
                   <MoreHorizIcon sx={{ fontSize: 12 }} />
                 </IconButton>
                 <Typography fontSize={14} fontWeight={"bold"} pl={1}>
+                  {movementData.id}
+                  {" "}
                   {movementData.type}
                 </Typography>
                 <Typography fontSize={14} pl={1} sx={{ flexGrow: 1 }}>
@@ -142,6 +152,10 @@ export default function MovementCard(props) {
               <Typography fontSize={10} pl={1}>
                 {"Descripción: " + movementData.description}
               </Typography>
+              <Typography fontSize={10} pl={1}>
+                {'Documento: ' + movementData.documentType}
+              </Typography>
+
             </Grid>
 
             <Grid item xs={1} display={showDetail ? "block" : "none"}>
@@ -191,7 +205,7 @@ export default function MovementCard(props) {
           </Grid>
           <Grid item>
             <Alert severity="warning">
-            Al anular una venta, se restablecerá el stock de los productos vendidos, se actualizará el saldo en caja, y se generará una nota de crédito/debito de anulación de venta que revertirá los movimientos registrados en la cuenta del cliente correspondiente.
+            Al anular una venta, se restablecerá el stock de los productos vendidos, se actualizará el saldo en caja y se revertiran los movimientos registrados en la cuenta del cliente correspondiente.
             </Alert>    
             </Grid>
             <Grid item>

@@ -211,3 +211,19 @@ const customer_account_movements = {
   user_id: null,
   nulled: false,
 };
+
+
+const partialCustomerPayments = {
+  id: null,
+  description: "",
+  type: 0,
+  amount: 0,
+  balance: 0,
+  sale_id: null,
+  user_id: null,
+  pay_date: null,
+  payment_method_id: null,
+  customer_id: null,
+  cash_register_movement_id: null,
+  nulled: false,
+};

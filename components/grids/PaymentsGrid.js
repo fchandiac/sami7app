@@ -115,21 +115,29 @@ export default function PaymentsGrid(props) {
 
   const columns = [
     { field: "id", headerName: "Id", flex: .5 },
-    { field: "description", headerName: "Description", flex: 1, hide: true },
-    { field: "type", headerName: "Type", flex: 1, hide: true },
-    { field: "amount", headerName: "Amount", flex: 1 },
-    { field: "balance", headerName: "Balance", flex: 1 },
-    { field: "status", headerName: "Status", flex: 1, type: "boolean"},
-    { field: "sale_id", headerName: "Sale Id", flex: 1, hide: true},
-    { field: "userName", headerName: "User Name", flex: 1, hide: true },
+    { field: "description", headerName: "Descripción", flex: 1, hide: true },
+    { field: "type", headerName: "Tipo", flex: 1, hide: true },
+    { field: "amount", headerName: "Monto", flex: 1,
+      valueFormatter: (params) =>
+        params.value.toLocaleString("es-CL", {
+          style: "currency",
+          currency: "CLP",
+        }),
+     },
+    { field: "balance", headerName: "Saldo", flex: 1,
+      valueFormatter: (params) =>
+        params.value.toLocaleString("es-CL", {
+          style: "currency",
+          currency: "CLP",
+        }),
+     },
+    { field: "status", headerName: "Estado", flex: 1, type: "boolean"},
+    { field: "sale_id", headerName: "Venta", flex: 1, hide: true},
+    { field: "userName", headerName: "Usuario", flex: 1, hide: true },
     { field: "payDate", headerName: "Pay Date", flex: 1, valueFormatter: (params) => moment(params.value).format("DD-MM-YYYY HH:ss") },
-    { field: "paymentMethodName", headerName: "Payment Method Name", flex: 1 },
-    { field: "customerName", headerName: "Customer Name", flex: 1 },
-    {
-      field: "cashRegisterMovementId",
-      headerName: "Cash Register Movement Id",
-      flex: 1, hide: true
-    },
+    { field: "paymentMethodName", headerName: "Medio de pago", flex: 1 },
+    { field: "customerName", headerName: "Cliente", flex: 1 },
+
   ];
 
   return (

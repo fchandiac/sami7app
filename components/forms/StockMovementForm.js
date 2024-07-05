@@ -22,7 +22,10 @@ import usePurchasePrices from "../hooks/usePurchasePrices";
 import useProducts from "../hooks/useProducts";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import RedoIcon from "@mui/icons-material/Redo";
-import { set } from "autonumeric";
+import useProductCards from "../hooks/useProductCards";
+
+
+
 
 
 export default function StockMovementForm(props) {
@@ -32,6 +35,9 @@ export default function StockMovementForm(props) {
   const stocks = useStocks();
   const taxes = useTaxes();
   const purchasePrices = usePurchasePrices();
+  const productCards = useProductCards();
+ 
+  
   const products = useProducts();
   const {
     taxesAmount,
@@ -189,6 +195,15 @@ export default function StockMovementForm(props) {
           afterSubmit();
           openSnack("Stock actualizado", "success");
         } else if (selectedFeature.id === 2) {
+
+          const lastMovement = await stocks.findLastStockMovementByProductAndStorage(product.id, storage.id);
+          const balance = lastMovement.balance;
+
+          if(balance < parseInt(quanty)){
+            openSnack("No hay suficiente stock", "error");
+            return
+          }
+
           const movement_ = await stocks.createDecrementMovement(
             description,
             parseInt(quanty),
@@ -197,6 +212,7 @@ export default function StockMovementForm(props) {
             product.id,
             storage.id,
           )
+
           console.log("movement", movement_);
           setQuanty(0);
           setSelectedFeature(null);
@@ -209,6 +225,8 @@ export default function StockMovementForm(props) {
           afterSubmit();
           openSnack("Stock actualizado", "success");
         }
+
+        
       }
     }
   };

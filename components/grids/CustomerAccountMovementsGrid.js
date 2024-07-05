@@ -29,8 +29,8 @@ export default function CustomerAccountMovementsGrid(props) {
       field: "type",
       headerName: "Tipo",
       flex: 1,
-      valueFormatter: (params) =>
-        customerAccountMovements.customerAccountMovementType(params.value),
+      // valueFormatter: (params) =>
+      //   customerAccountMovements.customerAccountMovementType(params.value),
     },
     {
       field: "previous_balance",
@@ -47,7 +47,7 @@ export default function CustomerAccountMovementsGrid(props) {
       headerName: "Débito",
       flex: 1,
       valueFormatter: (params) =>
-        params.value.toLocaleString("es-CL", {
+       ( params.value  == 0 ? params.value: params.value * -1).toLocaleString("es-CL", {
           style: "currency",
           currency: "CLP",
         }),

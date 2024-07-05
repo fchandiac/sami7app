@@ -43,6 +43,14 @@ export default function usePurchases() {
         const purchase = await purchases.findAllBetweenDates(start, end)
         return purchase
     }
+
+
+    //findAllByProvider(provider_id)
+
+    const findAllByProvider = async (provider_id) => {
+        const purchase = await purchases.findAllByProvider(provider_id)
+        return purchase
+    }
         
   return {
     create,
@@ -50,7 +58,8 @@ export default function usePurchases() {
     createDetail,
     findDetailByPurchase,
     findById,
-    findAllBetweenDates
+    findAllBetweenDates,
+    findAllByProvider
 
   }
    

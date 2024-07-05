@@ -61,18 +61,23 @@ export default function useCustomerAccountMovements() {
   };
 
   const customerAccountMovementType = (type) => {
-    console.log(type);
     switch (type) {
       case 1:
-        return "Venta";
+        return "Venta directa";
       case 2:
-        return "Pago";
+        return "Pago venta directa";
       case 3:
         return "Devolución";
       case 4:
         return "Ajuste";
       case 5:
         return "Crédito";
+      case 6:
+        return "Anulación venta directa";
+      case 7:
+        return "Anulación pago";
+      default:
+        return "N/A";
     }
   };
 

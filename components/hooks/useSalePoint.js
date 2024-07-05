@@ -12,6 +12,8 @@ import usePayments from "./usePayments";
 import useDte from "./useDte";
 import useCreditNotes from "./useCreditNotes";
 import useProductCards from "./useProductCards";
+import usePurchasePrices from "./usePurchasePrices";
+
 
 export default function useSalePoint() {
   const {
@@ -32,6 +34,7 @@ export default function useSalePoint() {
   const dte = useDte();
   const payments = usePayments();
   const productCards = useProductCards();
+  const purchasesPrices = usePurchasePrices();
   const lioren = useLioren();
   const sellingPrices = useSellingPrices();
   const cashRegisterMovements = useCashregisterMovements();
@@ -814,23 +817,24 @@ export default function useSalePoint() {
   
 
   const saleDetail = async (product, saleId, documentType) => {
-    // console.log('saleDetailProduct',product );
+    console.log('saleDetailProduct',product );
 
     if (product.stockControl == true){
       const productCardsList = await productCards.findAllBySaleAndProduct(saleId, product.id);
+
       let purchaseNet = 0
       for (let i = 0; i < product.quanty; i++) {
         purchaseNet += productCardsList[i].puchase_net
       }
 
       let tax = product.tax
-      let utility = product.net - purchaseNet
+      let utility = (product.net * product.quanty) - purchaseNet
       let net = product.net
 
       if (documentType == 1) {
           tax = 0
-          net = product.gross * product.quanty
-          utility = net - purchaseNet
+          net = product.gross
+          utility = (product.gross * product.quanty )- purchaseNet
       }
 
 
@@ -853,14 +857,14 @@ export default function useSalePoint() {
         product.id
       )
 
-      sales.createSaleDetail()
 
-
-     
       //item.quanty
       for (let i = 0; i < product.quanty; i++) {
         const productCard = productCardsList[i];
-        const updateProductCardDetail = await productCards.updateSaleDetail(productCard.id, newSaleDetail.id);
+        await productCards.updateSaleDetail(productCard.id, newSaleDetail.id);
+        await productCards.updateSaleValues(productCard.id, saleId, net, tax, product.gross, product.priceListId);
+        await productCards.updateutility(productCard.id,(productCard.sale_net - productCard.puchase_net));
+
       }
 
       return newSaleDetail
@@ -868,6 +872,14 @@ export default function useSalePoint() {
 
   
     } else {
+
+
+      const findPurchasePrice = await products.findOneById(product.id)
+      const unitPurchaseNet = findPurchasePrice.PurchasePrice.net
+      const purchaseNet = unitPurchaseNet * product.quanty
+
+
+
       let tax = product.tax
       let utility = product.utility
       let net = product.net
@@ -875,7 +887,7 @@ export default function useSalePoint() {
       if (documentType == 1) {
           tax = 0
           net = product.gross
-          utility = product.utility 
+          utility =  (product.gross * product.quanty )- purchaseNet
       }
 
       const newSaleDetail = await sales.createSaleDetail(
@@ -1011,43 +1023,22 @@ export default function useSalePoint() {
     };
   };
 
-  const voidSaleProcess = async (saleId, description, movementId) => {
+  const voidSaleProcess = async (saleId, description, movement) => {
     const findSale = await sales.findOneById(saleId);
     const items = await sales.findAllSaleDetailBySaleId(saleId);
-    // console.log("Find Sale", findSale);
-    // console.log("Items", items);
+    console.log("Find Sale", findSale);
+    console.log("Items", items);
+    console.log("movement", movement);
 
-    const voidMovement = await cashRegisterMovements.voidById(movementId);
-
-    if (findSale.customer_id === 1001) {
-      // Crear una lista de promesas para procesar cada item
-      const itemPromises = items.map(async (item) => {
-        // Si el producto tiene control de stock
-        if (item.Product.stock_control === true) {
-          const stockProduct = await stocks.findOneByStorageAndProduct(
-            info.storage.id,
-            item.ProductId
-          );
-          // console.log("Stock Product", stockProduct);
-          // Nuevo movimiento de stock
-          const incrementStock = await stocks.createAddMovement(
-            stockProduct.id,
-            item.quanty,
-            saleId,
-            7
-          );
-
-          return stockProduct;
-        } else {
-          console.log("No stock control");
-          return null;
-        }
-      });
-
-      // Esperar a que todas las promesas se resuelvan
-      const stockResults = await Promise.all(itemPromises);
-      // console.log("Stock Results", stockResults);
-    }
+    const voidSale = await sales.voidById(saleId);
+    const voidOrinigalMovement = await cashRegisterMovements.voidById(movement.id);
+    const voidMovement = await cashRegisterMovements.createVoid(
+      info.cashRegisterId,
+      movement.amount,
+      description,
+      movement
+    );
+    console.log("Void Movement", voidMovement);
   };
 
   const voidSaleNoClient = async (saleId, description, items) => {};

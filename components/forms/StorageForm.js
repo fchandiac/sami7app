@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Grid, Paper, Typography, TextField, Button, FormControlLabel, Switch } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 import { useAppContext } from "@/appProvider";
 import useRecords from "../hooks/useRecords";
 import useStorages from "../hooks/useStorages";
@@ -22,7 +30,27 @@ export default function StorageForm(props) {
 
   const save = async () => {
     if (edit) {
-      console.log("edit");
+      try {
+        await storages.update(
+          storageData.id,
+          storageData.name,
+          storageData.description,
+          storageData.salesRoom
+        );
+        afterSubmit(storageData);
+        await records.create(
+          user.id,
+          "Actualizar",
+          "Almacenes",
+          `Se actualizó el almacén ${storageData.name}`
+        );
+
+        setStorageData({ id: 0, name: "", description: "", salesRoom: true });
+
+        openSnack("Almacén actualizado", "success");
+      } catch (err) {
+        openSnack(err.errors[0].message, "error");
+      }
     } else {
       try {
         const newStorage = await storages.create(
@@ -35,7 +63,7 @@ export default function StorageForm(props) {
         openSnack("Almacén creado", "success");
         await records.createStorage(user.id, newStorage.name);
       } catch (err) {
-        console.log(err)
+        console.log(err);
         openSnack(err.errors[0].message, "error");
       }
     }
@@ -93,18 +121,16 @@ export default function StorageForm(props) {
                   <Switch
                     checked={storageData.salesRoom}
                     onChange={(e) => {
-                        setStorageData({
-                            ...storageData,
-                            salesRoom: e.target.checked,
-                        });
+                      setStorageData({
+                        ...storageData,
+                        salesRoom: e.target.checked,
+                      });
                     }}
                     color="primary"
                   />
                 }
                 label={
-                    storageData.salesRoom
-                    ? "Sala de ventas"
-                    : "Almacén interno"
+                  storageData.salesRoom ? "Sala de ventas" : "Almacén interno"
                 }
               />
             </Grid>

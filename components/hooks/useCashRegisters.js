@@ -69,6 +69,13 @@ export default function useCashRegisters() {
         return close
     }
 
+    // function findAllByStatus(status)
+
+    const findAllByStatus = async (status) => {
+        const cashRegisters_ = await cashRegisters.findAllByStatus(status)
+        return cashRegisters_
+    }
+
 
 
   return {
@@ -79,6 +86,7 @@ export default function useCashRegisters() {
     findAllOpenBySalePoint,
     balanceCashRegister,
     closeCashRegister,
-    updateClose
+    updateClose,
+    findAllByStatus
   }
 }

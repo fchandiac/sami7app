@@ -122,9 +122,34 @@ function findAllBetweenDates(start, end){
 
 }
 
+//findAllByProvider(provider_id)
+
+function findAllByProvider(provider_id){
+    const purchase = new Promise((resolve, reject) => {
+        fetch(server_url + 'purchases/findAllByProvider', {
+            method: 'POST',
+            body: JSON.stringify({ provider_id }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return purchase
+
+}
+
 export {
     create,
     findAll,
     findById,
-    findAllBetweenDates
+    findAllBetweenDates,
+    findAllByProvider
 }

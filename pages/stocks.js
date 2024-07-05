@@ -28,9 +28,9 @@ export default function stocks() {
   return (
     <>
       <StocksTab
-        Stocks={<Stocks />}
-        Movements={<Movements />}
-        Storages={<Storages />}
+        Stocks={Stocks()}
+        Movements={Movements()}
+        Storages={Storages()}
       />
     </>
   );

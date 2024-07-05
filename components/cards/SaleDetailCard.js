@@ -16,25 +16,34 @@ import {
 import moment from "moment";
 import PrintContainer from "../prints/PrintContainer";
 import InfoIcon from '@mui/icons-material/Info';
+import useProductCards from "../hooks/useProductCards";
+
 
 export default function SaleDetailCard(props) {
   const { saleId, minimal = true } = props;
   const sales = useSales();
+  const productCards = useProductCards();
+
 
   const [saleData, setSaleData] = useState({});
   const [saleDetailData, setSaleDetailData] = useState([]);
   const [openInfoDialog, setOpenInfoDialog] = useState(false);
 
-  console.log(saleId);
+  const [productsCardList, setProductsCardList] = useState([]);
+
 
   useEffect(() => {
     const fetch = async () => {
       const sale = await sales.findOneById(saleId);
       setSaleData(sale);
-      console.log("sale", sale);
+
       const detail = await sales.findAllSaleDetailBySaleId(saleId);
-      console.log("detail", detail);
       setSaleDetailData(detail);
+
+      const cards = await productCards.findAllBySale(saleId)
+      setProductsCardList(cards);
+
+
     };
     fetch();
   }, []);
@@ -52,7 +61,7 @@ export default function SaleDetailCard(props) {
 
   
 
-  const ItemList = (items) => {
+  const ItemsTable = (items) => {
     return (
       <TableContainer>
         <Table>
@@ -80,7 +89,7 @@ export default function SaleDetailCard(props) {
               </TableCell>
               <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Subtotal</TableCell>
               <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Desc.</TableCell>
-              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>{'    '}</TableCell>
+              {/* <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>{'    '}</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -125,11 +134,11 @@ export default function SaleDetailCard(props) {
                     currency: "CLP",
                   })}
                 </TableCell>
-                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                {/* <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
                   <IconButton>
                     <InfoIcon sx={{fontSize: 18}} />
                   </IconButton>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
@@ -137,6 +146,58 @@ export default function SaleDetailCard(props) {
       </TableContainer>
     );
   };
+
+  const cardsTable = (cards) => {
+    console.log('cards', cards)
+    return(
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Id</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Producto</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Neto venta</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Neto compra</TableCell>
+              <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>Utilidad</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {cards.map((card, index) => (
+              <TableRow key={index}>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                  {card.id}
+                </TableCell>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                  {card.Product.name}
+                </TableCell>
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                  {card.sale_net.toLocaleString("es-CL", {
+                    style: "currency",
+                    currency: "CLP",
+                  })}
+                </TableCell>
+
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                  {card.puchase_net.toLocaleString("es-CL", {
+                    style: "currency",
+                    currency: "CLP",
+                  })}
+                </TableCell>
+
+                <TableCell sx={{ fontSize: 12, p: 0, pl: 1 }}>
+                  {(card.sale_net - card.puchase_net).toLocaleString("es-CL", {
+                    style: "currency",
+                    currency: "CLP",
+                  })}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
+  }
+    
 
   return (
     <>
@@ -176,7 +237,7 @@ export default function SaleDetailCard(props) {
           </Grid>
 
           <Grid item minWidth={minimal ? "80mm" : 500}>
-            {ItemList(saleDetailData)}
+            {ItemsTable(saleDetailData)}
           </Grid>
           <Grid item>
             <Typography fontSize={12} lineHeight={1.2} textAlign={"right"}>
@@ -189,8 +250,15 @@ export default function SaleDetailCard(props) {
                 : ""}
             </Typography>
           </Grid>
+          <Grid item>
+          {cardsTable(productsCardList) }
+          </Grid>
         </Grid>
       </PrintContainer>
+
+    
+
+
 
       <Dialog 
         open={openInfoDialog} 

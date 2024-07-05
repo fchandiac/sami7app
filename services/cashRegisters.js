@@ -109,11 +109,11 @@ function  findAllOpenBySalePoint(sale_point_id) {
     return cashRegister
 }
 
-function balanceCashRegister(cash_register_id, debit, credit) {
+function balanceCashRegister(cash_register_id, debit, credit, type) {
     const cashRegister = new Promise((resolve, reject) => {
         fetch(server_url + 'cashRegisters/balanceCashRegister', {
             method: 'POST',
-            body: JSON.stringify({ cash_register_id, debit, credit }),
+            body: JSON.stringify({ cash_register_id, debit, credit, type }),
             headers: { 'Content-Type': 'application/json' }
         }).then(res => {
             res.json().then(res => {
@@ -177,6 +177,29 @@ function findAllByStatusBetweenDates(status, start_date, end_date) {
     return cashRegister
 }
 
+// function findAllByStatus(status)
+
+function findAllByStatus(status) {
+    const cashRegister = new Promise((resolve, reject) => {
+        fetch(server_url + 'cashRegisters/findAllByStatus', {
+            method: 'POST',
+            body: JSON.stringify({ status }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return cashRegister
+}
+
 
 export {
     create,
@@ -186,5 +209,6 @@ export {
     findAllOpenBySalePoint,
     balanceCashRegister,
     updateClose,
-    findAllByStatusBetweenDates
+    findAllByStatusBetweenDates,
+    findAllByStatus
 }

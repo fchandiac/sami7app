@@ -41,8 +41,8 @@ export default function CashRegistersForm(props) {
       const newCashRegister = await cashRegisters.create(
         cashRegisterData.description,
         true,
-        cashRegisterData.open,
-        cashRegisterData.open,
+        removeThousandsSeparator(cashRegisterData.open),
+        removeThousandsSeparator(cashRegisterData.open),
         0,
         user.id,
         null,

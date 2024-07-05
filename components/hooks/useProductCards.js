@@ -99,7 +99,9 @@ export default function useProductCards() {
     //findFirstCardByProductAndStorage(product_id, storage_id)
 
     const findFirstCardByProductAndStorage = async (product_id, storage_id) => {
+        console.log(product_id, storage_id)
         const productCard = await products.findFirstCardByProductAndStorage(product_id, storage_id)
+        console.log(productCard)
         return productCard
     }
 
@@ -145,6 +147,13 @@ export default function useProductCards() {
         return productCard
     }
 
+    // function updateutility(id, utility)
+
+    const updateutility = async (id, utility) => {
+        const productCard = await products.updateutility(id, utility)
+        return productCard
+    }
+
 
     return {
         create,
@@ -162,6 +171,7 @@ export default function useProductCards() {
         updateSaleValues,
         findAllBySaleAndProduct,
         updateSaleDetail,
+        updateutility
     }
 
 }

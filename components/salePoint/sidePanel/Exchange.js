@@ -138,9 +138,9 @@ export default function Exchange() {
     <Paper variant="outlined" sx={{ padding: 1 }}>
       <form onSubmit={(e) => {e.preventDefault(); saveMovement()}}>
       <Grid container spacing={1} direction={"column"} minWidth={"200px"}>
-        <Grid item>
+        {/* <Grid item>
             <Typography variant={'subtitle1'}>Ingreso / Egreso</Typography>
-        </Grid>
+        </Grid> */}
         <Grid item>
           <Autocomplete
             sx={{ flexGrow: 1 }}

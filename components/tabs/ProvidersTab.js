@@ -52,7 +52,7 @@ export default function ProvidersTab(props) {
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Proveedores" {...a11yProps(0)} />
                     <Tab label="Cuentas" {...a11yProps(1)} />
-                    {/* <Tab label="Compras" {...a11yProps(2)} /> */}
+                    <Tab label="Compras" {...a11yProps(2)} />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
@@ -61,9 +61,9 @@ export default function ProvidersTab(props) {
             <TabPanel value={value} index={1}>
                 {Accounts}
             </TabPanel>
-            {/* <TabPanel value={value} index={2}>
+            <TabPanel value={value} index={2}>
                 {Purchases}
-            </TabPanel> */}
+            </TabPanel>
 
         </Box>
     );

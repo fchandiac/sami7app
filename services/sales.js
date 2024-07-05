@@ -453,6 +453,30 @@ function updateSaleDocumentType(id, document_type) {
     return sale
 }
 
+// findAllNulledBetweenDates(start_date, end_date)
+
+function findAllNulledBetweenDates(start_date, end_date) {
+    let data = { start_date, end_date }
+    const sale = new Promise((resolve, reject) => {
+        fetch(server_url + 'sales/findAllNulledBetweenDates', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => {
+            res.json().then(res => {
+                if (res.code === 0) {
+                    reject(res.data)
+                } else {
+                    resolve(res.data)
+                }
+            })
+        }).catch(err => {
+            reject(err)
+        })
+    })
+    return sale
+}
+
 
 
 export {
@@ -475,7 +499,8 @@ export {
     totalSalesBetweenDates,
     updateSaleTax,
     updateSaleNet,
-    updateSaleDocumentType
+    updateSaleDocumentType,
+    findAllNulledBetweenDates
 }
 
 
