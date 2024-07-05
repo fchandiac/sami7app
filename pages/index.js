@@ -12,7 +12,6 @@ export default function Home() {
   return (
     <>
       <h1>Click en Menú</h1>
-
       {/* <Dialog open={openSplash}>
         <Box
          sx={{
