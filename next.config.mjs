@@ -4,7 +4,7 @@
 const nextConfig = {
   env: {
     //Corral
-   API_URL: "https://77.37.40.79/",
+   API_URL: "https://api.corraltab.cl/",
 
     //Test
    //API_URL: "http://localhost:3001/",
