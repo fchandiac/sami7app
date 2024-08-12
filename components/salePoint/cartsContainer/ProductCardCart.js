@@ -291,8 +291,9 @@ export default function ProductCardCart(props) {
                 <TextField
                   label="Monto"
                   name="discountAmount"
-                  value={addThousandsSeparator(discountAmount)}
+                  value={discountAmount}
                   onChange={(e) => {
+                    console.log("e.target.value", e.target.value);
                     setDiscountAmount(e.target.value);
                   }}
                   fullWidth

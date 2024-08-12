@@ -164,7 +164,8 @@ export default function MovementCard(props) {
                 onClick={() => {
                   setOpenDeleteDialog(true);
                 }}
-                disabled={movementData.type == "Venta directa" ? false : true}
+                disabled={true}
+                // disabled={movementData.type == "Venta directa" ? false : true}
                 >
                   <DeleteIcon sx={{ fontSize: 18 }} />
                 </IconButton>
