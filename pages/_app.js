@@ -7,11 +7,13 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { LocalizationProvider, esES as esESPick } from '@mui/x-date-pickers'
 
 
+//#00c853
 
+//#009688
 const theme = createTheme(
   {
     palette: {
-      primary: { main: '#009688', contrastText: '#fff' },
+      primary: { main: '#00c853', contrastText: '#fff' },
       // primary: { main: '#4caf50', contrastText: '#fff' },
       MUIBorder: { main: rgbToHex('rgba(0, 0, 0, 0.12)') },
       papperBorder: { main: rgbToHex('rgba(0, 0, 0, 0.25)') },
